@@ -4,9 +4,9 @@
 
 <p align="center">
 <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="Apache 2.0 License" /></a>
-<a href="?"><img src="https://img.shields.io/badge/📄_Paper-red?style=flat-square" alt="Tech Report" /></a>
-<a href=""><img src="https://img.shields.io/badge/🤗_SkillHub-pink?style=flat-square" alt="SkillHub" /></a>
-<a href="?"><img src="https://img.shields.io/badge/Dataset-Harbor-orange" alt="SkillHub" /></a>
+<a href="paper/Skill2Env_arXiv.pdf"><img src="https://img.shields.io/badge/📄_Paper-red?style=flat-square" alt="Tech Report" /></a>
+<a href="SkillHub/"><img src="https://img.shields.io/badge/🤗_SkillHub-pink?style=flat-square" alt="SkillHub" /></a>
+<a href="https://hub.harborframework.com/datasets/skill2env/skill2env"><img src="https://img.shields.io/badge/Dataset-Harbor-orange" alt="Dataset" /></a>
 
 Skill2Env turns any [Agent Skill](https://agentskills.io) into RL-ready terminal tasks in the [Harbor](https://harborframework.com) format.
 
