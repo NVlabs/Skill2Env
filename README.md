@@ -4,11 +4,11 @@
 
 <p align="center">
 <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="Apache 2.0 License" /></a>
-<a href="?"><img src="https://img.shields.io/badge/📄_Tech_Report-red?style=flat-square" alt="Tech Report" /></a>
+<a href="?"><img src="https://img.shields.io/badge/📄_Paper-red?style=flat-square" alt="Tech Report" /></a>
+<a href=""><img src="https://img.shields.io/badge/🤗_SkillHub-pink?style=flat-square" alt="SkillHub" /></a>
+<a href="?"><img src="https://img.shields.io/badge/Dataset-Harbor-orange" alt="SkillHub" /></a>
 
-</p>
-
-`skill2env` turns any [Agent Skills](https://agentskills.io) into verified, self-contained terminal tasks in the [Harbor](https://harborframework.com) format, ready to serve as RL environments or evaluation benchmarks.
+Skill2Env turns any [Agent Skill](https://agentskills.io) into RL-ready terminal tasks in the [Harbor](https://harborframework.com) format.
 
 <p align="center">
   <img src="assets/pipeline.png" alt="Skill2Env pipeline" width="800">
@@ -91,14 +91,6 @@ output/quickstart/
 `--input-root` is scanned recursively, so it can point at one Skill, one family, or the whole hub:
 
 ```bash
-# one Skill family, up to 4 tasks per Skill, 4 concurrent Codex agents
-uv run skill2env generate \
-  --input-root SkillHub/skills/duckdb \
-  --out output/duckdb \
-  --max-tasks-per-skill 4 \
-  --max-parallel-workers 4
-
-# the whole hub, resumable
 uv run skill2env generate \
   --input-root SkillHub/skills \
   --out output/skillhub \

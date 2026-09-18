@@ -1,10 +1,9 @@
 # SkillHub
 
-SkillHub is a curated collection of open-source [Agent Skills](https://agentskills.io), each kept
+SkillHub is a collection of open-source [Agent Skills](https://agentskills.io), each kept
 as a clean, self-contained skill folder with its `SKILL.md` and bundled references, scripts, and
 assets. We web-scraped a subset of publicly available skill repositories on GitHub, then filtered
-the result for licensing, offline feasibility, and quality (see [Curation](#curation)). It is the
-input corpus for `skill2env` (see the [top-level README](../README.md)).
+the result for licensing, offline feasibility, and quality.
 
 
 <p align="center">
