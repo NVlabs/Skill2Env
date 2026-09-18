@@ -1,0 +1,65 @@
+{
+  "skill": "alterlab-survey-design",
+  "evals": [
+    {
+      "id": "design-likert-scale",
+      "prompt": "I'm writing attitudinal items for a research-confidence survey. Should I use a 5-point or 7-point Likert scale, and how should I label the points?",
+      "expected_output": "Compares 5-point (most common, central tendency bias) versus 7-point (greater discrimination, better for factor analysis) scales and recommends based on the use case, advises fully labeling points for clarity (Strongly Disagree to Strongly Agree), and matches the anchor wording to the question type (agreement vs frequency vs importance). Should note the trade-offs of including a midpoint.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "Likert"},
+        {"type": "behavior", "value": "Compares 5- vs 7-point scales with their trade-offs and advises consistent, fully-labeled anchors matched to the stem."}
+      ]
+    },
+    {
+      "id": "fix-bad-items",
+      "prompt": "Review these survey items for me: 'How satisfied are you with the quality and timeliness of feedback?' and 'Do you agree that the new policy is beneficial?' What's wrong and how do I fix them?",
+      "expected_output": "Diagnoses the first as double-barreled (quality AND timeliness) and splits it into two separate items, and the second as leading/loaded and rewrites it with a neutral stem letting the Likert scale capture agreement. Applies item-writing rules: one concept per item, no leading language, specific time frames where relevant.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "double-barreled"},
+        {"type": "behavior", "value": "Identifies double-barreled and leading questions and rewrites them following the item-writing rules."}
+      ]
+    },
+    {
+      "id": "sample-size-calculation",
+      "prompt": "I'm running a descriptive survey estimating a proportion and want 95% confidence with a 5% margin of error. How many respondents do I need, and how do I adjust for a 30% response rate?",
+      "expected_output": "Applies the proportion sample-size formula n = (Z^2 * p * (1-p)) / E^2 with Z=1.96, p=0.5 (conservative), E=0.05 yielding ~385, then divides by the expected response rate (385 / 0.30 ≈ 1,284 invitations). May mention the finite-population correction. Grounds the answer in the survey-design sampling framework.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "margin of error"},
+        {"type": "behavior", "value": "Computes ~385 respondents and adjusts upward for the 30% response rate to ~1,284 invitations."}
+      ]
+    },
+    {
+      "id": "instrument-validation-reliability",
+      "prompt": "I just finished piloting my new scale on 40 people. How do I check whether it's reliable and whether the items hang together — what stats should I run?",
+      "expected_output": "Recommends reliability analysis (Cronbach's alpha per subscale, with interpretation thresholds), corrected item-total correlations (flag items below 0.30), and assessing dimensionality with exploratory factor analysis (KMO, Bartlett's test, eigenvalues, factor loadings >= 0.40). Should distinguish reliability from validity and reference the pilot-testing protocol.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "Cronbach"},
+        {"type": "behavior", "value": "Recommends Cronbach's alpha, item-total correlations, and EFA (KMO/Bartlett/loadings) for instrument validation."}
+      ]
+    },
+    {
+      "id": "platform-selection",
+      "prompt": "I need to choose between Qualtrics, REDCap, and Google Forms for a clinical health survey that has to be HIPAA compliant and needs advanced skip logic. Which fits best?",
+      "expected_output": "Compares the platforms on HIPAA compliance and skip-logic capability, recommending REDCap (designed for clinical/health research, HIPAA compliant, advanced skip logic) or Qualtrics (HIPAA via BAA, advanced logic) over Google Forms (not HIPAA compliant, only basic skip logic). Grounds the recommendation in the platform comparison table.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "REDCap"},
+        {"type": "behavior", "value": "Recommends a HIPAA-compliant platform with advanced skip logic (REDCap/Qualtrics) and explains why Google Forms is unsuitable."}
+      ]
+    },
+    {
+      "id": "near-miss-research-ethics",
+      "prompt": "My survey is built and ready. Now I need to prepare the IRB application and write the informed consent form for distributing it to participants. How do I do that?",
+      "expected_output": "This is ethics board application and informed consent drafting, which the skill's 'Does NOT Trigger' table routes to alterlab-research-ethics. Defers there for the IRB submission and consent form rather than handling compliance itself; survey-design covers only the instrument, not the ethics application.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-research-ethics"},
+        {"type": "behavior", "value": "Recognizes IRB/consent work as ethics territory and defers to alterlab-research-ethics."}
+      ]
+    }
+  ]
+}

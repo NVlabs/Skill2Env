@@ -1,0 +1,54 @@
+{
+  "skill": "alterlab-pyopenms",
+  "evals": [
+    {
+      "id": "load-mzml-inspect-spectra",
+      "prompt": "I have a raw LC-MS/MS run in mzML. Give me Python to load it, report how many spectra and chromatograms it has, and print the MS level and retention time of the first spectrum.",
+      "expected_output": "Triggers the pyOpenMS skill. Should import pyopenms, create an MSExperiment, load with MzMLFile().load('...', exp), then use getNrSpectra()/getNrChromatograms() and getSpectrum(0).getMSLevel()/getRT() and get_peaks() to inspect the data.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "MSExperiment"},
+        {"type": "behavior", "value": "Loads the mzML via MzMLFile into an MSExperiment and reports spectrum/chromatogram counts and MS level / retention time."}
+      ]
+    },
+    {
+      "id": "feature-detection-quant",
+      "prompt": "I want to detect features (chromatographic peaks) in my centroided mzML for quantification, then get them into a pandas DataFrame for downstream stats. How do I do this with pyOpenMS?",
+      "expected_output": "Triggers the pyOpenMS skill. Should use the pyOpenMS 3.x feature finder (FeatureFinderAlgorithmPicked().run(exp, features, params, seeds), or the MassTraceDetection -> ElutionPeakDetection -> FeatureFindingMetabo chain) to produce a FeatureMap, then convert with FeatureMap.get_df() (or load a featureXML via FeatureXMLFile) into a pandas DataFrame. Must NOT use the removed FeatureFinder.run('centroided', ...) facade. May mention the algorithm parameter system.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "FeatureMap"},
+        {"type": "behavior", "value": "Runs feature detection into a FeatureMap and exports to a pandas DataFrame via get_df()."}
+      ]
+    },
+    {
+      "id": "peptide-id-fdr-filter",
+      "prompt": "I ran a database search and have an idXML of peptide-spectrum matches. I want to load the identifications in Python and apply FDR filtering at the peptide level. What's the pyOpenMS code?",
+      "expected_output": "Triggers the pyOpenMS skill. Should load with IdXMLFile().load('identifications.idXML', protein_ids, peptide_ids) where (in pyOpenMS 3.x) peptide_ids is a PeptideIdentificationList (not a plain []), then run FalseDiscoveryRate().apply(peptide_ids) to compute q-values and filter at 1% via IDFilter().filterHitsByScore(peptide_ids, 0.01). May note the target_decoy/PeptideIndexer prerequisite and supported search engines (Comet, MSGFPlus, XTandem).",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "FalseDiscoveryRate"},
+        {"type": "behavior", "value": "Loads identifications from idXML (peptide_ids as a PeptideIdentificationList) and applies FalseDiscoveryRate, then filters the peptide IDs at a q-value threshold (e.g. via IDFilter)."}
+      ]
+    },
+    {
+      "id": "gaussian-smoothing-signal",
+      "prompt": "My profile-mode spectra are noisy. I want to apply Gaussian smoothing across the whole experiment in pyOpenMS and be able to tune the smoothing width. Show me how, including setting the parameter.",
+      "expected_output": "Triggers the pyOpenMS skill. Should use GaussFilter, fetch params via getParameters(), set 'gaussian_width' with params.setValue(...), apply with setParameters(), and run filterExperiment(exp). Demonstrates the OpenMS parameter system.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "GaussFilter"},
+        {"type": "behavior", "value": "Uses GaussFilter with the parameter system (getParameters/setValue 'gaussian_width'/setParameters) and filterExperiment."}
+      ]
+    },
+    {
+      "id": "near-miss-biopython",
+      "prompt": "I have a FASTA file of protein sequences. I just need to read each sequence, compute its molecular weight and amino-acid composition, and print a summary table — no mass spec involved.",
+      "expected_output": "Should NOT trigger the pyOpenMS skill. This is plain sequence biology — parsing a protein FASTA and computing molecular weight / composition — not mass-spectrometry data processing. It belongs to the biopython skill (Bio.SeqIO, Bio.SeqUtils.ProtParam / molecular_weight). The response should defer to biopython rather than load anything into an MSExperiment.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "biopython"}
+      ]
+    }
+  ]
+}

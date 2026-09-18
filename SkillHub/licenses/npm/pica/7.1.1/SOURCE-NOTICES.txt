@@ -1,0 +1,7 @@
+Source files: dist/pica.js
+
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/

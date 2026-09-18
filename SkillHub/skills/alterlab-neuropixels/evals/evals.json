@@ -1,0 +1,54 @@
+{
+  "skill": "alterlab-neuropixels",
+  "evals": [
+    {
+      "id": "load-spikeglx-preprocess",
+      "prompt": "I just got a SpikeGLX recording from a Neuropixels 1.0 probe (.ap.bin / .ap.meta). Walk me through loading it in SpikeInterface and the standard preprocessing chain before sorting.",
+      "expected_output": "Triggers the Neuropixels skill. Should use si.read_spikeglx with the imec0.ap stream, then the recommended preprocessing chain: highpass_filter, phase_shift (required for NP 1.0), detect_bad_channels + remove_channels, and common_reference (median CAR). May reference the bundled preprocess() helper.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "read_spikeglx"},
+        {"type": "behavior", "value": "Includes phase_shift for Neuropixels 1.0 and a common-reference/CAR step in the preprocessing chain."}
+      ]
+    },
+    {
+      "id": "drift-check-motion-correct",
+      "prompt": "Before I run spike sorting on my probe data I want to check for drift and correct it if it's bad. How do I do that in SpikeInterface, and what threshold means I should bother correcting?",
+      "expected_output": "Triggers the Neuropixels skill. Should check drift first (check_drift / peak detection + localization), and apply correct_motion (e.g. preset 'nonrigid_fast_and_accurate' or 'nonrigid_accurate') when drift is significant (>~10-20 microns). Should emphasize always checking drift before sorting.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "motion"},
+        {"type": "behavior", "value": "Recommends checking drift before sorting and applying motion/drift correction when the estimate exceeds ~10-20 microns."}
+      ]
+    },
+    {
+      "id": "kilosort4-quality-metrics-curation",
+      "prompt": "I want to run Kilosort4 on my preprocessed recording, then compute quality metrics and keep only good units using Allen Institute criteria. Show me the SpikeInterface steps.",
+      "expected_output": "Triggers the Neuropixels skill. Should run si.run_sorter('kilosort4', ...) (noting GPU is needed), build a SortingAnalyzer, compute extensions including quality_metrics, then curate with Allen criteria (presence_ratio > 0.9, isi_violations_ratio < 0.5, amplitude_cutoff < 0.1) or curate_units(method='allen').",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "kilosort4"},
+        {"type": "behavior", "value": "Computes quality_metrics on a SortingAnalyzer and applies Allen-style thresholds (presence_ratio, isi_violations_ratio, amplitude_cutoff) for curation."}
+      ]
+    },
+    {
+      "id": "export-to-phy",
+      "prompt": "My units are sorted and I have an analyzer with metrics. I want to hand this off for manual curation in Phy. How do I export it from SpikeInterface?",
+      "expected_output": "Triggers the Neuropixels skill. Should use si.export_to_phy(analyzer, output_folder='phy_export/', compute_pc_features=True, compute_amplitudes=True) to produce a Phy-compatible export for manual review.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "export_to_phy"},
+        {"type": "behavior", "value": "Calls export_to_phy on the SortingAnalyzer to produce a Phy-loadable folder for manual curation."}
+      ]
+    },
+    {
+      "id": "near-miss-scanpy",
+      "prompt": "I have a single-cell RNA-seq count matrix in an AnnData object. I want to cluster the cells with Leiden and make a UMAP colored by cluster. What's the standard workflow?",
+      "expected_output": "Should NOT trigger the Neuropixels skill. This is single-cell transcriptomics clustering on an AnnData object, not extracellular electrophysiology / spike sorting. It belongs to the scanpy skill (sc.pp.neighbors, sc.tl.leiden, sc.tl.umap). The response should defer to scanpy rather than SpikeInterface.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "scanpy"}
+      ]
+    }
+  ]
+}

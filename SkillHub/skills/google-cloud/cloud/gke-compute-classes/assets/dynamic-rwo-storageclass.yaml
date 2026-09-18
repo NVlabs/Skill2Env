@@ -1,0 +1,26 @@
+# EXAMPLE TEMPLATE - DO NOT DEPLOY (adapt, then apply).
+# REQUIRES GKE 1.35.3-gke.1290000+ (both control plane and node pools).
+# `dynamic-rwo` is a BUILT-IN StorageClass at that version — on supported clusters
+# reference it by name; you do NOT need to create it. This manifest only documents its
+# contents (the `type: dynamic` feature itself also requires 1.35.3-gke.1290000+, so it
+# cannot be back-ported to older clusters).
+#
+# WHY THIS MATTERS FOR ComputeClasses:
+# `type: dynamic` lets one StorageClass back either Persistent Disk (Gen 2) or Hyperdisk
+# (Gen 4) depending on the node. `use-allowed-disk-topology: "true"` makes the Cluster
+# Autoscaler disk-topology-aware: it reads the workload's disk requirements and scales up
+# ONLY disk-compatible node options, skipping incompatible-generation priorities instead
+# of provisioning a node that then fails PV attach. This is what makes a stateful
+# ComputeClass safe to span mixed machine families/generations in priorities[].
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: dynamic-rwo
+provisioner: pd.csi.storage.gke.io
+volumeBindingMode: WaitForFirstConsumer   # provision disk in the chosen node's zone
+allowVolumeExpansion: true
+parameters:
+  type: dynamic
+  pd-type: pd-balanced
+  hyperdisk-type: hyperdisk-balanced
+  use-allowed-disk-topology: "true"       # K8s StorageClass params are strings — quote intentionally

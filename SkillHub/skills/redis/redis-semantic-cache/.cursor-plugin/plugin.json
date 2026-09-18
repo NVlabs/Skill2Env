@@ -1,0 +1,13 @@
+{
+  "name": "redis-semantic-cache",
+  "version": "1.0.0",
+  "description": "Redis LangCache — cache-aside flow for LLM responses, similarity threshold tuning, per-task cache separation.",
+  "author": {
+    "name": "Redis",
+    "email": "support@redis.com"
+  },
+  "homepage": "https://redis.io",
+  "repository": "https://github.com/redis/agent-skills",
+  "license": "MIT",
+  "keywords": ["redis", "semantic-cache", "langcache", "llm", "ai"]
+}

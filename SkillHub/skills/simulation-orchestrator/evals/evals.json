@@ -1,0 +1,168 @@
+{
+  "skill_name": "simulation-orchestrator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to run a parameter sweep on dt and kappa for my phase-field simulation. Try 5 values of dt between 1e-4 and 1e-2, and 4 values of kappa between 0.1 and 1.0. My base config is simulation.json. Use linspace sampling.",
+      "expected_output": "Agent generates a sweep with 5x4=20 configurations using linspace method via sweep_generator.py, creating configs in the output directory.",
+      "assertions": [
+        "Invokes scripts/sweep_generator.py with --base-config simulation.json --params 'dt:1e-4:1e-2:5,kappa:0.1:1.0:4' --method linspace --json",
+        "Specifies an --output-dir for the generated configurations",
+        "Output includes configs, parameter_space, sweep_method, and total_runs fields",
+        "Reports total_runs as 20 (5 x 4 combinations)"
+      ],
+      "files": ["evals/files/simulation.json"],
+      "script_checks": [
+        {
+          "description": "5x4 linspace sweep of dt and kappa yields 20 runs with exact grid values",
+          "cmd": ["scripts/sweep_generator.py", "--base-config", "evals/files/simulation.json", "--params", "dt:1e-4:1e-2:5,kappa:0.1:1.0:4", "--method", "linspace", "--output-dir", "evals/scratch/case1_sweep", "--force", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "total_runs", "op": "eq", "value": 20},
+            {"path": "sweep_method", "op": "eq", "value": "linspace"},
+            {"path": "configs", "op": "type", "value": "list"},
+            {"path": "configs.0", "op": "eq", "value": "config_0000.json"},
+            {"path": "configs.19", "op": "eq", "value": "config_0019.json"},
+            {"path": "parameter_space.dt.0", "op": "approx", "value": 0.0001, "rel_tol": 1e-6},
+            {"path": "parameter_space.dt.2", "op": "approx", "value": 0.00505, "rel_tol": 1e-6},
+            {"path": "parameter_space.dt.4", "op": "approx", "value": 0.01, "rel_tol": 1e-6},
+            {"path": "parameter_space.kappa.0", "op": "approx", "value": 0.1, "rel_tol": 1e-6},
+            {"path": "parameter_space.kappa.1", "op": "approx", "value": 0.4, "rel_tol": 1e-6},
+            {"path": "parameter_space.kappa.3", "op": "approx", "value": 1.0, "rel_tol": 1e-6}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I have 4 parameters to explore: dt (1e-4 to 1e-2), kappa (0.1 to 1.0), M (1e-6 to 1e-4), and W (0.5 to 2.0). I can only afford 25 runs total. Generate a space-filling design.",
+      "expected_output": "Agent uses LHS method with 25 samples for the 4-parameter space since full factorial would require too many runs, invoking sweep_generator.py.",
+      "assertions": [
+        "Invokes scripts/sweep_generator.py with --method lhs --samples 25 and all 4 parameter ranges",
+        "Selects LHS over grid because 4 parameters with grid would be exponential",
+        "Output includes 25 configuration files",
+        "Explains why LHS is preferred for 4-dimensional space with limited budget"
+      ],
+      "files": ["evals/files/simulation.json"],
+      "script_checks": [
+        {
+          "description": "LHS over 4 params with budget 25 yields 25 runs; seed-42 sample values are deterministic",
+          "cmd": ["scripts/sweep_generator.py", "--base-config", "evals/files/simulation.json", "--params", "dt:1e-4:1e-2,kappa:0.1:1.0,M:1e-6:1e-4,W:0.5:2.0", "--method", "lhs", "--samples", "25", "--output-dir", "evals/scratch/case2_sweep", "--force", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "total_runs", "op": "eq", "value": 25},
+            {"path": "sweep_method", "op": "eq", "value": "lhs"},
+            {"path": "configs.0", "op": "eq", "value": "config_0000.json"},
+            {"path": "configs.24", "op": "eq", "value": "config_0024.json"},
+            {"path": "parameter_space.dt", "op": "type", "value": "list"},
+            {"path": "parameter_space.dt.0", "op": "approx", "value": 0.00894674, "rel_tol": 1e-5},
+            {"path": "parameter_space.kappa.0", "op": "approx", "value": 0.44860772, "rel_tol": 1e-5},
+            {"path": "parameter_space.W.0", "op": "approx", "value": 1.44379586, "rel_tol": 1e-5},
+            {"path": "parameter_space.M.3", "op": "approx", "value": 5.57e-06, "rel_tol": 1e-4}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Initialize a campaign for my sweep directory at ./dt_kappa_sweep. The simulation command is 'python phase_field.py --config {config}'. Then show me the status.",
+      "expected_output": "Agent initializes the campaign with campaign_manager.py and then checks status, reporting job counts and progress.",
+      "assertions": [
+        "Invokes scripts/campaign_manager.py with --action init --config-dir ./dt_kappa_sweep --command 'python phase_field.py --config {config}' --json",
+        "Invokes scripts/campaign_manager.py with --action status --config-dir ./dt_kappa_sweep --json",
+        "The status invocation output includes campaign_id, status, jobs, and progress fields (the init invocation instead emits campaign_id, total_jobs, config_dir, command_template)",
+        "Reports the number of pending, running, and completed jobs"
+      ],
+      "files": ["evals/files/case3_init/manifest.json", "evals/files/case3_status/campaign.json"],
+      "script_checks": [
+        {
+          "description": "init builds one job per config in the manifest and echoes the command template",
+          "cmd": ["scripts/campaign_manager.py", "--action", "init", "--config-dir", "evals/files/case3_init", "--command", "python phase_field.py --config {config}", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "total_jobs", "op": "eq", "value": 4},
+            {"path": "command_template", "op": "eq", "value": "python phase_field.py --config {config}"},
+            {"path": "campaign_id", "op": "type", "value": "str"}
+          ]
+        },
+        {
+          "description": "status summarizes a mixed-state campaign (2 completed, 1 running, 1 pending -> progress 0.5, in_progress)",
+          "cmd": ["scripts/campaign_manager.py", "--action", "status", "--config-dir", "evals/files/case3_status", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "status", "op": "eq", "value": "in_progress"},
+            {"path": "total_jobs", "op": "eq", "value": 4},
+            {"path": "jobs.completed", "op": "eq", "value": 2},
+            {"path": "jobs.running", "op": "eq", "value": 1},
+            {"path": "jobs.pending", "op": "eq", "value": 1},
+            {"path": "jobs.failed", "op": "eq", "value": 0},
+            {"path": "progress", "op": "approx", "value": 0.5, "rel_tol": 1e-9}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "All my simulations finished. Aggregate the results from ./dt_kappa_sweep and find which run minimized the interface_width metric.",
+      "expected_output": "Agent runs result_aggregator.py on the campaign directory to collect results and identify the best run by the interface_width metric.",
+      "assertions": [
+        "Invokes scripts/result_aggregator.py with --campaign-dir ./dt_kappa_sweep --metric interface_width --json",
+        "Output includes summary, statistics, best_run, and failed_runs fields",
+        "Identifies the run with the minimum interface_width value and its parameters",
+        "Reports summary statistics (mean, std, min, max) across all runs"
+      ],
+      "files": ["evals/files/case4_campaign/campaign.json", "evals/files/case4_campaign/config_0000.json", "evals/files/case4_campaign/config_0001.json", "evals/files/case4_campaign/config_0002.json", "evals/files/case4_campaign/result_job_0000.json", "evals/files/case4_campaign/result_job_0001.json", "evals/files/case4_campaign/result_job_0002.json"],
+      "script_checks": [
+        {
+          "description": "minimize interface_width: best run is job_0001 (0.15); stats and failed run pinned",
+          "cmd": ["scripts/result_aggregator.py", "--campaign-dir", "evals/files/case4_campaign", "--metric", "interface_width", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "summary.total_jobs", "op": "eq", "value": 4},
+            {"path": "summary.completed", "op": "eq", "value": 3},
+            {"path": "summary.failed", "op": "eq", "value": 1},
+            {"path": "summary.metric", "op": "eq", "value": "interface_width"},
+            {"path": "summary.minimize", "op": "eq", "value": true},
+            {"path": "statistics.min", "op": "approx", "value": 0.15, "rel_tol": 1e-6},
+            {"path": "statistics.max", "op": "approx", "value": 0.42, "rel_tol": 1e-6},
+            {"path": "statistics.mean", "op": "approx", "value": 0.29333333, "rel_tol": 1e-5},
+            {"path": "statistics.median", "op": "approx", "value": 0.31, "rel_tol": 1e-6},
+            {"path": "statistics.std", "op": "approx", "value": 0.13576941, "rel_tol": 1e-5},
+            {"path": "best_run.job_id", "op": "eq", "value": "job_0001"},
+            {"path": "best_run.value", "op": "approx", "value": 0.15, "rel_tol": 1e-6},
+            {"path": "best_run.params.kappa", "op": "approx", "value": 1.0, "rel_tol": 1e-6},
+            {"path": "failed_runs.0", "op": "eq", "value": "job_0003"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Generate a single-parameter sweep: just vary dt from 1e-5 to 1e-3 with 10 evenly spaced values. Base config is config.json. Output to ./dt_study.",
+      "expected_output": "Agent generates a simple 1D sweep with 10 linspace values for dt only, appropriate for a focused single-parameter study.",
+      "assertions": [
+        "Invokes scripts/sweep_generator.py with --base-config config.json --params 'dt:1e-5:1e-3:10' --method linspace --output-dir ./dt_study --json",
+        "Uses linspace method for uniform 1D sampling",
+        "Output shows total_runs as 10",
+        "Creates 10 configuration files with evenly spaced dt values"
+      ],
+      "files": ["evals/files/config.json"],
+      "script_checks": [
+        {
+          "description": "1D linspace sweep of dt with 10 points yields 10 runs and exact evenly-spaced values",
+          "cmd": ["scripts/sweep_generator.py", "--base-config", "evals/files/config.json", "--params", "dt:1e-5:1e-3:10", "--method", "linspace", "--output-dir", "evals/scratch/case5_sweep", "--force", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "total_runs", "op": "eq", "value": 10},
+            {"path": "sweep_method", "op": "eq", "value": "linspace"},
+            {"path": "configs.0", "op": "eq", "value": "config_0000.json"},
+            {"path": "configs.9", "op": "eq", "value": "config_0009.json"},
+            {"path": "parameter_space.dt.0", "op": "approx", "value": 1e-05, "rel_tol": 1e-4},
+            {"path": "parameter_space.dt.1", "op": "approx", "value": 0.00012, "rel_tol": 1e-5},
+            {"path": "parameter_space.dt.9", "op": "approx", "value": 0.001, "rel_tol": 1e-6}
+          ]
+        }
+      ]
+    }
+  ]
+}

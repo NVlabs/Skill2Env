@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-matchms",
+  "evals": [
+    {
+      "id": "library-search-annotation",
+      "prompt": "I have a folder of unknown MS/MS spectra in MGF and a reference spectral library in MSP. Can you score them against the library with modified cosine and give me the top matches per query to annotate the metabolites?",
+      "expected_output": "Invokes alterlab-matchms. Loads queries with load_from_mgf and the library with load_from_msp, computes similarity with calculate_scores using ModifiedCosineGreedy (which accounts for precursor m/z differences), and returns the best matches per query via scores_by_query(name=\"ModifiedCosineGreedy_score\", sort=True) for compound annotation.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "calculate_scores" },
+        { "type": "behavior", "value": "Uses calculate_scores with ModifiedCosineGreedy (or CosineGreedy) against a reference library and ranks best matches per query; does not use the removed name 'ModifiedCosine'." }
+      ]
+    },
+    {
+      "id": "spectrum-preprocessing-pipeline",
+      "prompt": "Before I compare my mass spectra I need to clean them: harmonize the metadata, normalize peak intensities, drop low-intensity noise peaks, and require at least 5 peaks. How do I build a reproducible processing pipeline?",
+      "expected_output": "Invokes alterlab-matchms. Builds a filtering pipeline (e.g. SpectrumProcessor) chaining default_filters for metadata harmonization, normalize_intensities, select_by_relative_intensity to remove low-intensity peaks, and require_minimum_number_of_peaks with n_required=5. Runs it with processor.process_spectra(...) / process_spectrum(...) (a SpectrumProcessor instance is not callable). Frames it as a reproducible matchms preprocessing workflow.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Chains matchms filters (default_filters, normalize_intensities, select_by_relative_intensity, require_minimum_number_of_peaks) into a SpectrumProcessor and executes it via process_spectra/process_spectrum (not by calling the processor object directly)." }
+      ]
+    },
+    {
+      "id": "cosine-similarity-two-spectra",
+      "prompt": "I have two MS/MS spectra and I just want a cosine similarity score between them with a 0.1 Da peak matching tolerance. What's the matchms way to do this?",
+      "expected_output": "Invokes alterlab-matchms. Constructs Spectrum objects (or loads them), then computes peak-based cosine similarity with CosineGreedy (or CosineHungarian) via calculate_scores, using the specified m/z matching tolerance. Explains the greedy vs Hungarian matching tradeoff.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "cosine" }
+      ]
+    },
+    {
+      "id": "derive-structure-fingerprint",
+      "prompt": "My spectra metadata only has SMILES. Can you derive the InChI and InChIKey for each spectrum and attach a Morgan fingerprint so I can compare structures alongside the spectral matches?",
+      "expected_output": "Invokes alterlab-matchms. Uses matchms metadata/annotation filters: derive_inchi_from_smiles, derive_inchikey_from_inchi, and add_fingerprint with a valid fingerprint_type such as 'morgan2' (not the invalid 'morgan'). Notes rdkit is required (it is a base matchms dependency, not a separate extra) and that this enables FingerprintSimilarity-based structural comparison.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses derive_inchi_from_smiles / derive_inchikey_from_inchi and add_fingerprint with a valid type ('morgan2'/'morgan1'/'morgan3'/'daylight', never bare 'morgan') to enrich spectrum metadata." }
+      ]
+    },
+    {
+      "id": "near-miss-pyopenms",
+      "prompt": "I need to run a full bottom-up proteomics pipeline on my raw LC-MS/MS files: peptide feature detection, database search for protein identification, and FDR control. Can you set that up?",
+      "expected_output": "Does NOT invoke this skill; defers to pyopenms. matchms scores mass-spectral similarity and does library-based small-molecule/metabolite annotation, not full LC-MS/MS proteomics pipelines with peptide feature detection, protein database search, and FDR control.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "pyopenms" }
+      ]
+    }
+  ]
+}

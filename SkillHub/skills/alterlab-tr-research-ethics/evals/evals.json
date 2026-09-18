@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-tr-research-ethics",
+  "evals": [
+    {
+      "id": "turkish-anket-basvuru",
+      "prompt": "İzmir Ekonomi Üniversitesi'nde lisans öğrencileriyle bir anket çalışması yapacağım. Etik kurul başvurusu için gereken formları ve hangi kurula başvurmam gerektiğini hazırlar mısın?",
+      "expected_output": "Invokes alterlab-tr-research-ethics. Applies the routing rule: an anket (survey) collecting data from participants triggers the TR Dizin 2020 rule and routes to the university Girişimsel Olmayan (non-interventional) Etik Kurulu — NOT the TİTCK clinical committee. Scaffolds the bilingual dossier from references/dossier_templates.md (Etik Kurul Başvuru Formu, başvuru dilekçesi, Bilgilendirilmiş Gönüllü Olur Formu) and states that the institution's own committee form overrides the skeleton.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Routes the survey study to the university non-interventional (Girişimsel Olmayan) ethics committee via the TR Dizin participant-data trigger, and produces the Turkish dossier skeleton rather than sending it to the TİTCK clinical committee." }
+      ]
+    },
+    {
+      "id": "device-titck-routing",
+      "prompt": "We are running a first-in-human study of a new wearable medical device on patients at a Turkish university hospital. Which ethics committee do we need, and is TİTCK approval required?",
+      "expected_output": "Invokes alterlab-tr-research-ethics. Classifies a medical-device study under Door 2: it requires a TİTCK-approved Klinik Araştırmalar Etik Kurulu PLUS a separate TİTCK start permit (and Ministry of Health permission). Surfaces the legal-validity gate — a decision from a committee not approved by TİTCK is legally void — and tells the user to verify the committee's TİTCK accreditation before submitting. Cites the Beşeri Tıbbi Ürünlerin Klinik Araştırmaları Hakkında Yönetmelik.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "TİTCK" },
+        { "type": "behavior", "value": "Routes the device study to the TİTCK-approved clinical-research ethics committee and flags both the separate TİTCK permit and the rule that a non-TİTCK-approved committee's decision is legally void." }
+      ]
+    },
+    {
+      "id": "consent-form-lint",
+      "prompt": "Here is my draft bilgilendirilmiş onam (informed consent) form for an interview study. Can you check it against the Turkish TİTCK minimum-content rules and tell me what's missing before I submit?",
+      "expected_output": "Invokes alterlab-tr-research-ethics in consent-lint mode: runs scripts/consent_form_check.py over the draft to check each TİTCK minimum-content element (date/version/page numbers, plain-language purpose, procedures+duration, risks, benefits, 24-hour contact, voluntary participation, withdraw-anytime, no-coercion, confidentiality), then reports a PASS/MISSING table naming the missing elements. States explicitly that a PASS means elements are present, not that the wording satisfies the committee.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Lints the consent draft against the TİTCK minimum-content checklist and reports the specific MISSING elements by name, with the caveat that completeness is not legal sign-off." }
+      ]
+    },
+    {
+      "id": "near-miss-international-irb",
+      "prompt": "I'm submitting to my US university's IRB under the Common Rule and need help drafting the informed consent and addressing Belmont Report principles and HIPAA for a clinical data study.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-research-ethics. The request is a non-Turkey IRB / Belmont Report / HIPAA submission, which is the international ethics sibling's territory. alterlab-tr-research-ethics is scoped to the Turkish etik kurul system (TR Dizin trigger, TİTCK clinical committees, Turkish consent rules) and does not handle US IRB / Common Rule / Belmont / HIPAA workflows.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-research-ethics" }
+      ]
+    },
+    {
+      "id": "near-miss-kvkk-dmp",
+      "prompt": "KVKK uyumlu bir veri yönetim planı hazırlamam lazım — verileri nasıl anonimleştireceğimi, saklama süresini ve VERBIS kaydının gerekip gerekmediğini planlamak istiyorum.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-kvkk-dmp. The request is a KVKK-compliant data management plan (anonymization, retention, VERBIS registration) — the data-protection track, separate from ethics-committee review. alterlab-tr-research-ethics scaffolds the etik kurul dossier and consent form; the KVKK data plan is alterlab-kvkk-dmp's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-kvkk-dmp" }
+      ]
+    },
+    {
+      "id": "near-miss-survey-design",
+      "prompt": "I need help designing the actual questionnaire for my study — writing good Likert items, avoiding double-barreled questions, and ordering the scales properly.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-survey-design. The user wants survey-instrument design (item wording, scale construction), not the ethics-committee submission. alterlab-tr-research-ethics handles the etik kurul dossier and consent form, not the design of the measurement instrument itself.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-survey-design" }
+      ]
+    }
+  ]
+}

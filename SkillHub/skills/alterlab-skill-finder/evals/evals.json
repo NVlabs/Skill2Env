@@ -1,0 +1,61 @@
+{
+  "skill": "alterlab-skill-finder",
+  "evals": [
+    {
+      "id": "use-alterlab-vague",
+      "prompt": "Use AlterLab skills to help me analyze my clinical trial dataset — I don't know which one to pick.",
+      "expected_output": "Invokes alterlab-skill-finder (Route mode): classifies the task, maps it to the data-science / clinical-research domain, names the best-fitting skill(s) (e.g. alterlab-statistical-analysis or alterlab-clinicaltrials), and applies it — telling the user which skill it picked and why.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Selects and names a concrete AlterLab skill for the task instead of asking the user to know skill names." }
+      ]
+    },
+    {
+      "id": "which-skill-for-task",
+      "prompt": "Which AlterLab skill should I use to find and fact-check papers on CRISPR off-target effects?",
+      "expected_output": "Invokes alterlab-skill-finder: routes to the research/discovery skills (e.g. alterlab-deep-research or alterlab-pubmed) and names them, using the domain map / skill index rather than making the user memorize names.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-" },
+        { "type": "behavior", "value": "Names the right AlterLab skill(s) for literature discovery and fact-checking." }
+      ]
+    },
+    {
+      "id": "alterflow-keyword-orchestrate",
+      "prompt": "alterflow — investigate the link between sleep and memory consolidation and turn it into a publishable paper.",
+      "expected_output": "Invokes alterlab-skill-finder in Orchestrate mode: FIRST asks 2-4 clarifying/scoping questions (quantitative vs qualitative, dataset/corpus, target output, depth) before executing, then selects the skills and proposes a multi-agent workflow (e.g. alterlab-research-pipeline: deep-research -> paper-writer -> paper-reviewer). Does not start executing before clarifying.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-research-pipeline" },
+        { "type": "behavior", "value": "On the alterflow keyword, asks clarifying questions before execution and plans a multi-agent workflow composing the right skills." }
+      ]
+    },
+    {
+      "id": "dont-know-names",
+      "prompt": "I don't know the names of your tools — what does AlterLab have to clean and model this messy survey dataset?",
+      "expected_output": "Invokes alterlab-skill-finder: maps the task to the data-science and social-science-workflow domains and names concrete skills (e.g. alterlab-missing-data, alterlab-survey-analysis, alterlab-statistical-analysis) so the user does not need to know names.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Surfaces concrete AlterLab skills for data cleaning / modeling when the user cannot name them." }
+      ]
+    },
+    {
+      "id": "near-miss-deep-research",
+      "prompt": "Run alterlab-deep-research in full mode on the topic of graphene batteries.",
+      "expected_output": "Should NOT trigger this skill; the user already named a specific skill (alterlab-deep-research), so it is invoked directly — no routing needed.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-deep-research" }
+      ]
+    },
+    {
+      "id": "near-miss-workflow-orchestration",
+      "prompt": "I want to hand-design a custom multi-agent workflow with a judge panel and adversarial verification composing three specific skills I'll name.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-workflow-orchestration. The user is designing the workflow mechanics themselves, which is that skill's job, not front-door routing.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-workflow-orchestration" }
+      ]
+    }
+  ]
+}

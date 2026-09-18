@@ -1,0 +1,65 @@
+{
+  "skill": "alterlab-cirq",
+  "evals": [
+    {
+      "id": "bell-state-simulator",
+      "prompt": "I want to build a two-qubit Bell state in Cirq using LineQubits, run it on cirq.Simulator with 1000 repetitions, and print the measurement histogram. Can you write that for me?",
+      "expected_output": "Activates the Cirq skill and produces a Cirq circuit using cirq.LineQubit.range(2), cirq.H and cirq.CNOT, a cirq.measure with a named key, then runs cirq.Simulator().run(circuit, repetitions=1000) and prints result.histogram(key=...). Stays within Cirq's API rather than any other framework.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "cirq"},
+        {"type": "behavior", "value": "Uses cirq.Simulator with repetitions and reports the measurement histogram via result.histogram."}
+      ]
+    },
+    {
+      "id": "google-hardware-execution",
+      "prompt": "I have an approved Google Quantum AI project and want to run my circuit on the Weber processor. How do I get the engine, pick good qubits from calibration, and submit the job with cirq-google?",
+      "expected_output": "Activates the Cirq skill and gives a cirq-google hardware path: cirq_google.get_engine(), engine.get_processor('weber'), selecting qubits using device/calibration data, compiling the circuit to the device gateset, and submitting via processor.run(...). Mentions validating against device constraints and testing on a simulator first.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "cirq_google"},
+        {"type": "behavior", "value": "References Google Quantum AI hardware execution through cirq-google (get_engine / get_processor / processor.run) and qubit selection from calibration."}
+      ]
+    },
+    {
+      "id": "depolarizing-noise-study",
+      "prompt": "I need to study how my circuit degrades under depolarizing noise. Can you sweep a few noise probabilities, attach cirq.depolarize, simulate with the density matrix simulator, and compare the output distributions?",
+      "expected_output": "Activates the Cirq skill and builds a noise study: applies cirq.depolarize(p=...) (e.g. via circuit.with_noise), simulates with cirq.DensityMatrixSimulator across several noise levels, and compares the resulting histograms/distributions. Notes that density matrix simulation is needed for mixed states under noise.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "depolarize"},
+        {"type": "behavior", "value": "Uses cirq.depolarize and cirq.DensityMatrixSimulator to compare circuit behavior across noise levels."}
+      ]
+    },
+    {
+      "id": "parameterized-sweep",
+      "prompt": "Using sympy symbols, I want a single-qubit ry(theta) circuit in Cirq and to sweep theta from 0 to 2*pi over 20 points with run_sweep. Show me how to collect the histograms per value.",
+      "expected_output": "Activates the Cirq skill and constructs a parameterized circuit with sympy.Symbol('theta') and cirq.ry(theta), defines a sweep with cirq.Linspace, and calls simulator.run_sweep(circuit, params=sweep, repetitions=...). Iterates over (params, result) pairs to pull per-value histograms.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "run_sweep"},
+        {"type": "behavior", "value": "Builds a sympy-parameterized Cirq circuit and uses cirq.Linspace with run_sweep to collect per-parameter histograms."}
+      ]
+    },
+    {
+      "id": "near-miss-qiskit",
+      "prompt": "I want to run a quantum circuit on IBM's real hardware through the IBM Quantum Platform using their runtime primitives. Which backend and transpiler settings should I use?",
+      "expected_output": "Should NOT activate the Cirq skill. IBM Quantum hardware, the IBM Quantum Platform, and runtime primitives are Qiskit's territory, so this defers to the qiskit skill. The response should redirect to qiskit rather than offering a cirq-google solution.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "qiskit"},
+        {"type": "behavior", "value": "Recognizes IBM hardware as Qiskit's domain and defers to the qiskit skill instead of using Cirq."}
+      ]
+    },
+    {
+      "id": "near-miss-pennylane",
+      "prompt": "I'm training a variational quantum classifier and need automatic differentiation of the circuit parameters with a PyTorch optimizer doing gradient descent. What's the cleanest setup?",
+      "expected_output": "Should NOT activate the Cirq skill. Autodiff of circuit parameters with a deep-learning optimizer for quantum ML is PennyLane's territory, so this defers to the pennylane skill rather than Cirq's parameter sweeps and scipy.optimize templates.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "pennylane"},
+        {"type": "behavior", "value": "Recognizes autodiff-based quantum ML as PennyLane's domain and defers to the pennylane skill instead of Cirq."}
+      ]
+    }
+  ]
+}

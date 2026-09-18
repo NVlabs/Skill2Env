@@ -1,0 +1,84 @@
+# EXAMPLE TEMPLATE - DO NOT DEPLOY
+# Consumption safeguard: stop workloads in a namespace from REQUESTING a ComputeClass.
+# RBAC cannot express this (consumption is not a CRUD verb on the CC object; it is a field
+# in the Pod/Deployment spec) -> use a native ValidatingAdmissionPolicy (in-process CEL,
+# no webhook). Pairs with the CRUD safeguard in computeclass-rbac-editor.yaml.
+#
+# A workload can reach a ComputeClass via THREE paths — the policy must close ALL of them:
+#   1. nodeSelector            cloud.google.com/compute-class: <NAME>
+#   2. nodeAffinity            matchExpressions key cloud.google.com/compute-class In [<NAME>]
+#   3. tolerations             tolerating the CC's NoSchedule taint, INCLUDING the wildcard
+#                              (operator: Exists with no key) which tolerates EVERY taint.
+# Missing any one path leaves a bypass.
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: restrict-computeclass-usage
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    # Match Pods AND every pod-CONTROLLER. The tutorial covers only pods + deployments;
+    # that leaves StatefulSet/DaemonSet/ReplicaSet/Job/CronJob as bypasses. Add them.
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["pods"]
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["deployments", "statefulsets", "daemonsets", "replicasets"]
+    - apiGroups: ["batch"]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["jobs", "cronjobs"]
+  variables:
+  - name: podSpec
+    # Pods carry spec; controllers carry spec.template.spec (CronJob nests one level deeper).
+    expression: >-
+      has(object.spec.template) ?
+        (has(object.spec.template.spec) ? object.spec.template.spec :
+          object.spec.jobTemplate.spec.template.spec) :
+        object.spec
+  - name: hasForbiddenNodeSelectorOrAffinity
+    expression: >-
+      (has(variables.podSpec.nodeSelector) &&
+       variables.podSpec.nodeSelector['cloud.google.com/compute-class'] == '<COMPUTECLASS_NAME>') ||
+      (has(variables.podSpec.affinity) && has(variables.podSpec.affinity.nodeAffinity) &&
+       has(variables.podSpec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution) &&
+       variables.podSpec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.exists(term,
+         has(term.matchExpressions) && term.matchExpressions.exists(exp,
+           exp.key == 'cloud.google.com/compute-class' && exp.operator == 'In' &&
+           exp.values.exists(v, v == '<COMPUTECLASS_NAME>'))))
+  - name: hasForbiddenComputeClassToleration
+    expression: >-
+      has(variables.podSpec.tolerations) && variables.podSpec.tolerations.exists(t,
+        t.key == 'cloud.google.com/compute-class' &&
+        (t.operator == 'Exists' || (t.operator == 'Equal' && t.value == '<COMPUTECLASS_NAME>')) &&
+        has(t.effect) && t.effect == 'NoSchedule')
+  - name: hasWildcardToleration
+    # operator: Exists with no key tolerates ALL taints -> would land on the restricted CC.
+    expression: >-
+      has(variables.podSpec.tolerations) && variables.podSpec.tolerations.exists(t,
+        t.operator == 'Exists' && !(has(t.key) && t.key != ''))
+  validations:
+  - expression: >-
+      !(variables.hasForbiddenNodeSelectorOrAffinity ||
+        variables.hasForbiddenComputeClassToleration ||
+        variables.hasWildcardToleration)
+    message: "This namespace cannot request ComputeClass <COMPUTECLASS_NAME> or use wildcard tolerations."
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: restrict-computeclass-usage-binding
+spec:
+  policyName: restrict-computeclass-usage
+  # Deny rejects violations; Audit also logs them to the K8s audit log (run Audit first to
+  # find existing violators before flipping to Deny).
+  validationActions: ["Deny", "Audit"]
+  matchResources:
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: <TARGET_NAMESPACE>

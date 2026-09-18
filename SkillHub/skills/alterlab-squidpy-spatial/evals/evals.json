@@ -1,0 +1,70 @@
+{
+  "skill": "alterlab-squidpy-spatial",
+  "evals": [
+    {
+      "id": "xenium-neighborhood-enrichment",
+      "prompt": "I have a 10x Xenium run with cells already clustered into cell types. I want to know which cell types tend to sit next to each other in the tissue — is there spatial co-localization between my tumor and immune clusters?",
+      "expected_output": "Invokes alterlab-squidpy-spatial. Recognizes Xenium as single-cell resolution, builds the graph with sq.gr.spatial_neighbors(coord_type='generic', delaunay=True), then runs sq.gr.nhood_enrichment on the cluster_key and reports the permutation z-score matrix (positive z = spatial attraction/co-localization, negative = avoidance). Does NOT use coord_type='grid' (that is for Visium spots).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "nhood_enrichment" },
+        { "type": "behavior", "value": "Chooses coord_type='generic' (Delaunay) for single-cell Xenium data and reports neighborhood-enrichment z-scores with their permutation context, not raw adjacency counts." }
+      ]
+    },
+    {
+      "id": "visium-spatial-variable-genes",
+      "prompt": "From my Visium slide I want the list of genes that vary across tissue space — spatially variable genes ranked by Moran's I. Walk me through it in squidpy.",
+      "expected_output": "Invokes alterlab-squidpy-spatial. Builds a Visium spot graph with sq.gr.spatial_neighbors(coord_type='grid', n_neighs=6), runs sq.gr.spatial_autocorr(mode='moran'), and returns genes ranked by Moran's I from adata.uns['moranI']. Notes Visium spots are multi-cell and that cell-type-level claims require deconvolution via alterlab-scvi-tools.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "spatial_autocorr" },
+        { "type": "behavior", "value": "Uses coord_type='grid' for Visium and ranks spatially variable genes by Moran's I via spatial_autocorr, flagging that Visium spots are multi-cell." }
+      ]
+    },
+    {
+      "id": "merfish-cooccurrence-distance",
+      "prompt": "Using squidpy on my MERFISH data, how do I measure whether two cell types co-occur as a function of distance, and also build the neighbor graph correctly for single-molecule imaging data?",
+      "expected_output": "Invokes alterlab-squidpy-spatial. Treats MERFISH as single-cell (coord_type='generic', delaunay=True or n_neighs), runs sq.gr.co_occurrence over the cluster_key to get the co-occurrence probability ratio across radial distance, and visualizes with sq.pl.co_occurrence.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "co_occurrence" }
+      ]
+    },
+    {
+      "id": "spatial-ligand-receptor",
+      "prompt": "I want to run a ligand-receptor interaction analysis between my annotated clusters in spatial transcriptomics data using squidpy. Which function and how do I read the output?",
+      "expected_output": "Invokes alterlab-squidpy-spatial. Uses sq.gr.ligrec with the cluster_key (Omnipath-backed permutation test of L-R co-expression between cluster pairs) and sq.pl.ligrec to visualize, explaining the means/p-values output per ligand-receptor pair per cluster pair.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ligrec" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-scanpy",
+      "prompt": "I just loaded a Xenium dataset into AnnData. Run the standard QC, normalize, find highly variable genes, PCA, build the kNN graph, and Leiden-cluster the cells so I have cell types.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scanpy. The request is the standard non-spatial single-cell pipeline (QC, normalization, HVGs, PCA, sc.pp.neighbors, Leiden) that produces the cluster labels; squidpy's spatial graph and neighborhood statistics come afterward. alterlab-squidpy-spatial assumes labels already exist.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scanpy" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-scvi-tools",
+      "prompt": "My Visium spots are mixtures of cells. I have a matching scRNA-seq reference with cell-type labels and want to deconvolve each spot into cell-type proportions using destVI.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scvi-tools. Spot deconvolution / mapping cell-type proportions onto Visium spots (destVI, Tangram) is a deep generative modeling task covered by alterlab-scvi-tools (references/models-spatial.md). alterlab-squidpy-spatial does neighborhood/graph statistics, not deconvolution.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scvi-tools" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-anndata",
+      "prompt": "I have several .h5ad files from different Visium slides. Help me concatenate them into one AnnData, align the var index, and move the raw counts into a layer — no analysis yet, just the data structure.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-anndata. The request is pure AnnData object construction — concatenation, var-index alignment, layer management — with no spatial analysis. alterlab-anndata is the data-format skill; alterlab-squidpy-spatial only runs once the object is ready and labels exist.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-anndata" }
+      ]
+    }
+  ]
+}

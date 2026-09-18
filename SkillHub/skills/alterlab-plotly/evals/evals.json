@@ -1,0 +1,91 @@
+{
+  "skill": "alterlab-plotly",
+  "evals": [
+    {
+      "id": "plotly-interactive-html-scatter",
+      "prompt": "I want an interactive scatter of temperature vs. yield from my DataFrame with an OLS trendline and custom hover tooltips, exported as a standalone HTML file I can put on the lab website.",
+      "expected_output": "Invokes alterlab-plotly: uses plotly.express (px.scatter with trendline='ols'), customizes the hovertemplate, and exports with fig.write_html(...), optionally include_plotlyjs='cdn' to shrink the file.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "write_html"
+        }
+      ]
+    },
+    {
+      "id": "plotly-dashboard-subplots",
+      "prompt": "Build me a 2x2 interactive dashboard panel — a scatter, a bar chart, a histogram, and a box plot — with subplot titles, so I can pan and zoom each one.",
+      "expected_output": "Invokes alterlab-plotly: uses make_subplots(rows=2, cols=2, ...) with per-cell specs/types, adds go.Scatter/go.Bar/go.Histogram/go.Box traces, and keeps the native interactivity (pan/zoom).",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "make_subplots"
+        }
+      ]
+    },
+    {
+      "id": "plotly-animated-timeseries",
+      "prompt": "I have multi-year measurement data. Make an animated scatter that steps through each year with an animation frame, plus a range slider on the time axis for exploration.",
+      "expected_output": "Invokes alterlab-plotly: builds px.scatter(..., animation_frame='year') and enables the rangeslider via fig.update_xaxes(rangeslider_visible=True), leaning on plotly's animation and interactivity features.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "plotly-3d-surface-interactive",
+      "prompt": "Render my z-grid as a rotatable interactive 3D surface plot I can spin around to inspect the topology in the browser.",
+      "expected_output": "Invokes alterlab-plotly: uses graph objects go.Surface(z=..., x=..., y=...) inside go.Figure to produce an interactive, rotatable 3D surface.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "Surface"
+        }
+      ]
+    },
+    {
+      "id": "near-miss-matplotlib",
+      "prompt": "I need a static, print-ready PDF figure of this line plot for journal submission — vector output, 300 DPI fallback PNG, no interactivity needed.",
+      "expected_output": "Does NOT invoke alterlab-plotly. A static publication figure with vector PDF output is matplotlib's (alterlab-matplotlib) territory; defers to matplotlib since no interactivity is required.",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "matplotlib"
+        }
+      ]
+    },
+    {
+      "id": "near-miss-seaborn",
+      "prompt": "Just give me a quick static correlation heatmap of my DataFrame columns with annotated cells for a slide — nothing interactive.",
+      "expected_output": "Does NOT invoke alterlab-plotly. A quick static statistical heatmap with sensible defaults is seaborn's territory; defers to seaborn rather than building an interactive plotly figure.",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "seaborn"
+        }
+      ]
+    }
+  ]
+}

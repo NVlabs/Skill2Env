@@ -1,0 +1,61 @@
+{
+  "skill": "alterlab-dask",
+  "evals": [
+    {
+      "id": "scale-pandas-groupby-multifile",
+      "prompt": "I have about 400 daily CSV files in data/2024-*.csv totalling roughly 200 GB. My pandas groupby-mean by category blows up memory on a single read. How do I run this so it doesn't load everything into RAM at once?",
+      "expected_output": "Invokes alterlab-dask using dask.dataframe: dd.read_csv on the glob pattern so Dask handles loading lazily (not pandas read_csv then from_pandas), builds the filter/groupby('category').mean() as a lazy task graph, and only triggers execution with .compute(). Mentions ~100 MB partition sizing and parquet over CSV for repeated access.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "compute()" },
+        { "type": "behavior", "value": "Uses dd.read_csv on the glob directly rather than loading with pandas first, and keeps operations lazy until .compute()." }
+      ]
+    },
+    {
+      "id": "larger-than-memory-array-zarr",
+      "prompt": "I need to normalize a 100000x100000 float array stored in Zarr by subtracting the mean and dividing by the std, but it's way bigger than my 48 GB of RAM. What's the right way to do this in chunks?",
+      "expected_output": "Invokes alterlab-dask using dask.array: loads with da.from_zarr, chooses chunk sizes around 100 MB, expresses (x - x.mean()) / x.std() as blocked operations that run per-chunk in parallel, and writes back with da.to_zarr. Notes chunk-size tradeoffs (too large overflows memory, too small adds scheduling overhead).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Recommends dask.array with explicit chunking (~100 MB) and blocked/lazy computation rather than loading the full array into NumPy." }
+      ]
+    },
+    {
+      "id": "distributed-parameter-sweep-futures",
+      "prompt": "I want to run my expensive simulation function across 500 parameter combinations in parallel on a local cluster, scattering the shared dataset once so it isn't re-sent every time. How do I set that up?",
+      "expected_output": "Invokes alterlab-dask using Futures and the distributed Client: creates Client() for a local cluster, uses client.scatter() to pre-distribute the shared dataset once, submits tasks with client.submit/client.map, and collects results with client.gather. Mentions the dashboard for monitoring and the ~1 ms per-task overhead.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "scatter" },
+        { "type": "behavior", "value": "Recommends the dask.distributed Client with scatter for the shared data and submit/map + gather for the sweep." }
+      ]
+    },
+    {
+      "id": "unstructured-json-logs-to-dataframe",
+      "prompt": "I've got thousands of newline-delimited JSON log files in logs/*.json. I want to parse them, keep only the records where status is valid, then aggregate by category. The records are messy Python dicts, not a clean table.",
+      "expected_output": "Invokes alterlab-dask using dask.bag for the unstructured stage: db.read_text on the glob, .map(json.loads), .filter on status=='valid', then converts to a DataFrame with .to_dataframe() for the structured groupby aggregation. Notes foldby over groupby for bag-level reductions and that streaming keeps memory low.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Starts with dask.bag for parsing/filtering the unstructured JSON, then converts to a DataFrame for the aggregation." }
+      ]
+    },
+    {
+      "id": "near-miss-vaex",
+      "prompt": "I have a single 150 GB HDF5 file of tabular sensor data on one workstation and I just want fast out-of-core groupby statistics and a heatmap, with no cluster to manage.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-vaex. The user wants out-of-core single-machine tabular analytics with built-in big-data visualization (heatmaps) and no cluster orchestration, which is vaex's territory rather than Dask's distributed task-graph model.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-vaex" }
+      ]
+    },
+    {
+      "id": "near-miss-polars",
+      "prompt": "My 3 GB CSV fits comfortably in my 48 GB RAM. I just want the fastest possible single-machine in-memory groupby and joins with a modern DataFrame API. I don't need any out-of-core or distributed stuff.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-polars. The data fits in memory and the user explicitly wants maximum in-memory speed with no out-of-core or distributed execution, which is polars' niche rather than Dask's larger-than-RAM / cluster scaling.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-polars" }
+      ]
+    }
+  ]
+}

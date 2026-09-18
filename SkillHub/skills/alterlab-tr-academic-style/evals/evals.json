@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-tr-academic-style",
+  "evals": [
+    {
+      "id": "trdizin-bilingual-abstract",
+      "prompt": "Makalemi bir TR Dizin dergisine göndereceğim. Öz ve abstract bölümlerini ve anahtar kelimeleri TR Dizin kurallarına göre düzenler misin?",
+      "expected_output": "Invokes alterlab-tr-academic-style in TR Dizin formatting mode: structures the Turkish öz, English abstract, and keywords (anahtar kelimeler) with the title/öz/keywords metadata block in proper Latin Turkish letters with diacritics preserved. Proposes the common house defaults (bilingual öz + abstract ~200-250 words each, 3-5 keywords each) but frames them as the JOURNAL's convention to confirm against its yazım kuralları — NOT as TR Dizin index rules; correctly scopes what TR Dizin itself mandates (a set abstract word limit, two referees from different institutions, second-language abstract only suggested, Latin script for non-Latin-alphabet articles). Flags a structured-abstract requirement where the field needs it, and reminds the user to confirm the journal's LIVE TR Dizin index status via alterlab-trdizin rather than asserting it.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Structures a Turkish öz, an English abstract, and keywords; presents 200-250 words / 3-5 keywords / mandatory-bilingual as common journal house conventions to verify against the journal's yazım kuralları rather than as TR Dizin requirements, and does not claim the journal's TR Dizin index status from memory." }
+      ]
+    },
+    {
+      "id": "turkce-apa7-intext",
+      "prompt": "I'm writing a Turkish-language education journal article that follows Turkish APA 7. Fix my in-text citations: I keep writing 'Yılmaz & Demir (2020) buldu' and 'Kaya et al. (2019)' and I'm not sure when to use 've ark.' versus 'vd.'.",
+      "expected_output": "Invokes alterlab-tr-academic-style in Türkçe APA 7 mode: rewrites narrative ampersand to the word 've' (Yılmaz ve Demir, 2020), converts 'et al.' to the Turkish et-al form (Kaya vd. or Kaya ve ark.) and explains that ampersand belongs only in parenthetical cites and the reference list, while 've ark.'/'vd.' must be chosen once and applied consistently. May run scripts/tr_apa_lint.py to surface the mechanical errors.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ve ark." },
+        { "type": "behavior", "value": "Replaces narrative '&' with 've', normalizes 'et al.' to 'vd.'/'ve ark.', and states that the chosen et-al form must be used consistently." }
+      ]
+    },
+    {
+      "id": "turkce-apa7-reference-list",
+      "prompt": "Can you convert this reference list to Turkish APA 7? I have a translated book and a journal article, and I need the right Turkish abbreviations for translator, page numbers, and 'no date'.",
+      "expected_output": "Invokes alterlab-tr-academic-style for reference-list formatting: applies the Türkçe APA 7 abbreviation deltas — Çev. for translator, s./ss. for page(s), t.y. for no date, Haz. for compiler/editor, Erişim adresi for retrieved-from — keeping ampersand only between the final two authors in the reference entry and preserving all Turkish diacritics. Uses references/turkce_apa7.md worked examples as the pattern.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Outputs reference entries using Çev., s./ss., and t.y. rather than Trans., p./pp., and n.d., and preserves Turkish diacritics in author names and titles." }
+      ]
+    },
+    {
+      "id": "near-miss-trdizin-index-status",
+      "prompt": "Bu dergi şu anda TR Dizin'de taranıyor mu? Göndermeden önce dergimin aktif olarak indekslendiğini doğrulamam gerek.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-trdizin. The user wants the journal's LIVE indexing status (is it actively indexed right now), which requires querying the TR Dizin search API — not manuscript formatting. alterlab-tr-academic-style only formats text and citations to TR Dizin / Türkçe APA 7 style; it must never assert index membership from memory.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-trdizin" }
+      ]
+    },
+    {
+      "id": "near-miss-english-citation-mgmt",
+      "prompt": "Format the bibliography of my English-language manuscript in APA 7 and set up a Zotero export so I can keep the references in sync.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-citation-mgmt. The user wants English-language APA 7 reference management and a reference-manager (Zotero) workflow, not the Turkish APA 7 adaptation or TR Dizin submission rules. alterlab-tr-academic-style is specific to Turkish-language conventions (ve ark./vd., s., Çev., t.y., bilingual öz).",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-citation-mgmt" }
+      ]
+    },
+    {
+      "id": "near-miss-venue-templates",
+      "prompt": "I'm submitting to IEEE Access. Give me the IEEE manuscript template with the right two-column LaTeX class and the IEEE reference style.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-venue-templates. The user wants an English-venue, publisher-specific submission template (IEEE LaTeX class + IEEE citation style), not Turkish-journal formatting or Türkçe APA 7. alterlab-tr-academic-style owns Turkish conventions only.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-venue-templates" }
+      ]
+    }
+  ]
+}

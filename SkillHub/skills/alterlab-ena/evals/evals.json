@@ -1,0 +1,58 @@
+{
+  "skill": "alterlab-ena",
+  "evals": [
+    {
+      "id": "download-reads-by-run",
+      "prompt": "I need the raw FASTQ reads for ENA run accession ERR123456 to feed into my alignment pipeline. How do I retrieve them?",
+      "expected_output": "Invokes alterlab-ena. Retrieves the run record (Browser API by accession), locates the FASTQ file URLs, and recommends FTP/Aspera (or enaBrowserTools) for the actual download. Notes the 50 req/sec rate limit and citing the study accession.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "FASTQ" }
+      ]
+    },
+    {
+      "id": "samples-in-study",
+      "prompt": "Give me a metadata table of every sample registered under ENA study PRJEB1234 so I can pick which ones to download.",
+      "expected_output": "Invokes alterlab-ena. Uses the Portal API search endpoint with result=sample and query=study_accession=PRJEB1234, returning a tabulated (TSV/JSON) metadata summary of the study's samples.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Portal API" }
+      ]
+    },
+    {
+      "id": "assemblies-by-organism",
+      "prompt": "I want all genome assemblies in ENA for Escherichia coli. Can you build the query and list what's available?",
+      "expected_output": "Invokes alterlab-ena. Uses the Portal API with result=assembly and a tax_tree(Escherichia coli) query to find assemblies for the organism, returning available assembly records.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Constructs an ENA Portal API assembly query filtered by taxonomy for the organism." }
+      ]
+    },
+    {
+      "id": "taxonomy-lineage",
+      "prompt": "Look up the full taxonomic lineage for NCBI taxon ID 562 using ENA's taxonomy service.",
+      "expected_output": "Invokes alterlab-ena. Queries the ENA Taxonomy REST API (tax-id/562) and returns the lineage and rank information for the organism.",
+      "assertions": [
+        { "type": "should_trigger", "value": true }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-geo",
+      "prompt": "I'm looking for a processed gene-expression dataset on GEO — give me the series matrix and per-sample normalized expression values for GSE12345.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-geo. The user wants a processed gene-expression series (GSE) with a series matrix of normalized expression values, which is GEO's domain, not ENA's raw nucleotide reads and sequence accessions.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-geo" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-uniprot",
+      "prompt": "Give me the reviewed protein sequence and functional annotation for human BRCA1 by its UniProt accession.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-uniprot. The user wants a curated protein sequence and functional annotation by UniProt accession, which is UniProt's territory, not ENA's nucleotide reads, assemblies, and sequencing-run data.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-uniprot" }
+      ]
+    }
+  ]
+}

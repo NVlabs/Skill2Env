@@ -1,0 +1,57 @@
+[
+  {
+    "id": "tc-001",
+    "prompt": "Audit the docs at https://docs.stripe.com/",
+    "assertions": [
+      "Fetches robots.txt, sitemap.xml, and llms.txt before generating the report",
+      "Evaluates all 33 checks across 7 categories",
+      "Renders a visual widget with score out of 100",
+      "Each check has a Pass, Warn, or Fail status with an evidence note",
+      "Provides a short text summary after the widget"
+    ]
+  },
+  {
+    "id": "tc-002",
+    "prompt": "Can you audit these docs for me? https://docs.anthropic.com/",
+    "assertions": [
+      "Recognizes the intent to audit docs without the word 'audit' being explicit",
+      "Fetches llms.txt and robots.txt as derived URLs without asking user",
+      "Scores AI & LLM Discoverability category",
+      "Renders full 7-category report with score hero"
+    ]
+  },
+  {
+    "id": "tc-003",
+    "prompt": "How good are the docs at https://docs.github.com/en? Check everything.",
+    "assertions": [
+      "Fetches at least 6 pages including infrastructure files",
+      "Checks for multi-language code examples",
+      "Checks for changelog/release notes",
+      "Checks canonical URLs for correctness",
+      "Final score is a number between 0 and 100"
+    ]
+  },
+  {
+    "id": "tc-004",
+    "prompt": "audit https://docs.orgn.com/",
+    "assertions": [
+      "Fetches robots.txt and llms.txt without waiting for user to provide them",
+      "Marks AI discoverability checks as fail if llms.txt is absent",
+      "Correctly identifies breadcrumbs and sidebar as present",
+      "Flags the canonical URL issue (preview domain vs real domain)",
+      "Identifies missing FAQ section as fail",
+      "Identifies missing version badges as fail"
+    ]
+  },
+  {
+    "id": "tc-005",
+    "prompt": "review the developer docs at https://docs.railway.app and give me a score",
+    "assertions": [
+      "Treats 'review' + 'score' as audit intent and uses the skill",
+      "Fetches quickstart and API reference pages",
+      "Checks for code examples in multiple languages",
+      "Renders widget with score circle colored correctly for the score range",
+      "Mentions strongest and weakest categories in summary"
+    ]
+  }
+]

@@ -1,0 +1,67 @@
+{
+  "skill": "alterlab-kegg",
+  "evals": [
+    {
+      "id": "gene-to-pathway",
+      "prompt": "Using the KEGG REST API directly, which pathways is human TP53 (hsa:7157) part of? Give me the pathway IDs and names.",
+      "expected_output": "Invokes alterlab-kegg. Uses kegg_link('pathway', 'hsa:7157') to find pathways containing the gene, then kegg_get / kegg_list to resolve pathway names. Works against the raw KEGG REST API.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses KEGG link/get operations to map the gene to its pathways and names them." }
+      ]
+    },
+    {
+      "id": "retrieve-pathway-entry",
+      "prompt": "Pull the KEGG glycolysis pathway entry hsa00010 and list the genes it contains.",
+      "expected_output": "Invokes alterlab-kegg. Uses kegg_get('hsa00010') to retrieve the pathway entry and kegg_link('genes', 'hsa00010') to list its member genes, all via the KEGG REST API.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "hsa00010" }
+      ]
+    },
+    {
+      "id": "id-conversion",
+      "prompt": "I have KEGG gene ID hsa:10458 and need its UniProt and NCBI Gene IDs to integrate with my other datasets. Convert it via KEGG.",
+      "expected_output": "Invokes alterlab-kegg. Uses kegg_conv('uniprot', 'hsa:10458') and kegg_conv('ncbi-geneid', 'hsa:10458') to map the KEGG gene ID to external database identifiers for cross-database integration.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses KEGG conv to convert the gene ID to UniProt and NCBI Gene identifiers." }
+      ]
+    },
+    {
+      "id": "drug-drug-interaction",
+      "prompt": "Check KEGG for any drug-drug interactions among KEGG drug IDs D00001, D00002, and D00564.",
+      "expected_output": "Invokes alterlab-kegg. Uses kegg_ddi with the list of KEGG drug IDs to check for documented drug-drug interactions / contraindications.",
+      "assertions": [
+        { "type": "should_trigger", "value": true }
+      ]
+    },
+    {
+      "id": "compound-search",
+      "prompt": "Search KEGG for the compound glucose, then find which metabolic pathways contain it.",
+      "expected_output": "Invokes alterlab-kegg. Uses kegg_find('compound', 'glucose') to get the compound ID (cpd:C00031), then kegg_link to map the compound through reactions to pathways via the KEGG REST API.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "compound" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-reactome",
+      "prompt": "I want a Reactome pathway-enrichment analysis on my gene list, with the reaction-level hierarchy and the curated Reactome pathway diagrams and statistics.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-reactome. The user explicitly wants Reactome's curated pathway hierarchy, enrichment statistics, and reaction-level diagrams, not KEGG's REST API. Reactome is a sibling pathway database with its own analysis service.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-reactome" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-string-db",
+      "prompt": "Build me a protein-protein interaction network for these 12 genes with confidence scores and functional enrichment of the network.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-string-db. The user wants a protein-protein interaction network with edge confidence scores, which is STRING's domain, not KEGG's pathway maps and ID conversion.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-string-db" }
+      ]
+    }
+  ]
+}

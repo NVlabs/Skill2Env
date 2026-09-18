@@ -1,0 +1,62 @@
+{
+  "skill": "alterlab-pymc",
+  "evals": [
+    {
+      "id": "hierarchical-multilevel-model",
+      "prompt": "I have student test scores nested within 30 schools and I want to estimate school-level effects with partial pooling, including credible intervals for each school. How should I set up and fit this Bayesian multilevel model?",
+      "expected_output": "Invokes alterlab-pymc to build a hierarchical model with pm.Model and coords for the groups, using non-centered parameterization (hyperpriors mu_alpha/sigma_alpha plus a standardized alpha_offset combined via pm.Deterministic) to avoid divergences, weakly informative priors, NUTS sampling with pm.sample(target_accept=0.9), R-hat/ESS/divergence diagnostics, and reports HDI credible intervals per school.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "non-centered" },
+        { "type": "behavior", "value": "Specifies a hierarchical/multilevel model with non-centered parameterization and reports per-group credible (HDI) intervals." }
+      ]
+    },
+    {
+      "id": "nuts-sampling-diagnostics-divergences",
+      "prompt": "My PyMC model is throwing a bunch of divergences and the trace plots look terrible. R-hat is around 1.05 on a couple of parameters. What's going wrong and how do I diagnose and fix it?",
+      "expected_output": "Invokes alterlab-pymc to diagnose NUTS sampling: checks R-hat (<1.01), ESS (>400), and idata.sample_stats.diverging via check_diagnostics, then prescribes fixes — raise target_accept to 0.95/0.99, switch to non-centered parameterization, add stronger priors, run longer chains, and inspect trace/rank/energy plots for mixing and multimodality.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "target_accept" },
+        { "type": "behavior", "value": "Interprets R-hat/ESS/divergences and recommends raising target_accept and/or reparameterizing to non-centered." }
+      ]
+    },
+    {
+      "id": "loo-waic-model-comparison",
+      "prompt": "I've fit three competing Bayesian regression models for the same outcome and I want to compare them rigorously. Which one should I prefer, and how do I check the comparison is trustworthy?",
+      "expected_output": "Invokes alterlab-pymc for model comparison: ensures each idata was sampled with log_likelihood=True, runs compare_models with ic='loo' (or WAIC), interprets the elpd/Δloo differences (Δloo<2 similar, >10 strong evidence), and checks reliability via Pareto-k values (k>0.7 means switch to WAIC or k-fold CV). May mention model averaging when models are close.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "LOO" },
+        { "type": "behavior", "value": "Uses LOO/WAIC for comparison and checks Pareto-k reliability before trusting the ranking." }
+      ]
+    },
+    {
+      "id": "prior-posterior-predictive-checks",
+      "prompt": "Before I trust my Bayesian Poisson count model I want to make sure my priors aren't generating absurd data and that the fitted model actually reproduces the observed distribution. What checks should I run in PyMC?",
+      "expected_output": "Invokes alterlab-pymc for the predictive-check workflow: pm.sample_prior_predictive before fitting with az.plot_ppc(group='prior') to confirm priors span plausible counts, then after sampling pm.sample_posterior_predictive(extend_inferencedata=True) with az.plot_ppc to verify the model captures observed patterns and to spot systematic misspecification (e.g. overdispersion suggesting NegativeBinomial).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Recommends both prior predictive and posterior predictive checks via sample_prior_predictive / sample_posterior_predictive and az.plot_ppc." }
+      ]
+    },
+    {
+      "id": "near-miss-scikit-learn",
+      "prompt": "I just want a fast classifier that maximizes test accuracy on my tabular dataset. Train a random forest and gradient boosting model, cross-validate, and tune hyperparameters with grid search. I don't need posteriors or uncertainty, just point predictions.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scikit-learn. The user wants classical predictive ML (random forest, gradient boosting, GridSearchCV) optimizing point-prediction accuracy with no Bayesian inference, posteriors, or credible intervals, which is scikit-learn's territory rather than PyMC's.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scikit-learn" }
+      ]
+    },
+    {
+      "id": "near-miss-statsmodels",
+      "prompt": "Fit a frequentist OLS regression on my data and give me the coefficient table with p-values, standard errors, R-squared, and the usual heteroskedasticity and normality-of-residuals diagnostic tests.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-statsmodels. The user wants classical frequentist regression with p-values, confidence intervals, and residual diagnostic tests, not Bayesian posteriors, MCMC, or credible intervals, so statsmodels handles this rather than PyMC.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statsmodels" }
+      ]
+    }
+  ]
+}

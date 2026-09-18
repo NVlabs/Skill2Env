@@ -1,0 +1,54 @@
+{
+  "skill": "alterlab-deeptools",
+  "evals": [
+    {
+      "id": "bam-to-bigwig-rpgc",
+      "prompt": "I have a sorted, indexed ChIP-seq BAM for a human (hg38) sample. I want a normalized coverage bigWig track for genome browser viewing. Give me the deepTools command with sensible normalization and parameters.",
+      "expected_output": "Triggers the deepTools skill. Should use bamCoverage with --normalizeUsing RPGC (or CPM) and --effectiveGenomeSize 2913022398 for hg38, plus ChIP-seq-appropriate flags like --extendReads, --ignoreDuplicates, --binSize, and --numberOfProcessors. Output is a .bw bigWig file.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "bamCoverage"},
+        {"type": "behavior", "value": "Provides the correct hg38 effective genome size (2913022398) with RPGC/CPM normalization and ChIP-seq read extension."}
+      ]
+    },
+    {
+      "id": "tss-heatmap-computematrix",
+      "prompt": "I have a signal bigWig and a BED of gene coordinates. I want a heatmap of my ChIP signal in a 3kb window centered on the TSS, with k-means clustering into 3 groups. How do I do this with deepTools?",
+      "expected_output": "Triggers the deepTools skill. Should describe the two-step computeMatrix -> plotHeatmap workflow: computeMatrix reference-point --referencePoint TSS -b 3000 -a 3000 -S signal.bw -R genes.bed -o matrix.gz, then plotHeatmap -m matrix.gz --kmeans 3 -o heatmap.png. May suggest plotProfile as a complement.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "computeMatrix"},
+        {"type": "behavior", "value": "Uses computeMatrix reference-point at the TSS feeding into plotHeatmap with --kmeans clustering."}
+      ]
+    },
+    {
+      "id": "chip-qc-fingerprint-correlation",
+      "prompt": "Before I dig into my ChIP-seq, I want to QC it: check that my two replicates correlate and that the antibody actually enriched. What deepTools steps should I run and how do I read the output?",
+      "expected_output": "Triggers the deepTools skill. Should recommend plotFingerprint to assess ChIP enrichment (steep rise = good, flat diagonal = poor) and multiBamSummary + plotCorrelation (and/or plotPCA) for replicate correlation, noting replicates should correlate >0.9. May reference bamPEFragmentSize and plotCoverage.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "plotFingerprint"},
+        {"type": "behavior", "value": "Explains the fingerprint interpretation (steep rise = enrichment) and uses multiBamSummary/plotCorrelation for replicate concordance."}
+      ]
+    },
+    {
+      "id": "atac-tn5-shift-coverage",
+      "prompt": "Working with ATAC-seq BAMs. I keep reading I need to correct for the Tn5 insertion offset before making coverage tracks. How do I do that and then generate the bigWig with deepTools?",
+      "expected_output": "Triggers the deepTools skill. Should use alignmentSieve with --ATACshift to apply the Tn5 offset correction, then bamCoverage on the shifted BAM (RPGC or CPM). May mention checking the fragment-size nucleosome ladder pattern.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "alignmentSieve"},
+        {"type": "behavior", "value": "Applies --ATACshift via alignmentSieve before generating coverage with bamCoverage."}
+      ]
+    },
+    {
+      "id": "near-miss-pysam",
+      "prompt": "I need to iterate read-by-read through a BAM file in Python, check each read's CIGAR and mapping quality, and pull out the soft-clipped bases at the 5' end for a custom analysis. What's the best library?",
+      "expected_output": "Should NOT trigger the deepTools skill. deepTools is a coverage/visualization CLI suite, not a per-read BAM record API. Iterating reads and inspecting CIGAR/MAPQ/soft-clips is low-level alignment manipulation that belongs to the pysam skill (pysam.AlignmentFile). The response should defer to pysam rather than reach for a deepTools command.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "pysam"}
+      ]
+    }
+  ]
+}

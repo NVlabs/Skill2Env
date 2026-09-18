@@ -1,0 +1,74 @@
+{
+  "skill": "alterlab-recommendation-letters",
+  "evals": [
+    {
+      "id": "grad-admission-letter",
+      "prompt": "One of my best master's students, Elif, is applying to PhD programs in computational biology and asked me for a recommendation letter. I taught her in two courses and supervised her thesis. Can you help me draft it? She built her own RNA-seq pipeline, presented at a national meeting, and pushed back productively when my first analysis suggestion was wrong.",
+      "expected_output": "Invokes alterlab-recommendation-letters in graduate-admission mode: collects the structured dossier (relationship/capacity/duration, target programs, the specific accomplishments the recommender supplied), then scaffolds a grad-admission letter via scripts/letter_scaffold.py (relationship/basis -> intellectual ability -> research aptitude/independence -> personal qualities -> calibrated ranking -> recommendation). Drafts in a grounded-advocacy register, anchoring each evaluative claim to one of the concrete instances supplied (the pipeline, the conference talk, the productive pushback) using the Claim -> Evidence -> Significance pattern, and brackets any claim it cannot support from the dossier rather than inventing it. Runs scripts/claim_guard.py on the draft to catch evidence-free superlatives before hand-off.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Produces a graduate-admission recommendation letter ABOUT the student, anchors every strong claim to a specific dossier example, and brackets (does not invent) anything the recommender did not supply." }
+      ]
+    },
+    {
+      "id": "tenure-external-review",
+      "prompt": "I've been asked to write an external review letter for a colleague's promotion to full professor. The committee specifically asks whether the candidate would receive tenure at my own institution and how they compare to peers at the same career stage. I know their work from the field but we've never collaborated. How should I approach this and can you draft it?",
+      "expected_output": "Invokes alterlab-recommendation-letters in tenure/promotion external-review mode: recognizes this is an EVALUATION, not an advocacy letter, and scaffolds the tenure-external skeleton (relationship + conflict disclosure -> central research contribution -> impact/influence -> standing relative to peers at the same stage -> direct evaluation) via scripts/letter_scaffold.py. Uses an arms-length, evaluative register; answers the institution's 'would this candidate get tenure here?' prompt directly; handles the peer comparison by asking the recommender for an honest comparison set and basis rather than fabricating named peers or a percentile. Surfaces missing facts as bracketed gaps.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Treats the external-review letter as evaluative (not advocacy), structures it around impact/standing and the institution's tenure question, and refuses to invent a peer comparison set or ranking the recommender did not provide." }
+      ]
+    },
+    {
+      "id": "fellowship-nomination",
+      "prompt": "My postdoc is up for a competitive early-career fellowship and I'm writing her nomination. The pool will be very strong. Help me make the case for why she specifically deserves this one.",
+      "expected_output": "Invokes alterlab-recommendation-letters in fellowship mode: scaffolds the fellowship skeleton (relationship + framing against the pool -> distinctive strength -> fit to the fellowship's stated aims -> trajectory the award would accelerate -> recommendation) via scripts/letter_scaffold.py. Emphasizes distinctiveness versus a strong applicant pool and maps the candidate's defining strength to the specific fellowship's criteria, anchoring each claim to a concrete accomplishment from the dossier. Prompts for the fellowship's stated criteria if not supplied rather than guessing them.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Frames a fellowship nomination around distinctiveness versus the pool and fit to the award's stated criteria, anchoring claims to specific accomplishments rather than generic praise." }
+      ]
+    },
+    {
+      "id": "evidence-check-existing-draft",
+      "prompt": "Here's a recommendation letter I drafted for a student. Before I send it, can you flag anything I'm claiming without backing it up? I have a feeling it reads like generic boilerplate in places — phrases like 'she is the best student I've ever had' and 'top 1%'.",
+      "expected_output": "Invokes alterlab-recommendation-letters in evidence-check / no-fabrication-guard mode: runs scripts/claim_guard.py over the draft to flag unsupported superlatives ('the best student I've ever had'), unanchored rankings ('top 1%' with no population or basis), and evidence-free evaluative adjectives, returning each flagged sentence with a reason and a fix prompt. For each flag it asks the recommender to ANCHOR the claim with a specific real example or SOFTEN it, and explicitly does NOT invent supporting evidence to make the claim pass.",
+      "files": [
+        {
+          "name": "draft_letter.md",
+          "content": "To the Admissions Committee:\n\nIt is my great pleasure to recommend Ms. Demir. She is the best student I have ever had. She is in the top 1% of students. She is exceptionally creative and a natural leader. I give her my strongest possible endorsement.\n"
+        }
+      ],
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Flags the unsupported superlative, the unanchored ranking, and the evidence-free adjectives, and asks the recommender to anchor or soften each one rather than inventing evidence to make the claims pass." }
+      ]
+    },
+    {
+      "id": "near-miss-academic-career",
+      "prompt": "I'm going up for tenure next year and need to write my own research statement and update my CV and promotion narrative for my dossier. Can you help me draft these?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-academic-career. The candidate is writing their OWN career documents (research statement, CV, promotion narrative) for their own dossier — self-authored materials — not a third party writing a reference letter ABOUT them. alterlab-recommendation-letters only drafts letters a recommender writes about a candidate; the candidate's own CV/statement/narrative is alterlab-academic-career's territory.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-academic-career" }
+      ]
+    },
+    {
+      "id": "near-miss-docentlik-eligibility",
+      "prompt": "I'm preparing my doçentlik application and need to check whether I meet the ÜAK associate-professor criteria — counting my publications, citations, and project points against the thresholds for my field. Can you work out whether I qualify?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-docentlik-eligibility. The request is a Türkiye ÜAK doçentlik eligibility/point computation against associate-professor thresholds, not the drafting of a prose reference or recommendation letter. alterlab-recommendation-letters writes evidence-anchored letters about a candidate and performs no points scoring against national criteria, which is alterlab-docentlik-eligibility's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-docentlik-eligibility" }
+      ]
+    },
+    {
+      "id": "near-miss-paper-reviewer",
+      "prompt": "Here is a colleague's finished manuscript. Give me a structured peer review with section-by-section comments, an assessment of the methodology and contribution, and an accept/revise/reject recommendation for the editor.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-paper-reviewer. The user wants an editorial quality judgment of a manuscript (novelty, methodology, contribution) with an accept/revise/reject verdict for an editor, not a personal reference letter about a person. alterlab-recommendation-letters writes recommendation/reference letters about candidates and makes no manuscript-quality judgment, which is alterlab-paper-reviewer's role.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-paper-reviewer" }
+      ]
+    }
+  ]
+}

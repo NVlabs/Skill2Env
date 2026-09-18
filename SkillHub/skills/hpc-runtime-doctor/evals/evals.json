@@ -1,0 +1,120 @@
+{
+  "skill_name": "hpc-runtime-doctor",
+  "evals": [
+    {
+      "id": "gpu_job_slow",
+      "prompt": "Diagnose a SLURM LAMMPS GPU job that runs much slower than expected. It uses 2 nodes, 128 MPI tasks, 2 CPUs per task, 4 GPUs total, and runs MPI+OpenMP+GPU.",
+      "expected_output": "GPU build, device binding, and ranks-per-GPU layout review; flags 32.0 ranks/GPU oversubscription across the 4 GPUs.",
+      "assertions": [
+        "checks accelerator build",
+        "reviews MPI/GPU layout",
+        "does not assume physics problem",
+        "reports the ranks-per-GPU warning of exactly 32.0 ranks/GPU from hpc_runtime_doctor.py (128 tasks / 4 GPUs)",
+        "reports resource_layout.gpus=4 and total_cpus=256 from the script output"
+      ],
+      "script_checks": [
+        {
+          "description": "GPU slow: 32.0 ranks/GPU oversubscription on 4 GPUs",
+          "cmd": [
+            "scripts/hpc_runtime_doctor.py",
+            "--scheduler", "slurm",
+            "--nodes", "2",
+            "--tasks", "128",
+            "--cpus-per-task", "2",
+            "--gpus", "4",
+            "--symptoms", "slow-gpu",
+            "--uses-mpi",
+            "--uses-openmp",
+            "--uses-gpu",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.warnings", "op": "contains", "value": "Many MPI ranks per GPU (32.0 ranks/GPU) may reduce GPU efficiency."},
+            {"path": "results.resource_layout.gpus", "op": "eq", "value": 4},
+            {"path": "results.resource_layout.total_cpus", "op": "eq", "value": 256},
+            {"path": "results.resource_layout.tasks_per_node", "op": "eq", "value": 64},
+            {"path": "results.diagnoses.0.category", "op": "eq", "value": "gpu"},
+            {"path": "results.diagnoses.0.recommended_action", "op": "contains", "value": "Confirm GPU build"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "killed_by_scheduler",
+      "prompt": "My MOOSE job gets killed before finishing and no result files are copied back. It ran on SLURM with 4 nodes, 256 tasks, walltime 12:00:00, and the job died with killed/timeout and no restart files saved.",
+      "expected_output": "Diagnoses scheduler kill, walltime exhaustion, and missing restart; recommends writing restart files and copying them out of scratch.",
+      "assertions": [
+        "checks scheduler limits",
+        "adds restart plan",
+        "mentions scratch handling",
+        "reports the restart diagnosis category=restart with the action to copy restart files out of scratch from hpc_runtime_doctor.py",
+        "reports resource_layout.tasks_per_node=64 and total_cpus=256 from the script output"
+      ],
+      "script_checks": [
+        {
+          "description": "Killed MOOSE job: scheduler/walltime/restart diagnoses",
+          "cmd": [
+            "scripts/hpc_runtime_doctor.py",
+            "--scheduler", "slurm",
+            "--nodes", "4",
+            "--tasks", "256",
+            "--cpus-per-task", "1",
+            "--symptoms", "killed,timeout,restart-missing",
+            "--uses-mpi",
+            "--walltime", "12:00:00",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.diagnoses.0.category", "op": "eq", "value": "scheduler"},
+            {"path": "results.diagnoses.1.category", "op": "eq", "value": "walltime"},
+            {"path": "results.diagnoses.2.category", "op": "eq", "value": "restart"},
+            {"path": "results.diagnoses.2.recommended_action", "op": "contains", "value": "copy them out of scratch"},
+            {"path": "results.resource_layout.tasks_per_node", "op": "eq", "value": 64},
+            {"path": "results.resource_layout.total_cpus", "op": "eq", "value": 256},
+            {"path": "results.resource_layout.walltime", "op": "eq", "value": "12:00:00"},
+            {"path": "results.warnings", "op": "contains", "value": "Large parallel jobs should use node-local or parallel scratch for heavy I/O."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mpi_openmp_layout",
+      "prompt": "Review a hybrid MPI/OpenMP layout on SLURM with 2 nodes, 128 tasks and 1 CPU per task, using MPI+OpenMP.",
+      "expected_output": "Flags that OpenMP is requested but cpus_per_task is 1 so threads have no cores; reports the layout and a one-variable retry.",
+      "assertions": [
+        "flags thread mismatch",
+        "reports resource layout",
+        "suggests one-variable retry",
+        "reports the exact OpenMP warning 'OpenMP requested but cpus_per_task is 1.' from hpc_runtime_doctor.py",
+        "reports resource_layout.total_cpus=128 and cpus_per_task=1 from the script output"
+      ],
+      "script_checks": [
+        {
+          "description": "Hybrid layout: OpenMP requested but cpus_per_task=1",
+          "cmd": [
+            "scripts/hpc_runtime_doctor.py",
+            "--scheduler", "slurm",
+            "--nodes", "2",
+            "--tasks", "128",
+            "--cpus-per-task", "1",
+            "--symptoms", "slow",
+            "--uses-mpi",
+            "--uses-openmp",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.warnings", "op": "contains", "value": "OpenMP requested but cpus_per_task is 1."},
+            {"path": "results.resource_layout.cpus_per_task", "op": "eq", "value": 1},
+            {"path": "results.resource_layout.total_cpus", "op": "eq", "value": 128},
+            {"path": "results.resource_layout.tasks_per_node", "op": "eq", "value": 64},
+            {"path": "results.diagnoses.0.category", "op": "eq", "value": "custom"},
+            {"path": "results.retry_plan", "op": "contains", "value": "change one resource variable at a time"}
+          ]
+        }
+      ]
+    }
+  ]
+}

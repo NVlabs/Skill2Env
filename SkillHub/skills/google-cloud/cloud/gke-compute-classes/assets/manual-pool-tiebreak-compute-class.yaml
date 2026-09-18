@@ -1,0 +1,33 @@
+# EXAMPLE TEMPLATE - DO NOT DEPLOY
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: pinned-pools-tiebreak
+spec:
+  # Standard-cluster ComputeClass pinned to pre-created manual node pools. Multiple equal pools per priority — autoscaler picks among them by lowest unit cost. node pool auto-creation fallback at the bottom for obtainability when all pinned pools are exhausted.
+  nodePoolAutoCreation:
+    enabled: true
+  # Each manual pool below must carry the binding label/taint:
+  #   cloud.google.com/compute-class=pinned-pools-tiebreak  (label AND taint)
+  # See gke-compute-classes-create.md → "Binding a manual node pool to a ComputeClass".
+  # Standard cluster only — Autopilot does not support nodepools: references.
+  priorities:
+  # 1. Pinned: any of three pre-created On-Demand n4 pools (one per zone).
+  #    All listed pools are equal candidates; autoscaler picks by unit cost / availability.
+  - nodepools:
+    - n4-pool-usc1a
+    - n4-pool-usc1b
+    - n4-pool-usc1c
+
+  # 2. Pinned fallback: two pre-created Spot pools, same shape across two zones.
+  - nodepools:
+    - n4-spot-usc1a
+    - n4-spot-usc1b
+
+  # 3. node pool auto-creation fallback — intent-based only (node pool auto-creation pools have no stable names to reference).
+  - machineFamily: n4  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 8
+    spot: false
+    location:
+      zones: ['us-central1-a', 'us-central1-b', 'us-central1-c']
+      locationPolicy: ANY

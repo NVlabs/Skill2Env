@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-chembl",
+  "evals": [
+    {
+      "id": "target-inhibitors-ic50",
+      "prompt": "Find me potent EGFR inhibitors from ChEMBL — I want compounds with an IC50 of 100 nM or lower against the EGFR target.",
+      "expected_output": "Invokes alterlab-chembl. Resolves EGFR to its target ChEMBL ID (CHEMBL203) via new_client.target, then queries new_client.activity filtered by target_chembl_id, standard_type='IC50', standard_value__lte=100, standard_units='nM', and returns the matching molecule_chembl_ids with their potencies.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "IC50" },
+        { "type": "behavior", "value": "Uses the ChEMBL Python client (new_client) to map the target then filter activities by IC50 threshold and units." }
+      ]
+    },
+    {
+      "id": "similarity-search",
+      "prompt": "I have the SMILES for aspirin (CC(=O)Oc1ccccc1C(=O)O). Search ChEMBL for compounds that are at least 85% structurally similar.",
+      "expected_output": "Invokes alterlab-chembl. Uses new_client.similarity.filter with the supplied SMILES and a similarity=85 threshold to return structurally related ChEMBL compounds.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Runs a structure similarity search against ChEMBL using the SMILES and a percent-similarity threshold." }
+      ]
+    },
+    {
+      "id": "drug-mechanism-indications",
+      "prompt": "Look up the approved drug with ChEMBL ID CHEMBL25 — I want its mechanism of action and the disease indications it's used for.",
+      "expected_output": "Invokes alterlab-chembl. Retrieves drug data via new_client.drug, mechanisms via new_client.mechanism.filter(molecule_chembl_id='CHEMBL25'), and indications via new_client.drug_indication.filter, summarizing how the drug works and what it treats.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Queries the ChEMBL mechanism and drug_indication endpoints for the given ChEMBL ID." }
+      ]
+    },
+    {
+      "id": "property-virtual-screen",
+      "prompt": "Pull drug-like small molecules from ChEMBL for a virtual screen: molecular weight between 300 and 500, ALogP at or below 5, no more than 10 H-bond acceptors and 5 donors.",
+      "expected_output": "Invokes alterlab-chembl. Uses new_client.molecule.filter on molecule_properties (mw_freebase__range, alogp__lte, hba__lte, hbd__lte) to return compounds matching the Lipinski-style property window for virtual screening.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Filters ChEMBL molecules by physicochemical properties (MW, ALogP, HBA, HBD) for a property-based screen." }
+      ]
+    },
+    {
+      "id": "near-miss-bindingdb",
+      "prompt": "I need the measured binding affinity (Kd, Ki) data points for the BRD4 bromodomain from BindingDB specifically — the curated binding measurements, not ChEMBL bioactivities.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-bindingdb. The user explicitly wants measured binding affinities from BindingDB; per this skill's own description, for measured binding affinities prefer bindingdb.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-bindingdb" }
+      ]
+    },
+    {
+      "id": "near-miss-pubchem",
+      "prompt": "Give me the canonical SMILES, InChIKey, and basic physical properties for PubChem CID 2244.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pubchem. The user is querying a PubChem compound by CID for chemical identifiers and properties, not mining ChEMBL bioactivity or drug-target data.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pubchem" }
+      ]
+    }
+  ]
+}

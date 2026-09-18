@@ -1,0 +1,64 @@
+{
+  "skill": "alterlab-imaging-data-commons",
+  "evals": [
+    {
+      "id": "build-lung-ct-dataset",
+      "prompt": "I want to build a training set of chest CT scans from the NLST collection in IDC. Find the series and download a small batch to a local folder.",
+      "expected_output": "Triggers the Imaging Data Commons skill. Instantiates IDCClient from idc-index, runs client.sql_query against the index table filtering Modality='CT', BodyPartExamined='CHEST', collection_id='nlst', then downloads with client.download_from_selection(seriesInstanceUID=[...], downloadDir=...). Recommends LIMIT during exploration and small batches to avoid timeouts; verifies IDC data version (v24) with client.get_idc_version(). No authentication required.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "idc-index" },
+        { "type": "behavior", "value": "Queries the index table with client.sql_query to get SeriesInstanceUIDs, then downloads via client.download_from_selection." },
+        { "type": "behavior", "value": "Recommends batching/LIMIT and verifying the IDC data version before bulk download." }
+      ]
+    },
+    {
+      "id": "filter-by-cancer-type",
+      "prompt": "Find breast MRI studies in IDC. I specifically want collections whose cancer type is breast, then I'll preview one in the browser before downloading.",
+      "expected_output": "Triggers IDC. Notes cancer type lives in collections_index.CancerTypes (not the primary index), so it calls client.fetch_index('collections_index') and JOINs index to collections_index on collection_id with CancerTypes LIKE '%Breast%' AND Modality='MR'. Then gets a viewer URL via client.get_viewer_URL(seriesInstanceUID=... or studyInstanceUID=...) to preview in-browser (OHIF) without downloading.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "collections_index" },
+        { "type": "behavior", "value": "Joins index to collections_index for cancer-type filtering and uses get_viewer_URL for in-browser preview." }
+      ]
+    },
+    {
+      "id": "license-aware-commercial",
+      "prompt": "We're building a commercial AI product. Which IDC chest CT data can I legally use? I need to filter to commercially permissible licenses and get citations for attribution.",
+      "expected_output": "Triggers IDC. Queries license_short_name in the index, filters to commercial-permissible licenses (CC BY 4.0 / CC BY 3.0) and excludes CC BY-NC, and explains the non-commercial restriction. Generates attribution via client.citations_from_selection(...) using source_DOI. Stresses checking the license field before commercial use.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "license_short_name" },
+        { "type": "behavior", "value": "Filters by license_short_name to exclude CC BY-NC for commercial use and generates citations with citations_from_selection." }
+      ]
+    },
+    {
+      "id": "segmentation-annotations",
+      "prompt": "I'm looking for DICOM segmentation objects in IDC and the source image series they were drawn on. How do I find AI or expert segmentations and link them back to the original scans?",
+      "expected_output": "Triggers IDC. Explains analysis_result_id identifies derived objects, fetches seg_index (client.fetch_index('seg_index')), and joins seg_index.segmented_SeriesInstanceUID = index.SeriesInstanceUID to link each segmentation back to its source image series. Notes specialized index tables avoid needing BigQuery.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "seg_index" },
+        { "type": "behavior", "value": "Uses seg_index and joins segmented_SeriesInstanceUID to the index to connect segmentations to their source series." }
+      ]
+    },
+    {
+      "id": "near-miss-clinvar",
+      "prompt": "For this lung-cancer patient's tumor, is the EGFR L858R variant a known oncogenic driver? Give me the clinical significance classification.",
+      "expected_output": "Should NOT trigger Imaging Data Commons. This is a genomic variant interpretation question (clinical significance of a point mutation), not an imaging-data request. IDC serves DICOM radiology/pathology images and their metadata, not variant pathogenicity calls. Defers to alterlab-clinvar (or a cancer-genomics skill) for variant classification.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "clinvar" }
+      ]
+    },
+    {
+      "id": "near-miss-datacommons",
+      "prompt": "What is the age-adjusted lung cancer incidence rate per 100,000 across U.S. states? I want the public health statistics.",
+      "expected_output": "Should NOT trigger Imaging Data Commons. This asks for aggregated public-health statistics (incidence rates over geographic entities), which Data Commons provides. IDC delivers individual DICOM imaging series and their metadata, not epidemiological rate statistics. Defers to alterlab-datacommons.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "datacommons" }
+      ]
+    }
+  ]
+}

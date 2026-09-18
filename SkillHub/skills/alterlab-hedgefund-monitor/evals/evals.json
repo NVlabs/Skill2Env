@@ -1,0 +1,76 @@
+{
+  "skill": "alterlab-hedgefund-monitor",
+  "evals": [
+    {
+      "id": "fpf-leverage-timeseries",
+      "prompt": "For a systemic-risk paper I want the aggregate hedge-fund leverage ratio from SEC Form PF, as a time series since 2015. How do I get it from the OFR Hedge Fund Monitor?",
+      "expected_output": "Triggers the OFR Hedge Fund Monitor skill. Hits https://data.financialresearch.gov/hf/v1 and uses /series/timeseries with start_date=2015-01-01. Knows there is no single FPF-ALLQHF_LEVERAGERATIO_* series: aggregate leverage is published per gross-asset cohort, so it uses FPF-ALLQHF_GAVN10_LEVERAGERATIO_AVERAGE (10 largest funds) plus GAVN11TO50 / GAVN51, or a strategy-level *_LEVERAGERATIO_GAVWMEAN series. Notes no API key is required and FPF is quarterly Form PF data.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "LEVERAGERATIO"},
+        {"type": "behavior", "value": "Uses /series/timeseries with a real FPF leverage mnemonic (a GAVN* cohort AVERAGE or a strategy GAVWMEAN/NAVWMEAN), not the non-existent FPF-ALLQHF_LEVERAGERATIO_GAVWMEAN; notes Form PF is the source and no API key is needed."}
+      ]
+    },
+    {
+      "id": "search-mnemonics",
+      "prompt": "I don't know the exact identifiers. How can I search the OFR Hedge Fund Monitor for all series related to leverage?",
+      "expected_output": "Triggers the OFR Hedge Fund Monitor skill. Uses the /metadata/search endpoint with a wildcard query like *leverage*, returning matching mnemonics, and can list datasets via /series/dataset.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "metadata/search"},
+        {"type": "behavior", "value": "Uses the metadata/search endpoint with a wildcard query to discover leverage mnemonics rather than guessing identifiers."}
+      ]
+    },
+    {
+      "id": "gross-assets-and-gne",
+      "prompt": "I'm tracking hedge-fund industry scale. Get me total gross assets and gross notional exposure across all qualifying funds over time from the OFR data.",
+      "expected_output": "Triggers the OFR Hedge Fund Monitor skill. Uses FPF-ALLQHF_GAV_SUM (total gross assets) and FPF-ALLQHF_GNE_SUM (gross notional exposure), fetched via /series/timeseries or /series/multifull. Explains the mnemonic pattern FPF-{SCOPE}_{METRIC}_{STAT}.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "GAV_SUM"},
+        {"type": "output_contains", "value": "GNE_SUM"},
+        {"type": "behavior", "value": "Selects the GAV_SUM and GNE_SUM FPF mnemonics and can pull both at once via multifull."}
+      ]
+    },
+    {
+      "id": "repo-volumes",
+      "prompt": "For a study on the repo market I need FICC Sponsored Repo Service volumes from the OFR Hedge Fund Monitor. How do I fetch that series?",
+      "expected_output": "Triggers the OFR Hedge Fund Monitor skill. Uses the ficc dataset and the FICC-SPONSORED_REPO_VOL mnemonic via /series/timeseries. Notes ficc reports daily business-day observations and no key is required.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "FICC"},
+        {"type": "behavior", "value": "Identifies the ficc dataset and the sponsored-repo-volume mnemonic from the Hedge Fund Monitor API."}
+      ]
+    },
+    {
+      "id": "spread-calc",
+      "prompt": "I want to compute the difference between two OFR hedge-fund leverage series and chart the spread over time. Does the Hedge Fund Monitor API do that for me?",
+      "expected_output": "Triggers the OFR Hedge Fund Monitor skill. Uses the /calc/spread endpoint with x= and y= mnemonics to return the difference between the two series directly from the API.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "spread"},
+        {"type": "behavior", "value": "Uses the /calc/spread endpoint with x and y mnemonics to compute the series difference server-side."}
+      ]
+    },
+    {
+      "id": "near-miss-edgartools",
+      "prompt": "I want to read an individual hedge fund's raw Form PF or 13F filing document from SEC EDGAR and extract its specific reported holdings line by line.",
+      "expected_output": "Should NOT trigger the OFR Hedge Fund Monitor skill. The OFR API serves OFR-aggregated time series, not individual filers' raw filing documents. Defer to the alterlab-edgartools skill, which retrieves the actual 13F/Form PF filings and their infotables from EDGAR.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-edgartools"},
+        {"type": "behavior", "value": "Distinguishes OFR-aggregated statistics from a single filer's raw EDGAR filing and defers to edgartools."}
+      ]
+    },
+    {
+      "id": "near-miss-fred",
+      "prompt": "Pull the Federal Reserve's broad financial-conditions and 10-year Treasury yield time series from FRED to contextualize my leverage analysis.",
+      "expected_output": "Should NOT trigger the OFR Hedge Fund Monitor skill. Treasury yields and Fed financial-conditions indices are FRED series, not OFR hedge-fund datasets. Defer to the alterlab-fred skill.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-fred"},
+        {"type": "behavior", "value": "Recognizes Treasury-yield and Fed indices as FRED series outside the OFR hedge-fund datasets and defers to the FRED skill."}
+      ]
+    }
+  ]
+}

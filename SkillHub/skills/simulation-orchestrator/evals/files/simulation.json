@@ -1,0 +1,7 @@
+{
+  "dt": 1e-3,
+  "kappa": 0.5,
+  "steps": 1000,
+  "mesh": 64,
+  "output": "result.json"
+}

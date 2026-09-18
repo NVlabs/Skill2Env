@@ -1,0 +1,2 @@
+click>=8.0.0
+# scipy and numpy optional - basic functions work without them

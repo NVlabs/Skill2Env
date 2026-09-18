@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-ssci-sampling-gate",
+  "evals": [
+    {
+      "id": "power-before-collection",
+      "prompt": "I'm planning a two-group experiment comparing a new study technique against the usual one. How many participants do I need?",
+      "expected_output": "Invokes alterlab-ssci-sampling-gate: routes to an a-priori power analysis, asks for the smallest meaningful effect size, alpha, and target power before giving an N, and warns against powering on an inflated pilot effect. May run the stdlib sample-size calculator.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "power" },
+        { "type": "behavior", "value": "Requires effect size + alpha + power (a-priori power analysis) before producing a sample size, rather than a rule of thumb." }
+      ]
+    },
+    {
+      "id": "convenience-generalization",
+      "prompt": "I surveyed 300 students from my own university. Can I generalize the results to all adults in the country?",
+      "expected_output": "Invokes alterlab-ssci-sampling-gate: identifies a convenience/non-probability sample with a coverage gap between the frame (own-university students) and the target population (all adults), and limits the claim to analytical (not statistical) generalization regardless of the count.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Distinguishes probability from non-probability sampling and ties statistical generalization to a probability sample and a matching frame, not to sample size." }
+      ]
+    },
+    {
+      "id": "collect-until-significant",
+      "prompt": "My t-test came back p = 0.09. Should I just keep collecting more participants until it turns significant?",
+      "expected_output": "Invokes alterlab-ssci-sampling-gate: refuses optional stopping / collect-until-significant as a false-positive inflator, and instead prescribes a pre-specified N from an a-priori power analysis (or a properly corrected sequential design).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Flags optional stopping as p-hacking that inflates the Type I error rate and requires a pre-specified sample size or a corrected sequential plan." }
+      ]
+    },
+    {
+      "id": "qual-saturation-size",
+      "prompt": "How many interviews are enough for my grounded-theory study on nurse burnout?",
+      "expected_output": "Invokes alterlab-ssci-sampling-gate: applies saturation / information-power logic rather than a power formula or a fixed number, and routes the deep grounded-theory coding mechanics to alterlab-qualitative-methods.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "saturation" }
+      ]
+    },
+    {
+      "id": "near-miss-test-selection-guard",
+      "prompt": "My data are already collected. Which statistical test should I use to compare the two groups?",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-test-selection-guard. The sample already exists; choosing the specific test is downstream of sampling and sizing.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-test-selection-guard" }
+      ]
+    },
+    {
+      "id": "near-miss-survey-design",
+      "prompt": "Help me word the items and pick the response options for my new questionnaire.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-survey-design. Writing and wording the instrument is separate from deciding who and how many to sample.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-survey-design" }
+      ]
+    }
+  ]
+}

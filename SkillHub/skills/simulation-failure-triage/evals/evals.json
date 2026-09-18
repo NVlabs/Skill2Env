@@ -1,0 +1,93 @@
+{
+  "evals": [
+    {
+      "id": "lammps_lost_atoms",
+      "prompt": "Triage a LAMMPS run with lost atoms, pressure blow-up, and NaN temperature.",
+      "expected_outputs": ["timestep", "overlaps", "barostat"],
+      "assertions": [
+        "classifies instability",
+        "preserves evidence",
+        "uses safe retry ladder",
+        "failure_triage.py infers pressure-blowup from the 'Lost atoms' log line even though only nan was passed as a symptom (evidence.symptoms == ['nan', 'pressure-blowup'])",
+        "classifies the inferred pressure-blowup symptom with category 'bad initial state' and first_action 'Minimize/equilibrate first and check density, overlaps, and barostat.'",
+        "fourth immediate_action reports 'revert or isolate recent change: increased timestep'"
+      ],
+      "script_checks": [
+        {
+          "description": "failure_triage infers pressure-blowup from log and classifies it",
+          "cmd": ["scripts/failure_triage.py", "--code", "LAMMPS", "--stage", "runtime", "--symptoms", "nan", "--recent-change", "increased timestep", "--log-text", "ERROR: Lost atoms on proc 0", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.evidence.symptoms.0", "op": "eq", "value": "nan"},
+            {"path": "results.evidence.symptoms.1", "op": "eq", "value": "pressure-blowup"},
+            {"path": "results.likely_causes.0.category", "op": "eq", "value": "non-finite values"},
+            {"path": "results.likely_causes.0.first_action", "op": "eq", "value": "Reduce timestep, check initial overlaps, bounds, and material parameters."},
+            {"path": "results.likely_causes.1.symptom", "op": "eq", "value": "pressure-blowup"},
+            {"path": "results.likely_causes.1.category", "op": "eq", "value": "bad initial state"},
+            {"path": "results.likely_causes.1.first_action", "op": "eq", "value": "Minimize/equilibrate first and check density, overlaps, and barostat."},
+            {"path": "results.immediate_actions.3", "op": "eq", "value": "revert or isolate recent change: increased timestep"},
+            {"path": "results.evidence.log_excerpt", "op": "eq", "value": "ERROR: Lost atoms on proc 0"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vasp_nonconvergence",
+      "prompt": "Diagnose a VASP electronic nonconvergence failure after changing smearing.",
+      "expected_outputs": ["nonconvergence", "recent change", "retry"],
+      "assertions": [
+        "isolates recent change",
+        "checks setup before retry",
+        "sets stop conditions",
+        "failure_triage.py classifies the nonconvergence symptom with category 'solver convergence' and first_action 'Inspect residual history, preconditioner, tolerance, and initial guess.'",
+        "the recent change 'changed smearing' appears as the fourth immediate_action, exactly 'revert or isolate recent change: changed smearing'",
+        "stop_conditions[1] is 'results depend on arbitrary stabilizing changes'"
+      ],
+      "script_checks": [
+        {
+          "description": "failure_triage classifies VASP nonconvergence with fixed retry/stop text",
+          "cmd": ["scripts/failure_triage.py", "--code", "VASP", "--stage", "runtime", "--symptoms", "nonconvergence", "--recent-change", "changed smearing", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.likely_causes.0.symptom", "op": "eq", "value": "nonconvergence"},
+            {"path": "results.likely_causes.0.category", "op": "eq", "value": "solver convergence"},
+            {"path": "results.likely_causes.0.first_action", "op": "eq", "value": "Inspect residual history, preconditioner, tolerance, and initial guess."},
+            {"path": "results.immediate_actions.3", "op": "eq", "value": "revert or isolate recent change: changed smearing"},
+            {"path": "results.retry_ladder.0", "op": "eq", "value": "validate input files and units"},
+            {"path": "results.retry_ladder.4", "op": "eq", "value": "change one solver or resource parameter at a time"},
+            {"path": "results.stop_conditions.1", "op": "eq", "value": "results depend on arbitrary stabilizing changes"},
+            {"path": "inputs.code", "op": "eq", "value": "VASP"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "missing_potential",
+      "prompt": "My MD run cannot find the potential for one species.",
+      "expected_outputs": ["missing-potential", "species mapping", "stop"],
+      "assertions": [
+        "does not invent potential parameters",
+        "requires verification",
+        "stops if model data missing",
+        "failure_triage.py classifies missing-potential with category 'missing model data' and first_action 'Locate potential/pseudopotential and verify species mapping.'",
+        "the first stop_condition is exactly 'required potential or pseudopotential cannot be verified'",
+        "no recent-change immediate_action is appended (immediate_actions has exactly 3 entries) since none was supplied"
+      ],
+      "script_checks": [
+        {
+          "description": "failure_triage classifies missing-potential and pins stop condition",
+          "cmd": ["scripts/failure_triage.py", "--code", "LAMMPS", "--stage", "setup", "--symptoms", "missing-potential", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.likely_causes.0.symptom", "op": "eq", "value": "missing-potential"},
+            {"path": "results.likely_causes.0.category", "op": "eq", "value": "missing model data"},
+            {"path": "results.likely_causes.0.first_action", "op": "eq", "value": "Locate potential/pseudopotential and verify species mapping."},
+            {"path": "results.stop_conditions.0", "op": "eq", "value": "required potential or pseudopotential cannot be verified"},
+            {"path": "results.immediate_actions.2", "op": "eq", "value": "rerun a smaller case with extra diagnostics"},
+            {"path": "inputs.recent_change", "op": "eq", "value": null}
+          ]
+        }
+      ]
+    }
+  ]
+}

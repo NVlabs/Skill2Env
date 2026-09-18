@@ -1,0 +1,63 @@
+{
+  "skill": "alterlab-neurokit2",
+  "evals": [
+    {
+      "id": "ecg-hrv-pipeline",
+      "prompt": "I have a 5-minute resting-state ECG recording sampled at 1000 Hz from a psychophysiology study. Can you clean it, detect R-peaks, and give me the full HRV breakdown across time, frequency, and nonlinear domains?",
+      "expected_output": "Invokes alterlab-neurokit2. Runs the ECG pipeline with nk.ecg_process() (cleaning -> R-peak detection -> delineation -> quality), then computes HRV with nk.hrv() / nk.hrv_time / nk.hrv_frequency / nk.hrv_nonlinear, reporting SDNN, RMSSD, pNN50 (time), LF/HF power and ratio (frequency), and Poincare SD1/SD2 plus entropy (nonlinear). Recognizes the >=10s duration as interval-related analysis.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "RMSSD" },
+        { "type": "behavior", "value": "Uses nk.ecg_process and nk.hrv (or the domain-specific hrv_* functions) and reports time, frequency, and nonlinear HRV indices." }
+      ]
+    },
+    {
+      "id": "eda-scr-decomposition",
+      "prompt": "I recorded skin conductance (EDA) at 100 Hz during an emotion-induction task. I need to decompose it into tonic and phasic components and count the skin conductance responses.",
+      "expected_output": "Invokes alterlab-neurokit2. Uses nk.eda_process() to decompose the signal into tonic and phasic components, detects skin conductance responses (SCR), and can compute the sympathetic nervous system index via nk.eda_sympathetic(). Frames EDA as autonomic nervous system assessment.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "phasic" },
+        { "type": "behavior", "value": "Calls nk.eda_process and references tonic/phasic decomposition and SCR detection." }
+      ]
+    },
+    {
+      "id": "multimodal-bio-process",
+      "prompt": "I simultaneously collected ECG, respiration, and EDA during a stress paradigm, all at 1000 Hz. I want them all processed together with a single unified output and then analyzed.",
+      "expected_output": "Invokes alterlab-neurokit2 multi-signal integration. Uses nk.bio_process(ecg=..., rsp=..., eda=..., sampling_rate=1000) to process all signals together and nk.bio_analyze() for the unified analysis, returning combined cardiac, respiratory, and electrodermal features. May mention hrv_rsa for respiratory sinus arrhythmia linking ECG and RSP.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "bio_process" },
+        { "type": "behavior", "value": "Processes ECG, RSP, and EDA jointly via nk.bio_process / nk.bio_analyze rather than three separate isolated pipelines." }
+      ]
+    },
+    {
+      "id": "eeg-microstates-complexity",
+      "prompt": "From a 64-channel resting EEG recording at 250 Hz, I want frequency band power (alpha, beta, etc.), a 4-state microstate segmentation, and some complexity/entropy measures on the signal.",
+      "expected_output": "Invokes alterlab-neurokit2. Computes band power with nk.eeg_power across Delta/Theta/Alpha/Beta/Gamma, runs nk.microstates_segment(n_microstates=4) with nk.microstates_static/dynamic, and computes complexity/entropy (e.g. nk.entropy_sample, nk.fractal_dfa, nk.complexity). Treats EEG as the brain-signal capability.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "microstate" },
+        { "type": "behavior", "value": "Uses nk.eeg_power for band power and nk.microstates_segment for microstate analysis, plus an entropy/fractal complexity measure." }
+      ]
+    },
+    {
+      "id": "near-miss-pydicom",
+      "prompt": "I have a folder of cardiac MRI DICOM files from a scanner. I need to read the pixel data out of each .dcm, apply the right windowing, and export them as PNGs.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pydicom. The task is reading and converting DICOM medical-imaging files (pixel_array, VOI LUT windowing, PNG export), not processing a physiological time-series biosignal like ECG/EEG/EDA. NeuroKit2 does not read DICOM imaging files.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pydicom" }
+      ]
+    },
+    {
+      "id": "near-miss-pyhealth",
+      "prompt": "I want to build a deep learning model on MIMIC-IV EHR data to predict ICU mortality, splitting by patient and training a RETAIN model with AUPRC monitoring.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pyhealth. The task is clinical ML on EHR datasets (MIMIC-IV, RETAIN, train/val/test split, mortality prediction) rather than raw physiological signal processing. NeuroKit2 extracts biosignal features; it does not train clinical prediction models on EHR datasets.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pyhealth" }
+      ]
+    }
+  ]
+}

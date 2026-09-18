@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-yok-akademik",
+  "evals": [
+    {
+      "id": "verify-current-affiliation",
+      "prompt": "I'm finalizing the author byline for a paper and need to confirm a Turkish co-author's current institution. Can you check where Prof. Dr. Ayşe Yılmaz officially works right now and which faculty/department she's in?",
+      "expected_output": "Invokes alterlab-yok-akademik to resolve the official current affiliation from YOK Akademik (YÖKSİS-backed). Runs scripts/yok_akademik.py search to get candidate rows (name, unvan, university, faculty/department, opaque authorId); if more than one candidate matches, asks the user to disambiguate by institution rather than silently picking one; then fetches the chosen profile via viewAuthor.jsp and reports kurum/fakülte/bölüm plus the unvan, attributing it to YOK Akademik (YÖKSİS) with the retrieval date. Does not assert an affiliation from model memory.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Treats YOK Akademik as the authoritative current-affiliation source, disambiguates multiple candidates before asserting, and reports provenance (YOK Akademik / YÖKSİS + date) rather than answering from memory." }
+      ]
+    },
+    {
+      "id": "list-supervised-theses",
+      "prompt": "Can you pull the list of master's and doctoral theses that Doç. Dr. Mehmet Demir at Hacettepe has supervised? I want the titles, students, and years.",
+      "expected_output": "Invokes alterlab-yok-akademik: searches the name on YOK Akademik to get the authorId for the Hacettepe Mehmet Demir, then runs scripts/yok_akademik.py theses against AkademisyenYonTezBilgileri to list the danışmanlık (supervised) theses with title, student, level (Yüksek Lisans/Doktora), year, and institution. Notes that for a thesis's full text or abstract the user should use alterlab-yok-tez (Ulusal Tez Merkezi), since this portal only lists the supervision records.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Fetches supervised-thesis records via the authorId from a live search and distinguishes the supervision list (this skill) from thesis full text (alterlab-yok-tez)." }
+      ]
+    },
+    {
+      "id": "turkish-find-researcher",
+      "prompt": "YÖK Akademik'te Çağrı Öztürk adlı akademisyeni bulup hangi üniversitede ve unvanı ne, bölümü ne öğrenebilir misin?",
+      "expected_output": "Invokes alterlab-yok-akademik on a Turkish-language request: normalizes the Turkish characters (Çağrı / Öztürk — İ/ı, Ş/ş, Ğ/ğ, Ç/ç, Ö/ö, Ü/ü folding for matching while preserving the diacritic spelling for display), runs scripts/yok_akademik.py search, and returns the candidate(s) with üniversite, unvan, and bölüm. If the common name returns several people it asks the user to confirm which one before reporting, and attributes the result to YOK Akademik (YÖKSİS).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Handles a Turkish-language query with diacritics, folds Turkish characters for matching, and returns university/unvan/department candidates from YOK Akademik." }
+      ]
+    },
+    {
+      "id": "verify-author-existence",
+      "prompt": "I have a list of references at the end of my draft and I'm worried my co-author used ChatGPT — can you check whether each cited paper actually exists and isn't fabricated?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-citation-verifier. The user wants existence-verification of cited PAPERS against scholarly databases (fabricated/hallucinated citations), not a lookup of an academic's official YÖKSİS profile or affiliation. alterlab-yok-akademik identifies people and their current institution, not whether a bibliography's entries resolve to real works.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-citation-verifier" }
+      ]
+    },
+    {
+      "id": "near-miss-yokatlas-admission-stats",
+      "prompt": "What were the kontenjan and taban puan for the Bilgisayar Mühendisliği program at Boğaziçi last year, and the başarı sırası of the last student placed?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-yokatlas. The user wants university/program ADMISSION statistics (kontenjan, taban puan, başarı sırası, yerleşen) from YÖK Atlas — a separate, differently-architected system — not an academic's profile or affiliation from YOK Akademik. The two YÖK systems are distinct; this skill never serves admission-statistics queries.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-yokatlas" }
+      ]
+    },
+    {
+      "id": "near-miss-yok-tez-fulltext",
+      "prompt": "Bir doktora tezinin tam metnini Ulusal Tez Merkezi'nden bulup özetini ve PDF erişim iznini kontrol edebilir misin?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-yok-tez. The user wants the FULL TEXT / abstract / access-permission status of a thesis from the Ulusal Tez Merkezi (the national thesis archive), not a supervisor's supervision record or an academic's affiliation. alterlab-yok-akademik only lists who supervised which theses; fetching thesis content and izin (permission) status is alterlab-yok-tez's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-yok-tez" }
+      ]
+    }
+  ]
+}

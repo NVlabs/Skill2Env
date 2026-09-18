@@ -1,0 +1,11 @@
+{
+  "name": "moodtrip-hotel-search",
+  "description": "Search, compare, and book hotels using MoodTrip.ai",
+  "emoji": "🏨",
+  "mcpServers": {
+    "moodtrip": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote@latest", "https://api.moodtrip.ai/api/mcp-http"]
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "skill_name": "content-planner",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Plan my next 90 days of content based on Search Console data. My site is example.com — a small B2B accounting SaaS for freelancers.",
+      "expected_output": "A GSC-driven content calendar with 8–12 prioritized topics, each tagged by opportunity bucket (striking-distance, gap, ctr-underperformer), scheduled across 12 weeks, with click-potential scores. The skill should write content-calendar.json to {data_dir} and tell the user how to launch the notfair-content-calendar viewer.",
+      "files": [],
+      "expectations": [
+        "Skill checks for GSC connection before doing anything else",
+        "Pulls 90-day query × page report, not just query-level",
+        "Classifies opportunities into the 5 buckets (striking-distance, gap, ctr-underperformer, related-expansion, cannibalization)",
+        "Computes clickPotential per topic using the documented formula",
+        "Every scheduled title uses a hook pattern (number, audience, contrarian, or outcome-promise) — no bare keyword titles",
+        "Writes content-calendar.json to {data_dir}/content-calendar.json with the documented schema",
+        "Tells the user the exact command to run the notfair-content-calendar viewer",
+        "Caps at 12 topics for a 90-day horizon unless user asks for more"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I keep getting impressions for 'invoice software for freelancers' but I'm at position 14. What should I do?",
+      "expected_output": "Recognizes this as a striking-distance opportunity (position 5–20 with impressions), classifies it as bucket A, suggests scheduling a focused post with the related-keyword expansions clustered as H2s, and offers to hand off to /content-writer with the pre-built writerPrompt.",
+      "files": [],
+      "expectations": [
+        "Classifies as Bucket A: striking-distance",
+        "Identifies 2–4 related-keyword expansions (Bucket D) as secondary keywords",
+        "Computes clickPotential and surfaces the estimated additional clicks if the post reaches position 3",
+        "Generates a hook-driven title, not 'Invoice Software For Freelancers'",
+        "Hands off to /content-writer with a complete writerPrompt"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "My GSC shows 3 different pages on my site all ranking for 'time tracking tips' between positions 12 and 18. Should I write a new post?",
+      "expected_output": "Flags cannibalization (Bucket E). Refuses to schedule new content for that query. Routes user to /seo-analysis to pick a canonical page and consolidate.",
+      "files": [],
+      "expectations": [
+        "Identifies cannibalization explicitly",
+        "Does NOT schedule a new post for this query",
+        "Writes a warning entry into warnings[] in content-calendar.json",
+        "Routes user to /seo-analysis as the next step"
+      ]
+    }
+  ]
+}

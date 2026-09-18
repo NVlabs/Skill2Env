@@ -1,0 +1,55 @@
+# EXAMPLE TEMPLATE - DO NOT DEPLOY
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: kafka-broker
+spec:
+  # Kafka broker — multi-zone, local SSD for page cache and segment scratch, Hyperdisk durable boot, all-Gen-4, no Spot.
+  # DATA PVs: use the built-in `dynamic-rwo` StorageClass (GKE 1.35.3-gke.1290000+,
+  # use-allowed-disk-topology: "true") — see assets/dynamic-rwo-storageclass.yaml. The Cluster
+  # Autoscaler then scales up only disk-compatible nodes, letting priorities[] span machine
+  # families/generations safely without PV attach failures on fallback.
+  # (bootDiskType / localSSDCount below are NODE-level disks, separate from the data PV StorageClass.)
+  nodePoolAutoCreation:
+    enabled: true
+  priorityDefaults:
+    location:
+      zones: ['us-central1-a', 'us-central1-b', 'us-central1-c']
+    nodeSystemConfig:
+      linuxNodeConfig:
+        sysctls:
+          net.core.somaxconn: 4096
+          vm.max_map_count: 262144   # Kafka mmaps many log segments
+          fs.file-max: 1000000       # broker holds many open file descriptors
+  priorities:
+  # 1. n4 with local SSD for page cache + segment scratch
+  - machineFamily: n4  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 16
+    minMemoryGb: 64
+    spot: false
+    storage:
+      bootDiskType: hyperdisk-balanced
+      bootDiskSize: 100
+      localSSDCount: 2
+
+  # 2. c4 fallback (Gen 4) — same zones, no local SSD
+  - machineFamily: c4  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 16
+    minMemoryGb: 64
+    spot: false
+    storage:
+      bootDiskType: hyperdisk-balanced
+      bootDiskSize: 100
+
+  # 3. Last resort — n4 with wider zone net
+  - machineFamily: n4  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 16
+    minMemoryGb: 64
+    spot: false
+    location:
+      zones: ['us-central1-a', 'us-central1-b', 'us-central1-c', 'us-central1-f']
+      locationPolicy: ANY
+    storage:
+      bootDiskType: hyperdisk-balanced
+      bootDiskSize: 100
+

@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Validate Markdown
+      uses: actionshub/markdownlint@main
+      continue-on-error: true
+    
+    - name: Check for broken links
+      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        use-quiet-mode: 'yes'
+        config-file: '.github/markdown-link-check-config.json'
+      continue-on-error: true
+    
+    - name: Validate file structure
+      run: |
+        echo "Checking required files..."
+        test -f README.md || exit 1
+        test -f SKILL.md || exit 1
+        test -f LICENSE || exit 1
+        test -f CONTRIBUTING.md || exit 1
+        test -d examples || exit 1
+        echo "All required files present ✓"
+    
+    - name: List examples
+      run: |
+        echo "Available examples:"
+        ls -la examples/

@@ -1,0 +1,52 @@
+{
+  "skill": "alterlab-molecular-dynamics",
+  "evals": [
+    {
+      "id": "setup-solvate-minimize",
+      "prompt": "I have a cleaned protein PDB and want to set up an OpenMM simulation: AMBER14 force field, TIP3P water with a 10 angstrom padding box, 150 mM NaCl, then energy minimize to remove clashes. Can you write that?",
+      "expected_output": "Invokes alterlab-molecular-dynamics. Builds an OpenMM system with ForceField('amber14-all.xml', water model), uses Modeller.addHydrogens and addSolvent (padding=10*angstroms, ionicStrength=0.15*molar), createSystem with PME and HBonds constraints, then runs minimizeEnergy. Mentions GPU platform selection (CUDA/OpenCL fallback to CPU).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "OpenMM" },
+        { "type": "behavior", "value": "Solvates with addSolvent (padding + ionic strength), creates the system with PME, and runs minimizeEnergy before dynamics." }
+      ]
+    },
+    {
+      "id": "rmsd-rmsf-trajectory",
+      "prompt": "I finished a 100 ns production run and have a DCD trajectory plus topology. Compute the backbone RMSD over time and the per-residue RMSF so I can see which loops are most flexible.",
+      "expected_output": "Invokes alterlab-molecular-dynamics. Loads the trajectory into an MDAnalysis Universe, aligns with align.AlignTraj, computes RMSD via rms.RMSD on a backbone selection, and per-residue flexibility via rms.RMSF. Plots RMSD over time (ns) and RMSF per residue. Notes discarding the equilibration portion before analysis.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "MDAnalysis" },
+        { "type": "behavior", "value": "Uses MDAnalysis rms.RMSD for backbone RMSD and rms.RMSF for per-residue flexibility on the loaded trajectory." }
+      ]
+    },
+    {
+      "id": "equilibration-production-protocol",
+      "prompt": "What's a sane equilibration and production protocol for my solvated protein in OpenMM? I want NVT then NPT then a 1 ns production run with a Monte Carlo barostat at 1 bar, 300 K.",
+      "expected_output": "Invokes alterlab-molecular-dynamics. Lays out the OpenMM staged protocol: NVT equilibration (set velocities to temperature, ~50-100 ps) then NPT with a MonteCarloBarostat at 1 bar / 300 K and production at 2 fs timestep with HBonds constraints. Adds StateDataReporter, DCDReporter, and CheckpointReporter, and recommends discarding the first portion as equilibration.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Describes NVT then NPT (MonteCarloBarostat) then production with a 2 fs timestep and reporters/checkpoints." }
+      ]
+    },
+    {
+      "id": "ligand-protein-contacts",
+      "prompt": "I ran an MD of a protein with a bound ligand (resname LIG). Across the trajectory, which protein residues stay in contact with the ligand within 4.5 angstroms?",
+      "expected_output": "Invokes alterlab-molecular-dynamics. Uses MDAnalysis to select protein and 'resname LIG', iterates the trajectory, and computes protein-ligand contacts within a 4.5 angstrom cutoff (e.g. contacts.contact_matrix) to report the set of contacting residues per frame. Frames it as residence/contact analysis of the binding pose over the trajectory.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Selects protein and ligand (resname LIG) in MDAnalysis and tracks contacts within a distance cutoff across the trajectory." }
+      ]
+    },
+    {
+      "id": "near-miss-rowan",
+      "prompt": "I just want to dock a single small molecule into the EGFR kinase pocket and get a binding score using AutoDock Vina on the cloud, no local setup or trajectory.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-rowan. The user wants cloud-based protein-ligand docking (AutoDock Vina) to get a binding score, not a time-resolved MD trajectory. Rowan handles docking/quantum-chemistry workflows with no local compute, whereas this skill runs and analyzes dynamics trajectories.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-rowan" }
+      ]
+    }
+  ]
+}

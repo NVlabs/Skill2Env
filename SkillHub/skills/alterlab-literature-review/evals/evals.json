@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-literature-review",
+  "evals": [
+    {
+      "id": "systematic-review-crispr",
+      "prompt": "I'm writing a systematic review on the efficacy of CRISPR-Cas9 for treating sickle cell disease compared to standard care. Can you run the whole review for me?",
+      "expected_output": "Invokes alterlab-literature-review: frames the question with PICO, develops a multi-database search strategy across at least 3 databases (PubMed via Entrez, bioRxiv/medRxiv, arXiv, Semantic Scholar), screens with a PRISMA flow, synthesizes results thematically (not study-by-study), verifies citations, and can generate a markdown/PDF document.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "prisma"},
+        {"type": "behavior", "value": "Plans a systematic methodology (PICO scoping, multi-database search, inclusion/exclusion criteria, PRISMA screening) and organizes synthesis by theme rather than summarizing studies one at a time."}
+      ]
+    },
+    {
+      "id": "multi-database-search-strategy",
+      "prompt": "Help me design and document a reproducible search strategy across PubMed, bioRxiv, and Semantic Scholar for single-cell sequencing methods, including the exact Boolean strings and date ranges.",
+      "expected_output": "Invokes alterlab-literature-review: identifies main concepts and synonyms, builds Boolean queries (AND/OR/NOT) with MeSH terms and field tags for PubMed (Entrez), bioRxiv API/Europe PMC, and Semantic Scholar, and documents each database's search string, date range, and date searched for reproducibility.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "behavior", "value": "Specifies at least three complementary databases with concrete, documented search strings and reproducibility metadata (date searched, date range, result counts)."}
+      ]
+    },
+    {
+      "id": "thematic-synthesis-and-gaps",
+      "prompt": "I've screened ~40 papers on CRISPR delivery methods. Synthesize the evidence thematically, compare the approaches, and identify the research gaps.",
+      "expected_output": "Invokes alterlab-literature-review for synthesis: organizes findings into 3-5 major themes, compares/contrasts approaches across studies with quantitative detail where available, notes consensus and controversy, assesses evidence quality, and explicitly identifies knowledge and methodological gaps with future directions.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "behavior", "value": "Produces cross-study thematic synthesis (compare/contrast, consensus vs controversy, gaps) instead of a sequential per-paper summary."}
+      ]
+    },
+    {
+      "id": "verify-citations-generate-pdf",
+      "prompt": "My literature review draft is finished in markdown — verify all the DOIs are correct and then produce a Nature-styled PDF.",
+      "expected_output": "Invokes alterlab-literature-review final phases: runs verify_citations.py to extract and verify every DOI against CrossRef and flag failures, then generate_pdf.py with --citation-style nature to produce a professional PDF via pandoc/xelatex.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "behavior", "value": "Verifies DOIs/citations before rendering and produces the PDF in the requested citation style, rather than skipping the verification step."}
+      ]
+    },
+    {
+      "id": "near-miss-citation-mgmt",
+      "prompt": "I just need a handful of DOIs converted to clean BibTeX and my references.bib validated for broken links — no review writing.",
+      "expected_output": "Defers to alterlab-citation-mgmt and does NOT invoke alterlab-literature-review: this is narrow technical citation handling (DOI-to-BibTeX, validation), not a systematic search-screen-synthesize review.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-citation-mgmt"}
+      ]
+    },
+    {
+      "id": "near-miss-scientific-writing",
+      "prompt": "Take my completed synthesis notes and write up the Discussion section of my manuscript as polished flowing prose.",
+      "expected_output": "Defers to alterlab-scientific-writing and does NOT invoke alterlab-literature-review: drafting the manuscript's narrative prose is a writing task. literature-review produces the structured review/synthesis itself, not the final paper's polished Discussion paragraphs.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-scientific-writing"}
+      ]
+    }
+  ]
+}

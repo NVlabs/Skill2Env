@@ -1,0 +1,71 @@
+{
+  "skill": "alterlab-scikit-bio",
+  "evals": [
+    {
+      "id": "alpha-beta-diversity",
+      "prompt": "I have a microbiome OTU count table and sample IDs. I want Shannon alpha diversity per sample and a Bray-Curtis beta-diversity distance matrix between samples.",
+      "expected_output": "Invokes alterlab-scikit-bio. Uses alpha_diversity('shannon', counts_matrix, ids=...) and beta_diversity('braycurtis', counts_matrix, ids=...) from skbio.diversity, noting counts must be integer abundances; alpha returns a Series and beta returns a DistanceMatrix.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "beta_diversity" },
+        { "type": "behavior", "value": "Computes Shannon alpha diversity and a Bray-Curtis DistanceMatrix from integer counts." }
+      ]
+    },
+    {
+      "id": "pcoa-permanova",
+      "prompt": "I have a UniFrac distance matrix and sample metadata with a treatment grouping. I want to ordinate the samples with PCoA and test whether the groups differ significantly.",
+      "expected_output": "Invokes alterlab-scikit-bio. Runs pcoa(distance_matrix) from skbio.stats.ordination for the ordination (PC1/PC2 coordinates, proportion explained) and permanova(distance_matrix, grouping, permutations=999) from skbio.stats.distance to test group differences, returning the p-value.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "permanova" },
+        { "type": "behavior", "value": "Ordinates with PCoA and tests group separation with PERMANOVA permutation test." }
+      ]
+    },
+    {
+      "id": "unifrac-phylogenetic",
+      "prompt": "I want weighted UniFrac distances between my microbiome samples, which means I need to bring in my phylogenetic tree and map the feature IDs.",
+      "expected_output": "Invokes alterlab-scikit-bio. Uses beta_diversity('weighted_unifrac', counts_matrix, ids=..., tree=tree, taxa=feature_ids), noting that phylogenetic metrics require the tree and feature (taxa) ID mapping; tree read via TreeNode.read.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "unifrac" },
+        { "type": "behavior", "value": "Computes UniFrac passing a tree and taxa (feature) IDs alongside the counts." }
+      ]
+    },
+    {
+      "id": "nj-tree-from-distances",
+      "prompt": "I have a DNA distance matrix for a set of taxa and want to build a neighbor-joining phylogenetic tree, then compute patristic distances between two tips.",
+      "expected_output": "Invokes alterlab-scikit-bio. Uses nj(distance_matrix) from skbio.tree to build the neighbor-joining TreeNode, then computes patristic distance with tree.find('taxon1').distance(tree.find('taxon2')) (or cophenetic_matrix()).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Builds a neighbor-joining tree with nj() and computes patristic/cophenetic distances." }
+      ]
+    },
+    {
+      "id": "sequence-translate-motif",
+      "prompt": "I have a DNA FASTA. I want to reverse-complement it, transcribe to RNA, translate to protein, and find all ATG-initiated codon motifs with a regex.",
+      "expected_output": "Invokes alterlab-scikit-bio. Reads with skbio.DNA.read, calls reverse_complement(), transcribe(), translate(), and uses find_with_regex for motif search, using the grammared DNA/RNA/Protein classes.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses skbio DNA/RNA/Protein methods (reverse_complement/transcribe/translate) and find_with_regex." }
+      ]
+    },
+    {
+      "id": "near-miss-pydeseq2",
+      "prompt": "I have a bulk RNA-seq counts matrix and want to find genes that are differentially expressed between two conditions with FDR correction.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pydeseq2. The user wants negative-binomial differential expression testing on RNA-seq counts, not community diversity, ordination, or sequence/phylogenetic analysis.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pydeseq2" }
+      ]
+    },
+    {
+      "id": "near-miss-etetoolkit",
+      "prompt": "I already have a Newick tree and want to render a publication-quality annotated tree figure with colored clades and custom node styles.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-etetoolkit. The user wants rich tree visualization/annotation (ETE styling), whereas scikit-bio's tree support is construction/manipulation/metrics with only ASCII visualization.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-etetoolkit" }
+      ]
+    }
+  ]
+}

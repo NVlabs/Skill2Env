@@ -1,0 +1,96 @@
+{
+  "skill": "alterlab-networkx",
+  "evals": [
+    {
+      "id": "centrality-citation-network",
+      "prompt": "I have a citation network as an edge list CSV (columns source, target). Load it into a graph and tell me which papers are most central - compute degree, betweenness, and PageRank, and export the rankings to a CSV.",
+      "expected_output": "Invokes alterlab-networkx: builds a graph with nx.from_pandas_edgelist (or read_edgelist), computes nx.degree_centrality, nx.betweenness_centrality, and nx.pagerank, then writes the per-node scores to a CSV via pandas. Stays in classical graph-analytics territory (no graph neural network).",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "pagerank"
+        },
+        {
+          "type": "behavior",
+          "value": "Uses NetworkX centrality functions (degree/betweenness/PageRank) rather than computing centrality by hand, and reads the edge list with from_pandas_edgelist or read_edgelist."
+        }
+      ]
+    },
+    {
+      "id": "community-detection",
+      "prompt": "Given an undirected social interaction graph, detect communities and report the modularity. I'd also like a spring-layout plot with nodes colored by community.",
+      "expected_output": "Invokes alterlab-networkx: runs community detection via networkx.algorithms.community (e.g. greedy_modularity_communities), reports modularity, and draws the network with nx.spring_layout(seed=...) coloring nodes by community membership through nx.draw with matplotlib.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "community"
+        },
+        {
+          "type": "behavior",
+          "value": "Uses a NetworkX community-detection algorithm such as greedy_modularity_communities and a deterministic spring_layout (fixed seed) for the visualization."
+        }
+      ]
+    },
+    {
+      "id": "synthetic-scale-free-shortest-path",
+      "prompt": "Generate a synthetic scale-free network of 500 nodes for a simulation, set a reproducible seed, then find the shortest path between two hub nodes and report its length.",
+      "expected_output": "Invokes alterlab-networkx: generates a Barabasi-Albert scale-free graph with nx.barabasi_albert_graph(n=500, m=..., seed=...), identifies hubs by degree, and uses nx.shortest_path / nx.shortest_path_length to return the path and its length. Emphasizes seeding for reproducibility.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "barabasi"
+        },
+        {
+          "type": "behavior",
+          "value": "Generates the network with a NetworkX generator (barabasi_albert_graph) using an explicit seed, and computes the path with nx.shortest_path rather than a custom traversal."
+        }
+      ]
+    },
+    {
+      "id": "graphml-export-metrics",
+      "prompt": "I built a weighted transportation graph in memory. Compute its density and average clustering, then save it as GraphML so I can open it in Gephi later.",
+      "expected_output": "Invokes alterlab-networkx: reports nx.density and nx.average_clustering on the existing graph and serializes it with nx.write_graphml to preserve node/edge attributes for downstream tools like Gephi.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "graphml"
+        },
+        {
+          "type": "behavior",
+          "value": "Uses nx.write_graphml for export (format that preserves attributes) and computes density/average clustering with the built-in NetworkX functions."
+        }
+      ]
+    },
+    {
+      "id": "near-miss-torch-geometric",
+      "prompt": "I want to train a graph neural network to classify the nodes in my Cora citation graph - set up a GCN with message passing and run node classification.",
+      "expected_output": "Does NOT invoke alterlab-networkx. This is geometric deep learning / GNN training (GCNConv, message passing, node-classification training loop on Planetoid/Cora), which is alterlab-torch-geometric territory, not classical NetworkX graph analytics. Should defer to alterlab-torch-geometric.",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "torch-geometric"
+        }
+      ]
+    }
+  ]
+}

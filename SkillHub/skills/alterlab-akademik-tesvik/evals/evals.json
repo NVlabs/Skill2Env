@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-akademik-tesvik",
+  "evals": [
+    {
+      "id": "calculate-annual-score",
+      "prompt": "I'm at a state university and need my akademik teşvik score for this year. I had one Q1 SSCI article (2 authors), I was the PI on a TÜBİTAK 1001 project, picked up 12 citations, gave one conference paper, and won a faculty award. Can you compute my score and tell me if I clear the threshold?",
+      "expected_output": "Invokes alterlab-akademik-tesvik: classifies each activity into its regulation type (Yayın, Proje, Atıf, Tebliğ, Ödül), derives each row's oran (faaliyet oranı) using the k/p/r coefficients, builds a JSON activity list, runs scripts/tesvik_score.py, and reports the final score with the per-type breakdown (Σoran -> türü puanı = Σoran x headline -> after the MADDE 8/3 headline ceiling). Confirms the net-30 gate (MADDE 10/3) is met (score >= 30) so the incentive is payable, applying the TABLO 4 headline puanları and coefficients rather than guessing a number.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Computes türü puanı = Σ(oran) x headline (MADDE 8/2), applies the per-type headline ceilings and the 100 cap (MADDE 8/3) and the net-30 gate (MADDE 10/3), and reports a final score plus a payable/not-payable verdict, not a fabricated figure." }
+      ]
+    },
+    {
+      "id": "net30-threshold-check-turkish",
+      "prompt": "Devlet üniversitesinde öğretim üyesiyim. Bu yıl sadece iki Q3 makalem ve birkaç atıfım var. Akademik teşvik puanımı hesaplar mısın, en az 30 barajını geçiyor muyum?",
+      "expected_output": "Invokes alterlab-akademik-tesvik in net-30 threshold-check mode: scores the iki Q3 makale (p=0.5) plus the atıflar via scripts/tesvik_score.py, computing türü puanı = Σ(oran) x headline, applies the per-type headline ceilings (MADDE 8/3), and reports whether the final score reaches the en az 30 (net-30) gate from MADDE 10/3. If the score is below 30, states clearly that no incentive (teşvik ödeneği) is payable this year despite the activity, in line with the regulation.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Recognises the Turkish request, computes the score, and gives a clear pass/fail verdict against the net-30 (en az 30) payment threshold." }
+      ]
+    },
+    {
+      "id": "thirty-percent-rule",
+      "prompt": "My whole akademik teşvik file this year is publications — I have almost nothing else. Will the 30% per-activity-type rule cut my Yayın points down, and what score am I actually left with?",
+      "expected_output": "Invokes alterlab-akademik-tesvik and corrects the user's mental model: the regulation's %30 (MADDE 1) is a fixed table-design weight, realised as the YAYIN headline ceiling of 30 (MADDE 8/3) — not a dynamic 'rescale to 30% of this year's gross' step. It computes Yayın türü puanı = Σ(oran) x 30, caps it at the 30-point headline, and shows that since Yayın can contribute at most 30 of the 100 points, a publication-only file is bounded at 30 and therefore sits right at the net-30 gate (MADDE 10/3) with no margin from other türler.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "30" },
+        { "type": "behavior", "value": "Explains that the %30 is the table-design weighting realised as the 30-point YAYIN headline ceiling (MADDE 8/3), caps the Yayın contribution at 30, and does NOT apply an invented dynamic 30%-of-gross rescaling." }
+      ]
+    },
+    {
+      "id": "near-miss-docentlik-eligibility",
+      "prompt": "I want to know if I'm eligible to apply for doçentlik this term. Can you total my points against the ÜAK table for my field and check whether I meet each mandatory minimum (article count, project, thesis supervision)?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-docentlik-eligibility. The user wants associate-professorship (doçentlik) eligibility scored against the per-field ÜAK table with its mandatory-minimum pass/fail checks — a different rule system from the annual akademik teşvik incentive. alterlab-akademik-tesvik only computes the annual incentive score and its net-30 payment gate, and deliberately keeps its coefficients separate from doçentlik scoring.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-docentlik-eligibility" }
+      ]
+    },
+    {
+      "id": "near-miss-trdizin-status",
+      "prompt": "Before I count one of my articles toward my incentive file, I need to know whether the journal it appeared in is actually indexed in TR Dizin right now. Can you check the journal's current TR Dizin status?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-trdizin. The user wants a live lookup of a journal's current TR Dizin index status, which alterlab-trdizin performs against the TR Dizin search API. alterlab-akademik-tesvik takes already-classified activities and scores them; it does not verify a journal's indexing status and has no network surface for it.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-trdizin" }
+      ]
+    }
+  ]
+}

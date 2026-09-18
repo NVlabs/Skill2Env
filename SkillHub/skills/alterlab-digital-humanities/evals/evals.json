@@ -1,0 +1,68 @@
+{
+  "skill": "alterlab-digital-humanities",
+  "evals": [
+    {
+      "id": "topic-model-corpus",
+      "prompt": "I have a corpus of about 4,000 nineteenth-century British novels and I want to discover the major thematic patterns across them and see how those themes rise and fall over the century.",
+      "expected_output": "Invokes alterlab-digital-humanities: applies topic modeling (LDA or BERTopic) following the corpus-prep -> preprocess -> feature extraction -> train -> coherence evaluation -> interpretation -> over-time analysis workflow, discusses choosing k via coherence scores and interpretability, and frames distant reading as a complement to close reading. Notes that topics show word co-occurrence, not meanings, and require human interpretation.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Recommends LDA or BERTopic, discusses selecting the number of topics, and frames the analysis as distant reading that still needs interpretive validation." }
+      ]
+    },
+    {
+      "id": "stylometry-authorship",
+      "prompt": "There's a disputed anonymous pamphlet from the 1790s and three candidate authors. Can you help me attribute it statistically from their known writings?",
+      "expected_output": "Invokes alterlab-digital-humanities stylometry/authorship attribution: uses function-word frequencies and the Burrows Delta method (via the R stylo package or PyDelta), warns about the minimum text length (2,000-5,000 words per sample) and genre contamination, and avoids circular reasoning. Computes Delta distances between the anonymous text and each candidate.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Delta" }
+      ]
+    },
+    {
+      "id": "tei-scholarly-edition",
+      "prompt": "I'm digitizing a collection of Mary Shelley's letters and want to encode them as a scholarly edition with proper markup for people, places, dates, and editorial notes.",
+      "expected_output": "Invokes alterlab-digital-humanities digital archives/editions: encodes the letters in TEI XML with a teiHeader (fileDesc, sourceDesc) and body markup using persName, placeName, date (@when), and note elements, and describes the components of a digital scholarly edition (transcription, encoding, apparatus, annotation, facsimile, stable identifiers). May reference Dublin Core for catalog-level metadata.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "TEI" }
+      ]
+    },
+    {
+      "id": "ocr-historical-newspapers",
+      "prompt": "I have scans of 18th-century newspapers with archaic typefaces and I need to turn them into searchable text for analysis. The default OCR is producing garbage.",
+      "expected_output": "Invokes alterlab-digital-humanities OCR workflow: recommends Kraken or Transkribus for historical/non-standard scripts, walks the image-prep (300-400 DPI, deskew, binarize) -> OCR -> post-processing -> quality-assessment pipeline, and stresses reporting Character/Word Error Rate (target CER < 5%). Notes garbage-in-garbage-out for downstream text mining.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Recommends a historical-text OCR engine (Kraken/Transkribus) and emphasizes measuring and reporting OCR error rate (CER/WER)." }
+      ]
+    },
+    {
+      "id": "correspondence-network",
+      "prompt": "I've extracted who wrote to whom from a Republic of Letters correspondence archive and I want to find the central figures and the community structure in that network.",
+      "expected_output": "Invokes alterlab-digital-humanities network analysis: builds an edge list (source, target, weight, date, type) from the correspondence, computes centrality measures and detects communities (Louvain/modularity) in Gephi, NetworkX, or igraph, and visualizes with an appropriate layout (ForceAtlas2). Frames it as a historical correspondence network.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Constructs a network edge list and computes centrality / community detection (e.g., Gephi, NetworkX, Louvain) on the historical correspondence data." }
+      ]
+    },
+    {
+      "id": "near-miss-social-science-methods",
+      "prompt": "I want to run a Fairclough critical discourse analysis of a set of university policy documents, focusing on how 'professionalism' encodes power and neoliberal governance.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-social-science-methods. Fairclough CDA (text/discursive-practice/social-practice analysis of power and ideology) is a social science discourse-analysis method, not a computational distant-reading or corpus/NLP task that this DH skill covers.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-social-science-methods" }
+      ]
+    },
+    {
+      "id": "near-miss-geopandas",
+      "prompt": "I have a shapefile of historical county boundaries and a CSV of population points. I need to spatially join the points into the polygons, reproject to a projected CRS, and compute population density per county.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-geopandas. This is a programmatic vector geospatial analysis task (sjoin, to_crs, area/density) in GeoPandas, not GIS-for-history georeferencing or humanities spatial-narrative mapping that this DH skill addresses.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-geopandas" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "skill_name": "numerical-integration",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm solving the Allen-Cahn equation with a stiff double-well potential. I have an analytic Jacobian. What integrator should I use?",
+      "expected_output": "Recommends IMEX scheme or Rosenbrock/BDF with diffusion implicit and reaction explicit.",
+      "assertions": [
+        "Uses integrator_selector.py with --stiff --jacobian-available --accuracy high",
+        "Recommends Rosenbrock, BDF, or IMEX-BDF2 as primary choice",
+        "Uses imex_split_planner.py to plan diffusion-implicit / reaction-explicit splitting",
+        "Notes that the double-well potential introduces stiffness requiring implicit treatment"
+      ],
+      "script_checks": [
+        {
+          "description": "integrator_selector recommends BDF/Radau/Rosenbrock for stiff problem with Jacobian and high accuracy",
+          "cmd": ["scripts/integrator_selector.py", "--stiff", "--jacobian-available", "--accuracy", "high", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.recommended.0", "op": "eq", "value": "BDF"},
+            {"path": "results.recommended.1", "op": "eq", "value": "Radau IIA"},
+            {"path": "results.recommended.2", "op": "eq", "value": "Rosenbrock"},
+            {"path": "results.recommended", "op": "contains", "value": "Rosenbrock"},
+            {"path": "results.alternatives", "op": "eq", "value": []},
+            {"path": "results.notes.0", "op": "eq", "value": "Tight tolerances required; expect smaller dt and higher cost."},
+            {"path": "inputs.stiff", "op": "eq", "value": true},
+            {"path": "inputs.jacobian_available", "op": "eq", "value": true}
+          ]
+        },
+        {
+          "description": "imex_split_planner puts diffusion implicit, reaction explicit with weak coupling",
+          "cmd": ["scripts/imex_split_planner.py", "--stiff-terms", "diffusion", "--nonstiff-terms", "reaction", "--coupling", "weak", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.implicit_terms.0", "op": "eq", "value": "diffusion"},
+            {"path": "results.explicit_terms.0", "op": "eq", "value": "reaction"},
+            {"path": "results.splitting_strategy", "op": "eq", "value": "lie"},
+            {"path": "results.recommended_integrator.0", "op": "eq", "value": "IMEX-ARK"},
+            {"path": "results.recommended_integrator.1", "op": "eq", "value": "SBDF (semi-implicit BDF)"},
+            {"path": "results.notes", "op": "contains", "value": "Lie splitting for efficiency."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "My adaptive RK45 solver keeps rejecting steps. Error norm is around 1.2 with dt=1e-3 and the method is order 4. What should the next dt be?",
+      "expected_output": "Step should be rejected and dt reduced based on the P or PI controller formula.",
+      "assertions": [
+        "Uses adaptive_step_controller.py with --dt 1e-3 --error-norm 1.2 --order 4",
+        "Reports step should be rejected since error norm > 1.0",
+        "Computes reduced dt_next using the controller formula",
+        "Suggests PI controller for smoother step-size adaptation"
+      ],
+      "script_checks": [
+        {
+          "description": "adaptive_step_controller rejects step (err 1.2 > 1.0) and shrinks dt with the P controller",
+          "cmd": ["scripts/adaptive_step_controller.py", "--dt", "1e-3", "--error-norm", "1.2", "--order", "4", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.accept", "op": "eq", "value": false},
+            {"path": "results.controller_used", "op": "eq", "value": "p"},
+            {"path": "results.factor", "op": "approx", "value": 0.8677732536023646, "rel_tol": 1e-9},
+            {"path": "results.factor", "op": "lt", "value": 1.0},
+            {"path": "results.dt_next", "op": "approx", "value": 0.0008677732536023645, "rel_tol": 1e-9},
+            {"path": "results.dt_next", "op": "lt", "value": 0.001},
+            {"path": "results.note", "op": "contains", "value": "Step rejected"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I'm using Strang splitting for a reaction-diffusion system with dt=1e-4 and the commutator norm between operators is about 50. Is my splitting error acceptable if I need 1e-6 accuracy?",
+      "expected_output": "Splitting error estimate and whether substeps are needed to meet the target.",
+      "assertions": [
+        "Uses splitting_error_estimator.py with --dt 1e-4 --scheme strang --commutator-norm 50 --target-error 1e-6",
+        "Reports estimated splitting error for Strang splitting (O(dt^2))",
+        "Evaluates whether the error meets the 1e-6 target",
+        "Recommends substeps or smaller dt if error exceeds target"
+      ],
+      "script_checks": [
+        {
+          "description": "splitting_error_estimator: Strang (order 2) error 5e-11 already meets 1e-6, no substeps needed",
+          "cmd": ["scripts/splitting_error_estimator.py", "--dt", "1e-4", "--scheme", "strang", "--commutator-norm", "50", "--target-error", "1e-6", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.scheme", "op": "eq", "value": "strang"},
+            {"path": "results.order", "op": "eq", "value": 2},
+            {"path": "results.error_estimate", "op": "approx", "value": 5.000000000000001e-11, "rel_tol": 1e-9},
+            {"path": "results.error_estimate", "op": "lt", "value": 1e-6},
+            {"path": "results.substeps", "op": "eq", "value": 1},
+            {"path": "results.dt_effective", "op": "approx", "value": 0.0001, "rel_tol": 1e-9}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "compute the scaled error norm for a step where the error vector is [0.01, 0.02] and the solution is [1.0, 2.0]. rtol=1e-3, atol=1e-6.",
+      "expected_output": "Scaled error norm computed using mixed relative/absolute tolerance formula.",
+      "assertions": [
+        "Uses error_norm.py with --error 0.01,0.02 --solution 1.0,2.0 --rtol 1e-3 --atol 1e-6",
+        "Computes error norm using scale = atol + rtol * |solution|",
+        "Reports whether the error norm is above or below 1.0",
+        "Explains that norm > 1.0 means step should be rejected"
+      ],
+      "script_checks": [
+        {
+          "description": "error_norm: scaled RMS norm ~9.99 (> 1.0 => reject) with scale = atol + rtol*|y|",
+          "cmd": ["scripts/error_norm.py", "--error", "0.01,0.02", "--solution", "1.0,2.0", "--rtol", "1e-3", "--atol", "1e-6", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.error_norm", "op": "approx", "value": 9.99250655617825, "rel_tol": 1e-9},
+            {"path": "results.error_norm", "op": "gt", "value": 1.0},
+            {"path": "results.max_component", "op": "approx", "value": 9.995002498750624, "rel_tol": 1e-9},
+            {"path": "results.scale_min", "op": "approx", "value": 0.001001, "rel_tol": 1e-9},
+            {"path": "results.scale_max", "op": "approx", "value": 0.002001, "rel_tol": 1e-9}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+# Generated tasks and private run state
+output/
+.skill2env/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+tmp/
+
+# OS
+.DS_Store

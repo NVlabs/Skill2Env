@@ -1,0 +1,3 @@
+Source files: dist/mermaid-b5860b54.js
+
+/*! js-yaml 4.1.0 https://github.com/nodeca/js-yaml @license MIT */

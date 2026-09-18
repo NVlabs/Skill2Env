@@ -1,0 +1,188 @@
+{
+  "skill_name": "differentiation-schemes",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to discretize a second derivative for a diffusion equation on a uniform grid. I want 4th-order accuracy. What stencil should I use?",
+      "expected_output": "5-point central difference stencil with coefficients [-1/12, 4/3, -5/2, 4/3, -1/12] / dx^2.",
+      "assertions": [
+        "Uses stencil_generator.py with --order 2 --accuracy 4 --scheme central",
+        "Returns 5-point stencil with correct coefficients [-1/12, 4/3, -5/2, 4/3, -1/12]",
+        "Notes this is divided by dx^2",
+        "Mentions boundary stencils will need separate one-sided treatment"
+      ],
+      "script_checks": [
+        {
+          "description": "4th-order central 2nd-derivative stencil",
+          "cmd": [
+            "scripts/stencil_generator.py",
+            "--order",
+            "2",
+            "--accuracy",
+            "4",
+            "--scheme",
+            "central",
+            "--json"
+          ],
+          "assert": [
+            {
+              "path": "results.accuracy",
+              "op": "eq",
+              "value": 4
+            },
+            {
+              "path": "results.coefficients.2",
+              "op": "approx",
+              "value": -2.5,
+              "rel_tol": 1e-09
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "my solution is too diffusive. i'm using first-order upwind for advection with dx=0.005m. the flow is smooth and subsonic. any better options?",
+      "expected_output": "Recommends switching to central or higher-order scheme since flow is smooth.",
+      "assertions": [
+        "Uses scheme_selector.py with --smooth and --order 1 flags",
+        "Identifies first-order upwind as excessively diffusive for smooth flows",
+        "Recommends central differences or higher-order upwind (2nd or 4th order)",
+        "Suggests using truncation_error.py to quantify the error improvement"
+      ],
+      "script_checks": [
+        {
+          "description": "Smooth subsonic advection: recommend central FD over diffusive upwind",
+          "cmd": [
+            "scripts/scheme_selector.py",
+            "--smooth",
+            "--order",
+            "1",
+            "--accuracy",
+            "2",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.recommended.0",
+              "op": "eq",
+              "value": "Central FD"
+            },
+            {
+              "path": "results.recommended",
+              "op": "contains",
+              "value": "Central FD"
+            },
+            {
+              "path": "results.alternatives.0",
+              "op": "eq",
+              "value": "Higher-order upwind (2nd/4th)"
+            },
+            {
+              "path": "results.notes.0",
+              "op": "contains",
+              "value": "truncation_error.py"
+            },
+            {
+              "path": "inputs.smooth",
+              "op": "eq",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "What is the truncation error for a standard 2nd-order central difference approximation of the first derivative when dx=0.001?",
+      "expected_output": "Truncation error scales as O(dx^2) = O(1e-6) for the given grid spacing.",
+      "assertions": [
+        "Uses truncation_error.py with --dx 0.001 --accuracy 2",
+        "Reports error scaling as O(dx^2)",
+        "Computes approximate error magnitude around 1e-6",
+        "Explains that halving dx would reduce error by factor of 4"
+      ],
+      "script_checks": [
+        {
+          "description": "2nd-order central difference truncation error at dx=0.001",
+          "cmd": [
+            "scripts/truncation_error.py",
+            "--dx",
+            "0.001",
+            "--accuracy",
+            "2",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.error_scale",
+              "op": "approx",
+              "value": 1e-06,
+              "rel_tol": 1e-09
+            },
+            {
+              "path": "results.order",
+              "op": "eq",
+              "value": 2
+            },
+            {
+              "path": "results.reduction_if_halved",
+              "op": "eq",
+              "value": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I'm simulating shock propagation in a metal rod. The solution has sharp discontinuities. Which differentiation scheme should I use for the spatial derivatives and why?",
+      "expected_output": "Recommends upwind, TVD, or WENO schemes for discontinuous solutions.",
+      "assertions": [
+        "Uses scheme_selector.py indicating non-smooth solution with discontinuities",
+        "Recommends upwind-biased, TVD, or WENO schemes",
+        "Explains that central differences produce spurious oscillations at shocks",
+        "Notes that limiters or shock-capturing methods are essential for discontinuities"
+      ],
+      "script_checks": [
+        {
+          "description": "Shock with discontinuities: recommend FV with limiter/WENO, avoid central FD",
+          "cmd": [
+            "scripts/scheme_selector.py",
+            "--discontinuous",
+            "--order",
+            "1",
+            "--accuracy",
+            "2",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.recommended.0",
+              "op": "eq",
+              "value": "Finite Volume (FV) with limiter/WENO"
+            },
+            {
+              "path": "results.alternatives",
+              "op": "contains",
+              "value": "Upwind FD (low order)"
+            },
+            {
+              "path": "results.notes.0",
+              "op": "contains",
+              "value": "Avoid high-order central FD"
+            },
+            {
+              "path": "inputs.discontinuous",
+              "op": "eq",
+              "value": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

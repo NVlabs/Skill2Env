@@ -1,0 +1,77 @@
+{
+  "skill": "alterlab-geopandas",
+  "evals": [
+    {
+      "id": "spatial-join-aggregate",
+      "prompt": "I have a GeoJSON of census tract polygons and a shapefile of geotagged incident points. I need to count how many incidents fall within each tract and attach that count back to the polygons.",
+      "expected_output": "Invokes alterlab-geopandas: reads both layers with gpd.read_file, ensures matching CRS, runs gpd.sjoin with predicate 'within' to assign points to tracts, aggregates by the polygon index (groupby/size), and merges the counts back onto the tract GeoDataFrame. Warns to match CRS before the join.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "sjoin" }
+      ]
+    },
+    {
+      "id": "reproject-area-calc",
+      "prompt": "My country boundaries are in EPSG:4326 and I'm getting nonsense when I compute polygon areas in square meters. How do I fix this in GeoPandas?",
+      "expected_output": "Invokes alterlab-geopandas: explains that area must be computed in a projected CRS, reprojects with to_crs to a metric/projected EPSG (e.g., 3857 or a regional UTM/equal-area CRS), then computes geometry.area. Reinforces the best practice of using a projected CRS for area and distance calculations.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "CRS" }
+      ]
+    },
+    {
+      "id": "buffer-overlay",
+      "prompt": "I want to find all the buildings within 100 meters of a river and clip them to the floodplain polygon, working from two GeoPackage layers.",
+      "expected_output": "Invokes alterlab-geopandas: reads the layers, confirms a projected CRS so the 100 m buffer is meaningful, buffers the river geometry by 100, uses a spatial predicate or gpd.overlay/clip to select intersecting buildings, and clips to the floodplain. Mentions copying geometry before modifying and validating geometries.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses buffer plus an overlay/clip or spatial predicate in GeoPandas, with awareness that buffer distances require a projected CRS." }
+      ]
+    },
+    {
+      "id": "choropleth-export",
+      "prompt": "I have a GeoDataFrame of regions with a population column and I want a choropleth map plus an interactive HTML version I can share, then save the result as a GeoPackage.",
+      "expected_output": "Invokes alterlab-geopandas visualization/IO: renders a choropleth with gdf.plot(column='population', cmap=..., legend=True), produces an interactive map with gdf.explore(...).save('map.html'), and writes the data with gdf.to_file('...gpkg') (optionally use_arrow=True). Recommends GeoPackage over Shapefile.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Produces a choropleth (gdf.plot with column/cmap) and an interactive gdf.explore map, and writes to GeoPackage." }
+      ]
+    },
+    {
+      "id": "postgis-read",
+      "prompt": "Pull my parcels layer out of a PostGIS database, reproject it to match my roads shapefile, and find parcels within 50 meters of a road.",
+      "expected_output": "Invokes alterlab-geopandas: reads from PostGIS with gpd.read_postgis (geom_col), reprojects with to_crs to match the roads CRS, and computes proximity using geometry.distance against the unioned roads (or sjoin_nearest with max_distance). References the psycopg2/geoalchemy2 PostGIS dependencies.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "PostGIS" }
+      ]
+    },
+    {
+      "id": "near-miss-digital-humanities",
+      "prompt": "I want to georeference a scanned 1890 city map by placing ground control points against a modern basemap in QGIS, then overlay it to study neighborhood change.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-digital-humanities (GIS for historical research). Georeferencing a historical raster map with GCPs in QGIS for spatial-history interpretation is a humanities GIS workflow, not programmatic vector analysis with the GeoPandas library.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-digital-humanities" }
+      ]
+    },
+    {
+      "id": "near-miss-social-science-methods",
+      "prompt": "I have a relational dataset of who collaborates with whom among researchers and I want to compute betweenness and eigenvector centrality and detect which actors bridge communities.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-social-science-methods (social network analysis). The data is a non-spatial relational/social network, and the measures are SNA centralities, not geospatial geometry operations that GeoPandas handles.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-social-science-methods" }
+      ]
+    },
+    {
+      "id": "near-miss-geomaster-raster",
+      "prompt": "I have a stack of Sentinel-2 satellite scenes and I want to compute NDVI per pixel, classify land cover, and mosaic the rasters into a single cloud-optimized GeoTIFF.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-geomaster (remote sensing / raster). NDVI, per-pixel classification, and raster mosaicking are raster/earth-observation operations on satellite imagery, not the tabular vector geometry work (sjoin, buffer, overlay, choropleth) that GeoPandas handles.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-geomaster" }
+      ]
+    }
+  ]
+}

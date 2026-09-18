@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-metabolomics-wb",
+  "evals": [
+    {
+      "id": "refmet-standardize-and-find-studies",
+      "prompt": "Standardize the metabolite name 'citrate' to RefMet nomenclature and then find all Metabolomics Workbench studies that measured it.",
+      "expected_output": "Invokes alterlab-metabolomics-wb to first call the RefMet match endpoint (rest/refmet/match/citrate/name/json) to standardize the name, then query the study endpoint by refmet_name (rest/study/refmet_name/.../summary/json) to list studies measuring that metabolite.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "RefMet" }
+      ]
+    },
+    {
+      "id": "moverz-mass-search",
+      "prompt": "I have a precursor ion at m/z 635.52 from positive-mode LC-MS. Search the Metabolomics Workbench for candidate compounds assuming an M+H adduct with 0.5 Da tolerance.",
+      "expected_output": "Invokes alterlab-metabolomics-wb to use the moverz endpoint (rest/moverz/MB/635.52/M+H/0.5/json) to return candidate compounds matching the m/z within tolerance for the specified adduct, optionally across MB/LIPIDS/REFMET databases.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "m/z" }
+      ]
+    },
+    {
+      "id": "study-data-retrieval",
+      "prompt": "Pull the study summary and the full experimental data for Metabolomics Workbench study ST000001.",
+      "expected_output": "Invokes alterlab-metabolomics-wb to query the study context by study_id (rest/study/study_id/ST000001/summary/json and .../data/json), returning the study metadata and experimental dataset, optionally as mwTab.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Retrieves study metadata and experimental data for the given ST-numbered study from the Metabolomics Workbench REST API." }
+      ]
+    },
+    {
+      "id": "metstat-disease-platform-filter",
+      "prompt": "Find human blood metabolomics studies on diabetes that used LC-MS in positive mode with HILIC chromatography in the Metabolomics Workbench.",
+      "expected_output": "Invokes alterlab-metabolomics-wb to use the MetStat context with a semicolon-delimited filter (rest/metstat/LCMS;POSITIVE;HILIC;Human;Blood;Diabetes/json) to return matching studies by analytical method, polarity, chromatography, species, sample source, and disease.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "MetStat" }
+      ]
+    },
+    {
+      "id": "near-miss-hmdb",
+      "prompt": "Give me the full HMDB record for L-tyrosine: its normal and abnormal concentrations in human blood and urine, associated diseases, and biofluid locations.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-hmdb. The user wants curated human-metabolome reference data (physiological concentrations, biofluid locations, disease associations) from HMDB, not public study datasets or RefMet/m-z searches from the Metabolomics Workbench.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-hmdb" }
+      ]
+    },
+    {
+      "id": "near-miss-pubchem",
+      "prompt": "Look up the canonical SMILES, molecular weight, and computed XLogP for PubChem CID 5281365.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pubchem. The user wants chemical structure and computed physicochemical properties for a PubChem compound, which is PubChem's domain, not metabolomics study/RefMet data from the Metabolomics Workbench.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pubchem" }
+      ]
+    }
+  ]
+}

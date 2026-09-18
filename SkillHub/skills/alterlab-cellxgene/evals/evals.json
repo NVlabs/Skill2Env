@@ -1,0 +1,63 @@
+{
+  "skill": "alterlab-cellxgene",
+  "evals": [
+    {
+      "id": "query-marker-genes-by-celltype",
+      "prompt": "From the CZ CELLxGENE Census, pull human T cells and B cells but only the expression of CD4, CD8A, and CD19, and return it as an AnnData I can work with. Make sure I'm not double-counting cells.",
+      "expected_output": "Invokes alterlab-cellxgene: opens the census with cellxgene_census.open_soma(), calls get_anndata with organism='Homo sapiens', a var_value_filter on feature_name for the three genes, and an obs_value_filter on cell_type that includes is_primary_data == True to avoid duplicates.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "is_primary_data" },
+        { "type": "behavior", "value": "Uses cellxgene_census.get_anndata with var_value_filter on feature_name and an obs_value_filter, and includes is_primary_data == True." }
+      ]
+    },
+    {
+      "id": "explore-cell-types-in-tissue",
+      "prompt": "Before I download anything, I just want to know what cell types are available in human brain in the Census and roughly how many cells of each. What's the lightweight way to check?",
+      "expected_output": "Invokes alterlab-cellxgene: uses the explore-then-query pattern with cellxgene_census.get_obs (not get_anndata) on tissue_general == 'brain' and is_primary_data == True, selecting only column_names=['cell_type'] and doing value_counts to summarize without loading expression.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "get_obs" },
+        { "type": "behavior", "value": "Queries metadata only via get_obs and value_counts before any expression download, filtering for primary data." }
+      ]
+    },
+    {
+      "id": "out-of-core-large-query",
+      "prompt": "I need mean expression of FOXP2, TBR1, and SATB2 across every primary brain cell in the Census, but that's way more cells than my 48 GB machine can hold. How do I compute it without loading everything into memory?",
+      "expected_output": "Invokes alterlab-cellxgene: uses out-of-core processing via axis_query() with soma.AxisQuery obs/var filters, iterates query.X('raw').tables() in batches accumulating sum and count incrementally to compute the mean, rather than get_anndata.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "axis_query" },
+        { "type": "behavior", "value": "Recommends out-of-core iteration over X tables/batches instead of loading the full query into an AnnData." }
+      ]
+    },
+    {
+      "id": "reproducible-census-version",
+      "prompt": "I'm writing the methods section of a paper that uses Census data. How do I make sure my exact same query is reproducible months from now when the Census has been updated?",
+      "expected_output": "Invokes alterlab-cellxgene: advises pinning the release by passing census_version (e.g. open_soma(census_version='2023-07-25')) so the analysis is reproducible across Census updates, and recording that version in the methods.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "census_version" },
+        { "type": "behavior", "value": "Recommends explicitly pinning census_version for reproducibility rather than relying on the default 'stable' release." }
+      ]
+    },
+    {
+      "id": "near-miss-scanpy",
+      "prompt": "I already loaded a lung dataset into an AnnData object. Normalize it, find highly variable genes, run PCA and UMAP, and cluster it with Leiden so I can see the cell populations.",
+      "expected_output": "Should NOT trigger alterlab-cellxgene. This is downstream single-cell analysis (normalize, HVG, PCA, UMAP, Leiden) on an already-loaded dataset, which is alterlab-scanpy territory. cellxgene-census is for pulling reference data from the public atlas and defers analysis of your own dataset to scanpy.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "scanpy" }
+      ]
+    },
+    {
+      "id": "near-miss-anndata",
+      "prompt": "I have three local .h5ad files on disk and I want to concatenate them along the cells axis with an inner join on genes and a batch label. No public data involved.",
+      "expected_output": "Should NOT trigger alterlab-cellxgene. Concatenating local .h5ad files with ad.concat (axis, join, label) is alterlab-anndata's data-format territory. cellxgene-census is specifically for querying the public CZ CELLxGENE Census, not wrangling local files.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "anndata" }
+      ]
+    }
+  ]
+}

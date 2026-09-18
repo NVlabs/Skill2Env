@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-zinc-db",
+  "evals": [
+    {
+      "id": "docking-library-subset",
+      "prompt": "I'm setting up a molecular docking screen and need a library of ~10,000 random purchasable drug-like compounds from ZINC22, with their ZINC IDs, SMILES, and tranche data.",
+      "expected_output": "Invokes alterlab-zinc-db. Uses the CartBlanche22 random endpoint (substance/random) with subset=drug-like and output_fields=zinc_id,smiles,tranche to assemble a docking library, and explains the tranche encoding (H-count, LogP, MW) for filtering.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "tranche" }
+      ]
+    },
+    {
+      "id": "purchasable-analogs",
+      "prompt": "Here's the SMILES of a hit compound. Find me purchasable analogs in ZINC within a Tanimoto distance of 5, with their supplier catalogs.",
+      "expected_output": "Invokes alterlab-zinc-db. Runs a CartBlanche22 SMILES search (smiles.txt) with dist=5 and output_fields including zinc_id, smiles, and catalogs to find purchasable analogs of the hit and report which vendors offer them.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Runs a ZINC SMILES similarity search with a distance threshold and returns purchasable analogs with supplier/catalog info." }
+      ]
+    },
+    {
+      "id": "batch-zinc-id-lookup",
+      "prompt": "I have a list of ZINC IDs from a previous screen. Pull their SMILES, supplier codes, and catalogs from ZINC22 in one batch query.",
+      "expected_output": "Invokes alterlab-zinc-db. Uses the CartBlanche22 substances endpoint with a comma-separated list of zinc_id values and output_fields=zinc_id,smiles,supplier_code,catalogs to batch-retrieve the compounds.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ZINC" }
+      ]
+    },
+    {
+      "id": "download-3d-structures",
+      "prompt": "I need docking-ready 3D structures (MOL2 or DB2) for a set of ZINC compounds. Where do I get them and how are they organized?",
+      "expected_output": "Invokes alterlab-zinc-db. Points to the ZINC file repository (files.docking.org/zinc22/), explains structures are organized by tranche and available as MOL2/SDF/DB2.GZ for docking (e.g., DOCK), and suggests parallel download tools for bulk retrieval.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "MOL2" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-pubchem",
+      "prompt": "Give me the molecular weight, XLogP, TPSA, IUPAC name, and InChIKey for ibuprofen, and run a Tanimoto similarity search across all of PubChem.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pubchem. The user wants computed physicochemical properties and a similarity search over PubChem's full 110M-compound database, which is PubChem's PUG-REST territory, not ZINC's purchasable-compound and docking-library focus.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pubchem" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-pdb",
+      "prompt": "I need the experimental crystal structure of a protein-ligand complex, with the PDB coordinates and resolution, to set up my docking grid.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pdb. The user wants an experimentally determined macromolecular structure (protein-ligand complex coordinates, resolution) from the PDB, not ZINC's purchasable small-molecule library or ligand 3D conformers.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pdb" }
+      ]
+    }
+  ]
+}

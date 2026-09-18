@@ -1,0 +1,6 @@
+{
+  "dt": 1e-4,
+  "steps": 500,
+  "mesh": 32,
+  "output": "result.json"
+}

@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "skill2env"
+version = "0.3.0"
+description = "Synthesize host-validated Harbor terminal-agent tasks from Agent Skills"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "harbor==0.16.0",
+    "PyYAML>=6.0",
+    "rich>=13.9",
+]
+
+[project.scripts]
+skill2env = "skill2env.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["skill2env*"]
+
+[tool.setuptools.package-data]
+skill2env = ["generator.Dockerfile"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

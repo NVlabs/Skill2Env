@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-yokatlas",
+  "evals": [
+    {
+      "id": "taban-puan-basari-sirasi-turkish",
+      "prompt": "YÖK Atlas'tan Boğaziçi Üniversitesi Bilgisayar Mühendisliği programının son yıllara ait taban puanını ve başarı sırasını çıkarır mısın? SAY puan türü.",
+      "expected_output": "Invokes alterlab-yokatlas: runs scripts/yokatlas_lookup.py search with --puan-turu SAY --universite \"boğaziçi\" --program \"bilgisayar\" through the keyless yokatlas-py wrapper, reads the JSON envelope, and reports the program's min_puan (taban puan) and basari_sirasi (başarı sırası) for each available year, naming the year and the SAY score type. Does not fabricate the numbers from memory; states they come from YÖK Atlas.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Reports taban puan (min_puan) and başarı sırası (basari_sirasi) per year for a real program via the yokatlas-py wrapper, naming the data year and that figures are from YÖK Atlas rather than inventing them." }
+      ]
+    },
+    {
+      "id": "kontenjan-yerlesen-benchmark",
+      "prompt": "Compare the kontenjan and number of placed students for all Tıp (medicine) programs at state universities so I can benchmark fill rates. Pull it from YÖK Atlas.",
+      "expected_output": "Invokes alterlab-yokatlas in program-benchmarking mode: runs scripts/yokatlas_lookup.py search with --program \"tıp\" --universite-turu DEVLET, then tabulates kontenjan (quota) vs yerlesen (placed) per program for the latest available year and notes the fill rate. Uses the keyless JSON API via yokatlas-py; reports the data year.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "kontenjan" }
+      ]
+    },
+    {
+      "id": "program-staff-counts",
+      "prompt": "For the Hacettepe Elektrik-Elektronik Mühendisliği program, how many professors versus research assistants (araştırma görevlisi) are on staff? I need the academic-staff breakdown from YÖK Atlas.",
+      "expected_output": "Invokes alterlab-yokatlas: locates the program via scripts/yokatlas_lookup.py (search to find the kılavuz kodu, then program --kod), and reports the per-title academic-staff counts prof (profesör), doc (doçent), dou (doktor öğretim üyesi), ogr_gor (öğretim görevlisi), and ar_gor (araştırma görevlisi) from the returned statistics. Notes that v0.6.0 does not provide demographic breakdowns.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Reports the academic-staff title counts (prof/doc/dou/ogr_gor/ar_gor) for a real program from YÖK Atlas, and does not promise demographic (gender / high-school) breakdowns that v0.6.0 dropped." }
+      ]
+    },
+    {
+      "id": "near-miss-yok-akademik-profile",
+      "prompt": "Can you find Prof. Dr. Ayşe Yılmaz's official current university affiliation and her list of supervised PhD theses and recent publications from YÖK?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-yok-akademik. The user wants an individual academic's CV — official affiliation, supervised theses, and publications — from the YÖK Akademik profile system (akademik.yok.gov.tr), not program-level admission statistics. alterlab-yokatlas only returns YÖK Atlas program/university quota, score, and staff-count statistics and has no per-person CV data.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-yok-akademik" }
+      ]
+    },
+    {
+      "id": "near-miss-yok-tez-thesis",
+      "prompt": "Bir öğrencimin tez konusunu onaylamadan önce, aynı konuda daha önce yazılmış yüksek lisans ve doktora tezleri var mı diye Ulusal Tez Merkezi'nde özgünlük taraması yapar mısın?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-yok-tez. The user wants a thesis originality/novelty search in YÖK Ulusal Tez Merkezi (tez.yok.gov.tr) — graduate theses by topic — not university admission statistics. alterlab-yokatlas covers YÖK Atlas program/quota/score statistics only and does not search theses.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-yok-tez" }
+      ]
+    },
+    {
+      "id": "near-miss-docentlik-eligibility",
+      "prompt": "Here is my publication list. Can you compute whether I have enough points to apply for doçentlik in my field this period?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-docentlik-eligibility. The user wants an associate-professorship (doçentlik) points computation against the ÜAK per-field criteria, not YÖK Atlas program statistics. alterlab-yokatlas only retrieves university/program admission and staff statistics and computes no eligibility scores.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-docentlik-eligibility" }
+      ]
+    }
+  ]
+}

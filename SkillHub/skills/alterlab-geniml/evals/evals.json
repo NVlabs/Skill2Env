@@ -1,0 +1,57 @@
+{
+  "skill": "alterlab-geniml",
+  "evals": [
+    {
+      "id": "region2vec-embedding-pipeline",
+      "prompt": "I have a folder of ChIP-seq BED files and a universe.bed reference. I want to tokenize them and train Region2Vec embeddings (100 dimensions) so I can compare region sets across experiments. How do I do this with geniml?",
+      "expected_output": "Triggers the geniml skill. Walks through hard tokenization against the universe, then region2vec training with embedding_dim=100 and num_shufflings, producing region embeddings. Should use the real import paths (geniml.tokenization.main.hard_tokenization_main and geniml.region2vec.main_legacy.region2vec) and treat the overlap parameter as a fraction, not a p-value.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "Region2Vec"},
+        {"type": "output_contains", "value": "tokeniz"},
+        {"type": "behavior", "value": "Describes the tokenization-then-train pipeline using a universe reference and sets the embedding dimension, rather than generic word2vec advice."}
+      ]
+    },
+    {
+      "id": "scembed-scatac-clustering",
+      "prompt": "I have a scATAC-seq AnnData (.h5ad) with peak coordinates. I want to learn cell embeddings, then cluster the cells with Leiden and visualize with UMAP in scanpy. Can geniml do this?",
+      "expected_output": "Triggers the geniml skill. Uses scEmbed: build an ScEmbed model with a gtars Tokenizer over a universe, train on a Region2VecDataset, write embeddings into adata.obsm, then run sc.pp.neighbors / sc.tl.leiden / sc.tl.umap. Should use the real import path geniml.scembed.main.ScEmbed and scanpy integration.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "scEmbed"},
+        {"type": "output_contains", "value": "scanpy"},
+        {"type": "behavior", "value": "Routes single-cell ATAC-seq embedding through scEmbed and integrates the resulting embeddings into a scanpy clustering/UMAP workflow via adata.obsm."}
+      ]
+    },
+    {
+      "id": "build-consensus-universe-cc",
+      "prompt": "I have a collection of ATAC-seq BED files and want to build a consensus peak set to use as a tokenization reference. I'd like to use a simple coverage-cutoff method. What's the geniml workflow?",
+      "expected_output": "Triggers the geniml skill. Combines BED files, generates coverage tracks (e.g. uniwig), then builds a universe with the CC (Coverage Cutoff) method via `geniml build-universe cc` with cutoff/merge/filter-size parameters, and optionally evaluates universe quality. Should name the universe-building methods (CC/CCF/ML/HMM).",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "universe"},
+        {"type": "output_contains", "value": "cutoff"},
+        {"type": "behavior", "value": "Builds a consensus universe with the coverage-cutoff (CC) method as a tokenization reference, referencing the `geniml build-universe cc` workflow and parameters."}
+      ]
+    },
+    {
+      "id": "bedspace-metadata-query",
+      "prompt": "I have region sets plus metadata labels (cell types and tissues) and want a joint embedding so I can query regions by label and labels by region. Which geniml tool and what's the workflow?",
+      "expected_output": "Triggers the geniml skill. Recommends BEDspace (StarSpace-based joint region+metadata embeddings): preprocess regions and metadata against a universe, train the model, compute distances, then run region->label and label->region searches (e.g. geniml bedspace search -t r2l). Should reference BEDspace.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "BEDspace"},
+        {"type": "behavior", "value": "Selects BEDspace for joint region/metadata embeddings and describes cross-modal label<->region querying, not plain Region2Vec."}
+      ]
+    },
+    {
+      "id": "near-miss-gtars-bed-overlap",
+      "prompt": "I just need to compute fast pairwise overlaps and intersections between two large BED files and get the count of overlapping intervals. No machine learning, no embeddings.",
+      "expected_output": "Should NOT trigger the geniml skill. This is raw genomic interval set arithmetic (overlap/intersection counting) with no ML or embedding component, which belongs to the gtars genomic tools/utilities skill rather than geniml's region-embedding ML. Defer to gtars.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "gtars"}
+      ]
+    }
+  ]
+}

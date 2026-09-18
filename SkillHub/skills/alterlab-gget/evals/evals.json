@@ -1,0 +1,54 @@
+{
+  "skill": "alterlab-gget",
+  "evals": [
+    {
+      "id": "gene-info-lookup",
+      "prompt": "Quick lookup: for the Ensembl IDs ENSG00000034713 and ENSG00000104853, can you pull the UniProt ID, primary gene name, and a short description from the terminal? I just want a one-liner, not a pipeline.",
+      "expected_output": "Triggers the gget skill. Should use gget info (e.g. `gget info ENSG00000034713 ENSG00000104853`) to pull cross-referenced Ensembl/UniProt/NCBI metadata. May mention the -pdb flag or Python `gget.info([...])`. This is the canonical quick interactive lookup gget is for.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "gget info"},
+        {"type": "behavior", "value": "Uses gget info to return UniProt ID, gene name, and description for the supplied Ensembl IDs."}
+      ]
+    },
+    {
+      "id": "enrichr-enrichment",
+      "prompt": "I have a short gene list — ACE2, AGT, AGTR1 — and I want a quick GO biological process enrichment without setting up a whole environment. Can you run it from the command line?",
+      "expected_output": "Triggers the gget skill. Should use gget enrichr with an ontology database (e.g. `gget enrichr -db ontology ACE2 AGT AGTR1`, where 'ontology' shortcuts to GO_Biological_Process). May mention the plot option in Python or other database shortcuts (pathway, transcription).",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "enrichr"},
+        {"type": "behavior", "value": "Calls gget enrichr with the ontology/GO Biological Process database on the three-gene list."}
+      ]
+    },
+    {
+      "id": "alphafold-structure-predict",
+      "prompt": "I have a single protein amino-acid sequence and no experimental structure. Can I get a quick predicted 3D structure for it from the terminal using gget, and what setup do I need first?",
+      "expected_output": "Triggers the gget skill. Should use gget alphafold, and note the one-time setup: `uv pip install openmm` then `gget setup alphafold` (downloads ~4GB of parameters). May suggest checking gget pdb first for an existing experimental structure, and mention multimer_recycles / relax options.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "gget alphafold"},
+        {"type": "behavior", "value": "Mentions the required gget setup alphafold step (and openmm) before predicting the structure."}
+      ]
+    },
+    {
+      "id": "ref-download-ensembl",
+      "prompt": "I need the GTF annotation and cDNA FASTA for mouse from Ensembl to build a kallisto index. What's the fastest way to grab the download links or the files themselves?",
+      "expected_output": "Triggers the gget skill. Should use gget ref to retrieve Ensembl reference links/files (e.g. `gget ref -w gtf,cdna -d mouse`), passing the file types to -w/--which as a comma-separated list and using the -d/--download flag. May mention listing species with --list_species or specifying a release with -r.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "gget ref"},
+        {"type": "behavior", "value": "Uses gget ref with --which (comma-separated gtf,cdna) and --download to fetch the mouse Ensembl reference files."}
+      ]
+    },
+    {
+      "id": "near-miss-biopython",
+      "prompt": "I have a directory of 500 GenBank files and I need a reusable Python pipeline that parses each one, extracts CDS features, translates them, and writes per-gene FASTA files with custom headers and error handling.",
+      "expected_output": "Should NOT trigger the gget skill. gget is for fast one-liner database lookups, not for batch-processing local sequence files into a custom scripted pipeline. Parsing GenBank, extracting CDS features, and translating belongs to the biopython skill (Bio.SeqIO, SeqFeature, Seq.translate). The response should defer to biopython rather than reach for a gget module.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "biopython"}
+      ]
+    }
+  ]
+}

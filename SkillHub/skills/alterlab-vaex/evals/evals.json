@@ -1,0 +1,63 @@
+{
+  "skill": "alterlab-vaex",
+  "evals": [
+    {
+      "id": "out-of-core-aggregations-single-machine",
+      "prompt": "I have a single 300 GB HDF5 file of tabular sensor readings on one workstation with 48 GB of RAM. I want fast groupby aggregations and overall statistics without loading it all into memory, and no cluster to set up.",
+      "expected_output": "Invokes alterlab-vaex for out-of-core single-machine analytics: vaex.open on the HDF5 file (memory-mapped, instant), df.describe()/df.x.mean() and df.groupby(...).agg(...) computed lazily over the full dataset without loading into RAM. Leverages lazy evaluation and stays on one machine with no cluster.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "vaex.open" },
+        { "type": "behavior", "value": "Uses vaex.open and lazy out-of-core aggregations on a single machine, without loading the dataset into RAM or invoking a cluster." }
+      ]
+    },
+    {
+      "id": "virtual-columns-feature-engineering",
+      "prompt": "My billion-row Vaex DataFrame is already near my memory limit. I need to add several engineered columns (age squared, a full-name concatenation, an is_adult flag) without blowing up memory by materializing copies.",
+      "expected_output": "Invokes alterlab-vaex using virtual columns: assigns df['age_squared'] = df.age ** 2, df['full_name'] = df.first_name + ' ' + df.last_name, df['is_adult'] = df.age >= 18 as lazily-evaluated expressions computed on the fly with no memory overhead, rather than materializing new arrays.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "virtual column" },
+        { "type": "behavior", "value": "Adds engineered columns as Vaex virtual columns (lazy expressions) instead of materializing data, to avoid memory overhead." }
+      ]
+    },
+    {
+      "id": "csv-to-hdf5-conversion-bigdata-viz",
+      "prompt": "I keep re-reading a huge multi-gigabyte CSV and it's painfully slow, and I also want a density heatmap of two columns across the whole billion-row dataset. What's the efficient workflow?",
+      "expected_output": "Invokes alterlab-vaex for I/O and big-data visualization: convert the slow CSV once via vaex.from_csv then export_hdf5 so future vaex.open loads are near-instant, and produce a 2D density heatmap with df.plot(df.x, df.y, limits='99.7%') over the full dataset. Recommends HDF5/Arrow over CSV for repeated access.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "export_hdf5" },
+        { "type": "behavior", "value": "Recommends converting CSV to HDF5 (or Arrow) for fast repeated access and uses Vaex's built-in heatmap/2D plotting for the big-data visualization." }
+      ]
+    },
+    {
+      "id": "batched-delayed-aggregations",
+      "prompt": "I want to compute the mean of one column, the std of another, and the sum of a third over my huge Vaex DataFrame, but I'd rather not pass over the data three separate times. Can these run in a single scan?",
+      "expected_output": "Invokes alterlab-vaex for batched lazy aggregations: requests each statistic with delay=True (df.mean(df.x, delay=True), df.std(df.y, delay=True), df.sum(df.z, delay=True)), calls df.execute() once to run them in a single pass, then collects each result with .get() rather than scanning the data three times.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "delay=True" },
+        { "type": "behavior", "value": "Batches the multiple aggregations with delay=True and triggers a single pass with df.execute(), retrieving each result via .get(), so they share one scan over the data." }
+      ]
+    },
+    {
+      "id": "near-miss-dask",
+      "prompt": "My dataset is 10 TB across hundreds of Parquet files and I need to distribute the processing across a multi-node cluster with a monitoring dashboard and custom parallel task dependencies.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-dask. The user needs distributed multi-machine cluster execution with a scheduling dashboard and custom task-graph dependencies, which is Dask's distributed model, whereas Vaex is single-machine out-of-core.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-dask" }
+      ]
+    },
+    {
+      "id": "near-miss-polars",
+      "prompt": "I have a 4 GB Parquet file that fits easily in my 48 GB RAM and I just want the fastest in-memory groupby and joins with a modern lazy query API. No out-of-core needed.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-polars. The data fits in memory and the user explicitly wants maximum in-memory speed with a modern DataFrame/lazy-query API and no out-of-core processing, which is polars' niche rather than Vaex's out-of-core focus.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-polars" }
+      ]
+    }
+  ]
+}

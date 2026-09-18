@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Miner"
+  short_description: "Mine agent history for reusable skill candidates."
+  default_prompt: "Scan my coding-agent history and find repeated workflows that should become skills."

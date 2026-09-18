@@ -1,0 +1,64 @@
+{
+  "skill": "alterlab-string-db",
+  "evals": [
+    {
+      "id": "ppi-network-from-list",
+      "prompt": "I have a list of DNA-damage-response proteins (TP53, BRCA1, ATM, CHEK2, MDM2, ATR, BRCA2). Build the high-confidence protein-protein interaction network for them in human.",
+      "expected_output": "Triggers the STRING skill. Maps the gene names to STRING IDs with string_map_ids(species=9606), then retrieves the network with string_network(gene_list, species=9606, required_score=700) for high confidence, returning interaction pairs with combined and per-channel evidence scores. Notes mapping identifiers first and that 700 corresponds to the high-confidence threshold.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "required_score=700" },
+        { "type": "behavior", "value": "Maps gene names to STRING IDs first, then calls string_network with required_score=700 for the human (9606) network." },
+        { "type": "behavior", "value": "Returns interaction pairs with confidence/evidence-channel scores." }
+      ]
+    },
+    {
+      "id": "functional-enrichment",
+      "prompt": "Run GO and KEGG functional enrichment on this protein set so I can see which pathways are over-represented: TP53, MDM2, ATM, CHEK2, BRCA1, ATR, TP73. Flag what's significant.",
+      "expected_output": "Triggers STRING. Calls string_enrichment(proteins, species=9606), which returns enrichment across GO (BP/MF/CC), KEGG, Pfam, InterPro, etc. computed with Fisher's exact test and Benjamini-Hochberg FDR correction. Parses the TSV and flags significant terms where fdr < 0.05.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "fdr" },
+        { "type": "behavior", "value": "Uses string_enrichment and treats FDR < 0.05 as the significance cutoff across GO/KEGG categories." }
+      ]
+    },
+    {
+      "id": "interaction-partners",
+      "prompt": "What are the top 20 high-confidence interaction partners of TP53 in human? I want to find its main hub connections.",
+      "expected_output": "Triggers STRING. Uses string_interaction_partners('TP53', species=9606, limit=20, required_score=700) to return TP53's top high-confidence partners, supporting hub identification and network expansion from a seed protein.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "string_interaction_partners" },
+        { "type": "behavior", "value": "Calls string_interaction_partners with limit and required_score to return the seed protein's top partners." }
+      ]
+    },
+    {
+      "id": "ppi-enrichment-module",
+      "prompt": "Do these five proteins (TP53, MDM2, ATM, CHEK2, BRCA1) actually form a connected functional module, or could the connections be random? Test the network statistically.",
+      "expected_output": "Triggers STRING. Uses string_ppi_enrichment(proteins, species=9606) to compare observed vs expected edge counts and returns a p-value; interprets p < 0.05 as the network being significantly enriched (proteins likely form a functional module) versus p >= 0.05 suggesting no significant connectivity.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "string_ppi_enrichment" },
+        { "type": "behavior", "value": "Uses string_ppi_enrichment and interprets the p-value (p<0.05) as significant network connectivity / functional module." }
+      ]
+    },
+    {
+      "id": "near-miss-reactome",
+      "prompt": "Give me the detailed Reactome pathway diagram for the p53-dependent G1 DNA damage response, with the ordered reaction steps and the molecular events in the pathway.",
+      "expected_output": "Should NOT trigger STRING. This asks for a curated Reactome pathway's detailed reaction steps and ordered molecular events / pathway diagram, which is Reactome's domain. STRING provides interaction networks and pathway-level functional enrichment (over-representation), not curated step-by-step reaction topology. Defers to alterlab-reactome.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "reactome" }
+      ]
+    },
+    {
+      "id": "near-miss-uniprot",
+      "prompt": "For human TP53, give me the canonical UniProt entry: the protein sequence, functional domains, post-translational modification sites, and subcellular localization annotations.",
+      "expected_output": "Should NOT trigger STRING. This requests curated single-protein annotation (sequence, domains, PTM sites, localization) from UniProt. STRING is about inter-protein interaction networks and enrichment, not per-protein feature/annotation records. Defers to alterlab-uniprot.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "uniprot" }
+      ]
+    }
+  ]
+}

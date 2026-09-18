@@ -1,0 +1,63 @@
+{
+  "skill": "alterlab-polars",
+  "evals": [
+    {
+      "id": "lazy-scan-large-csv",
+      "prompt": "I have a 40GB CSV of sensor readings that fits in RAM but pandas takes forever to filter and aggregate. I only need three columns and rows where status == 'active', then group by device_id and average the reading. How do I make this fast?",
+      "expected_output": "Invokes alterlab-polars and uses lazy evaluation: pl.scan_csv to build a LazyFrame, applies .filter(pl.col('status') == 'active') and .select on the three needed columns early so predicate and projection pushdown kick in, then .group_by('device_id').agg(pl.col('reading').mean()), and finishes with .collect() (optionally engine=\"streaming\" to lower peak memory). Explains that the lazy query plan is optimized before execution, unlike eager pandas.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "scan_csv" },
+        { "type": "behavior", "value": "Builds a LazyFrame with scan_csv, pushes filter/select down before collect(), and uses group_by().agg() rather than eager reads." }
+      ]
+    },
+    {
+      "id": "pandas-migration-parallel-with-columns",
+      "prompt": "I'm porting a slow pandas script to Polars. It does df.assign() to add several derived columns with lambdas and a df.groupby('city').transform('mean') for a per-group average. What's the idiomatic Polars equivalent?",
+      "expected_output": "Invokes alterlab-polars and maps the pandas idioms to the expression API: df.assign(...) lambdas become a single df.with_columns(...) call (all columns computed in parallel using pl.col), and groupby().transform('mean') becomes a window function pl.col('value').mean().over('city') inside with_columns. Notes Polars has no index and parallelizes with_columns expressions, so chaining many sequential assigns is unnecessary.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "with_columns" },
+        { "type": "behavior", "value": "Translates assign->with_columns and groupby.transform->.over() window expression, emphasizing parallel expression evaluation." }
+      ]
+    },
+    {
+      "id": "groupby-window-rank",
+      "prompt": "Using Polars, for each employee row I want to add their department's average salary and their salary rank within the department, without collapsing the rows. How do I do this in one pass?",
+      "expected_output": "Invokes alterlab-polars and uses window functions with over() inside with_columns to preserve row count: pl.col('salary').mean().over('department') for the group average and pl.col('salary').rank().over('department') for the within-group rank. Distinguishes this from group_by().agg(), which would collapse rows, and may mention mapping strategies (group_to_rows preserves order).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "over" },
+        { "type": "behavior", "value": "Uses over() window expressions inside with_columns to add per-group statistics while preserving the original row count." }
+      ]
+    },
+    {
+      "id": "parquet-join-pipeline",
+      "prompt": "I have two Parquet files, an orders table and a customers table, and I want to left-join them on customer_id, filter to orders over $100, and write the result back to Parquet efficiently.",
+      "expected_output": "Invokes alterlab-polars to build the pipeline: read/scan the Parquet files (pl.scan_parquet for laziness), df1.join(df2, on='customer_id', how='left'), .filter(pl.col('amount') > 100), then write_parquet. Recommends Parquet and lazy scanning for performance and selecting only needed columns early.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "join" },
+        { "type": "behavior", "value": "Joins the two frames on customer_id with how='left', filters, and reads/writes Parquet, favoring lazy scanning for performance." }
+      ]
+    },
+    {
+      "id": "near-miss-vaex",
+      "prompt": "My dataset is 600GB of taxi trips and does not fit in my 48GB of RAM. I need to compute group-by aggregations over the whole thing without loading it into memory. What library should I use?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-vaex (or alterlab-dask). The data is far larger than RAM, and Polars is for datasets that fit in memory; the polars description explicitly says to prefer vaex/dask for larger-than-RAM data. The response should point to alterlab-vaex for out-of-core, memory-mapped processing.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-vaex" }
+      ]
+    },
+    {
+      "id": "near-miss-dask",
+      "prompt": "I need to distribute a heavy DataFrame ETL job across all the cores of a multi-node cluster with a task graph and a dashboard to monitor workers. What's the right tool?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-dask. The user wants distributed, multi-node parallelism with a task graph and worker dashboard, which is Dask's territory. Polars parallelizes on a single machine over in-memory data and does not orchestrate a cluster, so the response should point to alterlab-dask.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-dask" }
+      ]
+    }
+  ]
+}

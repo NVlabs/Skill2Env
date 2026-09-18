@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-reactome",
+  "evals": [
+    {
+      "id": "overrepresentation-analysis",
+      "prompt": "I have a list of differentially expressed genes (TP53, BRCA1, EGFR, MYC, ...). Run a pathway enrichment / overrepresentation analysis in Reactome and tell me which pathways are significant by p-value and FDR.",
+      "expected_output": "Invokes alterlab-reactome: POSTs the identifier list to the Reactome AnalysisService /identifiers/ endpoint, retrieves the analysis token, and returns enriched pathways with stId, name, pValue and FDR.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "FDR" }
+      ]
+    },
+    {
+      "id": "gene-to-pathway-mapping",
+      "prompt": "Which Reactome pathways does TP53 participate in? Map the gene to its curated biological pathways.",
+      "expected_output": "Invokes alterlab-reactome: uses the ContentService to map the gene to its participating Reactome pathways/reactions and lists the curated pathway names and stable IDs.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Maps a gene to curated Reactome pathways via the Content/Analysis service, not a generic pathway-image search." }
+      ]
+    },
+    {
+      "id": "pathway-detail-query",
+      "prompt": "Get me the details and participating molecules for the Reactome pathway R-HSA-69278 from the Content Service.",
+      "expected_output": "Invokes alterlab-reactome: queries the ContentService /data/query/{id} and /data/participants/{id}/participatingPhysicalEntities endpoints for R-HSA-69278 and returns pathway metadata plus its participating physical entities.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "R-HSA-69278" }
+      ]
+    },
+    {
+      "id": "expression-analysis",
+      "prompt": "I have a TSV of gene expression values across three samples. Submit it to Reactome's expression analysis to find which pathways are most affected.",
+      "expected_output": "Invokes alterlab-reactome: POSTs the '#'-headed TSV expression matrix to the AnalysisService /identifiers/ endpoint and returns pathways ranked by the expression analysis with statistical metrics and a token.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Submits quantitative expression data (TSV) to Reactome's expression analysis rather than a plain overrepresentation list." }
+      ]
+    },
+    {
+      "id": "near-miss-kegg",
+      "prompt": "Pull the KEGG pathway map image and KO orthology assignments for the MAPK signaling pathway.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-kegg. The user specifically wants KEGG pathway maps and KO orthology, a different curated pathway resource, not a Reactome enrichment/Content-Service query.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-kegg" }
+      ]
+    },
+    {
+      "id": "near-miss-string-db",
+      "prompt": "Build me a protein-protein interaction network for my 15-gene list with confidence scores and show the functional clusters.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-string-db. The user wants a protein-protein interaction network with confidence scores and clustering, not curated pathway enrichment from Reactome.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-string-db" }
+      ]
+    }
+  ]
+}

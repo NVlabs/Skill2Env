@@ -1,0 +1,61 @@
+{
+  "skill": "alterlab-preregistration-discipline",
+  "evals": [
+    {
+      "id": "no-frozen-plan-before-analysis",
+      "prompt": "I just finished collecting my survey data (two groups, N=80). I have no analysis plan written down — can you just dig in and run whatever tests look promising to find the significant effects so I can write this up as our main finding?",
+      "expected_output": "Invokes alterlab-preregistration-discipline and enforces the Iron Law: NO DATA ANALYSIS WITHOUT A PRE-REGISTERED ANALYSIS PLAN FIRST. Refuses to treat data-driven test-hunting as confirmatory; explains that with no plan frozen before the data, every analysis is exploratory and its p-values are descriptive, not confirmatory (COS model). Walks the PLAN/COLLECT/CONFIRM/EXPLORE workflow, routes the registration mechanics to alterlab-open-science and the test choice to alterlab-statistical-analysis, and insists any findings be labeled exploratory with a replication caveat.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "exploratory" },
+        { "type": "behavior", "value": "States the Iron Law, refuses to label data-mined results confirmatory, and requires unplanned findings to be labeled exploratory rather than running 'whatever looks promising' as the main finding." }
+      ]
+    },
+    {
+      "id": "outcome-switch-after-results",
+      "prompt": "Our pre-registered primary outcome (exam score) came out null, but a secondary measure, engagement, is significant at p=.03. Can we just make engagement the primary outcome in the paper and add a couple of covariates that strengthen it? It tells a cleaner story.",
+      "expected_output": "Invokes alterlab-preregistration-discipline and flags this as outcome-switching plus post-hoc covariate addition — classic researcher degrees of freedom (HARKing). Uses the Excuse-vs-Reality table and Red-Flags-STOP list to refuse swapping the frozen primary outcome and adding undeclared covariates. Explains the null primary result stands as the confirmatory finding; the engagement result and added covariates are exploratory, must be labeled as such, and any deviation must be disclosed. Routes reporting completeness to alterlab-results-transparency where relevant; does not silently absorb the change.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Refuses to promote a secondary outcome to primary after seeing results and refuses to add undeclared covariates; names this as HARKing / researcher degrees of freedom and labels it exploratory rather than confirmatory." }
+      ]
+    },
+    {
+      "id": "optional-stopping-peek",
+      "prompt": "We're halfway through data collection and I peeked — the effect is already significant. Can we just stop collecting now and report it? Saves us a month of recruitment.",
+      "expected_output": "Invokes alterlab-preregistration-discipline and identifies optional stopping: stopping data collection because an interim peek is significant inflates the Type I error rate. Cites the COLLECT-phase stopping-rule gate and refuses unless a sequential design was pre-specified in the frozen plan. Offers the correct paths: follow the pre-registered stopping rule, or declare the analysis exploratory. Hands the actual sequential-test mechanics to alterlab-statistical-analysis.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "optional stopping" },
+        { "type": "behavior", "value": "Names optional stopping as the problem, explains it inflates Type I error, and refuses outcome-dependent stopping unless a sequential design was pre-specified." }
+      ]
+    },
+    {
+      "id": "pre-register-a-study",
+      "prompt": "I'm starting a new randomized experiment next month on whether AI feedback improves student revision quality. I want to lock down my analysis plan beforehand so I can't fool myself later. Help me make sure the plan is actually frozen properly before I touch any data.",
+      "expected_output": "Invokes alterlab-preregistration-discipline to drive the PLAN phase: enumerates every element that must be frozen (directional hypotheses, ranked primary/secondary outcomes, the test per hypothesis, inclusion/exclusion and outlier rules, stopping rule / planned N, covariates and transformations, missing-data handling), and applies the exit gate ('what result would falsify this?'). Orchestrates rather than reimplements: routes the registration artifact itself (OSF Registries / AsPredicted / PROSPERO) to alterlab-open-science and the specific test selection + assumptions to alterlab-statistical-analysis. May offer scripts/prereg_check.py as a later plan-vs-actual self-audit.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Lists the frozen plan elements and the falsifiability exit gate, and defers the registration mechanics to alterlab-open-science and test selection to alterlab-statistical-analysis instead of reimplementing them." }
+      ]
+    },
+    {
+      "id": "near-miss-open-science-registration-mechanics",
+      "prompt": "I already know I want to pre-register and my analysis plan is settled. Which registry should I actually use — OSF Registries vs AsPredicted vs PROSPERO — and can you walk me through filling out the AsPredicted template and picking a CC license and data repository for the project?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-open-science. The user is asking about registration mechanics — which registry, how to complete the AsPredicted template, licensing and repository choice — not about whether their plan is frozen or whether an analysis is confirmatory vs exploratory. alterlab-preregistration-discipline only enforces the freeze-and-honor discipline; the how-to of registering and FAIR/open-data choices is alterlab-open-science's territory.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-open-science" }
+      ]
+    },
+    {
+      "id": "near-miss-statistical-analysis-test-choice",
+      "prompt": "For my pre-registered plan I need to pick the right test: I have one continuous outcome, two independent groups, and the residuals look a bit skewed. Should I use a Welch t-test or Mann-Whitney, and how do I run the Shapiro-Wilk and Levene checks and report it all in APA?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-statistical-analysis. The user wants help choosing the appropriate hypothesis test, running assumption checks (Shapiro-Wilk, Levene), and producing APA-formatted results — statistical-analysis work. alterlab-preregistration-discipline only enforces that whichever test is chosen gets frozen in the plan before data; it does not select tests or run diagnostics. (Note: this is a pre-data plan, so there is no deviation to police.)",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statistical-analysis" }
+      ]
+    }
+  ]
+}

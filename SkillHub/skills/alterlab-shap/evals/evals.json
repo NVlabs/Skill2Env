@@ -1,0 +1,43 @@
+{
+  "skill": "alterlab-shap",
+  "evals": [
+    {
+      "id": "feature-importance-xgboost",
+      "prompt": "Explain which features are most important in my trained XGBoost classifier and give me a beeswarm and bar summary plot.",
+      "expected_output": "Invokes alterlab-shap: builds a SHAP explainer for the tree model (TreeExplainer), computes SHAP values, and produces the beeswarm and bar summary plots to rank global feature importance.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "SHAP" },
+        { "type": "behavior", "value": "Computes SHAP values for the tree model and generates beeswarm/bar feature-importance plots." }
+      ]
+    },
+    {
+      "id": "explain-single-prediction",
+      "prompt": "Why did my model predict this specific customer would churn? Show me a waterfall or force plot for that one prediction.",
+      "expected_output": "Invokes alterlab-shap: computes SHAP values for the single instance and renders a waterfall (or force) plot decomposing the prediction into per-feature contributions from the base value.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "waterfall" },
+        { "type": "behavior", "value": "Produces a local explanation (waterfall/force plot) for a single prediction's feature contributions." }
+      ]
+    },
+    {
+      "id": "fairness-bias-analysis",
+      "prompt": "Use explainability to check my credit model for bias — I want to see whether sensitive-feature proxies are driving predictions.",
+      "expected_output": "Invokes alterlab-shap: uses SHAP value distributions (e.g. beeswarm/scatter, grouped comparisons) to analyze how features — including proxies for sensitive attributes — drive predictions, supporting a fairness/bias audit.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Applies SHAP to a fairness/bias analysis, examining feature contributions including sensitive-attribute proxies." }
+      ]
+    },
+    {
+      "id": "near-miss-eda",
+      "prompt": "Before I model anything, profile this raw dataset — show distributions, missingness, and pairwise correlations between the columns.",
+      "expected_output": "Does NOT invoke alterlab-shap; defers to an EDA / data-profiling skill. The ask is exploratory data analysis of a raw dataset (distributions, missingness, correlations), not explaining a trained model's predictions. SHAP requires a fitted model and explains its outputs; it is not a dataset-profiling tool.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "behavior", "value": "Recognizes raw-dataset profiling as EDA territory (no model to explain) and defers rather than invoking SHAP." }
+      ]
+    }
+  ]
+}

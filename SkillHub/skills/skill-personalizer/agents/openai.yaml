@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Personalizer"
+  short_description: "Audit and tune skills to a user's local workflow."
+  default_prompt: "Audit this skill, then tune it to my local tools, paths, phrasing, and verification habits."

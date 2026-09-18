@@ -1,0 +1,8 @@
+units metal
+atom_style atomic
+boundary p p p
+read_data data.lmp
+pair_style eam/alloy
+pair_coeff * * AlCu.eam.alloy Al Cu
+timestep 0.001
+run 10000

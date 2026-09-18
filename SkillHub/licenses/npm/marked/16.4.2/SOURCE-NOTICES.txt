@@ -1,0 +1,8 @@
+Source files: lib/marked.esm.js
+
+/**
+ * marked v16.4.2 - a markdown parser
+ * Copyright (c) 2018-2025, MarkedJS. (MIT License)
+ * Copyright (c) 2011-2018, Christopher Jeffrey. (MIT License)
+ * https://github.com/markedjs/marked
+ */

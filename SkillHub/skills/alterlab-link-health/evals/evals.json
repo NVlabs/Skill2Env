@@ -1,0 +1,45 @@
+{
+  "skill": "alterlab-link-health",
+  "evals": [
+    {
+      "id": "full-repo-audit",
+      "prompt": "Our docs repo's lychee link-check GitHub Action is failing with over a thousand broken-link errors. Audit and repair the link health of AlterLab-IEU/our-docs and get the checker back to green.",
+      "expected_output": "Invokes alterlab-link-health: dispatches the full four-tier pipeline (config hardening, intra-repo file-ref fixes, external URL substitutions, residual exclusions) per playbooks/full-audit.md, classifies each failing link by tier, and applies fixes while enforcing the Tier 3 substitution guardrail so no previously-passing link regresses.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "tier" },
+        { "type": "behavior", "value": "Runs the four-tier audit-and-repair pipeline for a lychee-based checker and reports per-tier link classifications." }
+      ]
+    },
+    {
+      "id": "residual-followup",
+      "prompt": "The lychee link checker is down from 1208 to 67 errors after the first pass. Close out the remaining residual broken links.",
+      "expected_output": "Invokes alterlab-link-health and dispatches the targeted residual followup pass (playbooks/followup-pass.md), resolving the remaining links via Tier 2/3 substitutions or Tier 4 exclusions without regressing any link that already passes.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "residual" },
+        { "type": "behavior", "value": "Handles the residual-pass scenario rather than re-running a full audit, preserving the no-regression guardrail." }
+      ]
+    },
+    {
+      "id": "dead-links-generic-checker",
+      "prompt": "Can you find and fix all the dead links and 404s in our Markdown docs? We use markdown-link-check in CI.",
+      "expected_output": "Invokes alterlab-link-health: applies the same tiered methodology generalized from lychee to markdown-link-check, hardening checker config, repairing intra-repo file references, substituting dead external URLs, and excluding irreducible residuals, with the Tier 3 regression guardrail in force.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "tier" },
+        { "type": "behavior", "value": "Recognizes the generic markdown-link-check checker and applies the same four-tier link-repair methodology, keeping the no-regression guardrail in force." }
+      ]
+    },
+    {
+      "id": "near-miss-citation-verifier",
+      "prompt": "Check whether the references in my paper's bibliography actually exist — I'm worried some DOIs are fabricated or hallucinated.",
+      "expected_output": "Does NOT invoke alterlab-link-health; defers to alterlab-citation-verifier. The user wants scholarly-citation existence verification against Crossref/OpenAlex/etc., not Markdown link-health auditing of a docs repo. Link-health repairs broken hyperlinks in docs; it does not validate that a cited paper exists.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "citation-verifier" },
+        { "type": "behavior", "value": "Distinguishes bibliographic existence-verification (citation-verifier) from Markdown link-health repair and defers." }
+      ]
+    }
+  ]
+}

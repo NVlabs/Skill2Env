@@ -1,0 +1,61 @@
+{
+  "skill": "alterlab-citation-mgmt",
+  "evals": [
+    {
+      "id": "doi-to-bibtex",
+      "prompt": "I have a DOI, 10.1038/s41586-021-03819-2, and I need a clean BibTeX entry for it to drop into my references file.",
+      "expected_output": "Invokes alterlab-citation-mgmt to convert the DOI to a properly formatted BibTeX entry, pulling metadata from CrossRef (e.g. via doi_to_bibtex.py / extract_metadata.py) and returning a complete @article entry with author, title, journal, year, volume, pages, and the doi field.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "bibtex"},
+        {"type": "behavior", "value": "Pulls metadata from an authoritative source (CrossRef/PubMed/arXiv) rather than fabricating the entry, and produces a syntactically valid BibTeX @article with required fields."}
+      ]
+    },
+    {
+      "id": "validate-bib-file",
+      "prompt": "Can you check my references.bib for broken DOIs, missing required fields, and duplicate entries before I submit?",
+      "expected_output": "Invokes alterlab-citation-mgmt in validation mode (validate_citations.py): verifies each DOI resolves via doi.org/CrossRef, checks required fields per entry type, detects duplicates by DOI/title, and reports errors and warnings with citation keys and severities.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "behavior", "value": "Reports DOI verification, required-field completeness, and duplicate detection as distinct validation checks rather than just reformatting the file."}
+      ]
+    },
+    {
+      "id": "search-pubmed-build-bibliography",
+      "prompt": "Find recent clinical-trial and review papers on CRISPR therapeutics for sickle cell disease and turn them into a BibTeX bibliography I can cite.",
+      "expected_output": "Invokes alterlab-citation-mgmt: searches PubMed via E-utilities (search_pubmed.py) using MeSH terms / publication-type and date filters, then extracts metadata and exports properly formatted BibTeX entries for the matched papers.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "pubmed"},
+        {"type": "behavior", "value": "Uses an academic database search (PubMed/Google Scholar) with appropriate filters, then converts results to validated BibTeX rather than guessing citations."}
+      ]
+    },
+    {
+      "id": "format-deduplicate-bibtex",
+      "prompt": "My .bib file is a mess from mixing Zotero and manual entries — please standardize the formatting, sort by year newest-first, and strip duplicates.",
+      "expected_output": "Invokes alterlab-citation-mgmt (format_bibtex.py) to standardize field order/indentation, protect title capitalization with braces, fix page-range dashes, deduplicate, and sort entries by year descending.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "behavior", "value": "Performs BibTeX cleanup operations (standardize, deduplicate, sort) on the existing file without inventing new references."}
+      ]
+    },
+    {
+      "id": "near-miss-literature-review",
+      "prompt": "Run a full systematic literature review on CRISPR therapeutics for sickle cell disease — search multiple databases, screen with PRISMA, and write a thematic synthesis.",
+      "expected_output": "Defers to alterlab-literature-review and does NOT invoke alterlab-citation-mgmt: this is a full systematic review (multi-database search, PRISMA screening, thematic synthesis, narrative document), not technical citation extraction/validation. citation-management only handles the citations within such a workflow.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-literature-review"}
+      ]
+    },
+    {
+      "id": "near-miss-scientific-writing",
+      "prompt": "Help me write the related-work section of my paper as flowing prose, weaving in the references I've collected.",
+      "expected_output": "Defers to alterlab-scientific-writing and does NOT invoke alterlab-citation-mgmt: drafting narrative manuscript prose around references is a writing task. citation-management only supplies/validates the BibTeX, it does not author paragraphs.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-scientific-writing"}
+      ]
+    }
+  ]
+}

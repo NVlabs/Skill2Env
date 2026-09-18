@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-deepchem",
+  "evals": [
+    {
+      "id": "moleculenet-benchmark",
+      "prompt": "I want to benchmark a graph convolutional network on the Tox21 toxicity dataset from MoleculeNet with a scaffold split and report ROC-AUC. Can you set that up?",
+      "expected_output": "Invokes alterlab-deepchem. Loads the MoleculeNet benchmark via dc.molnet.load_tox21 with featurizer='GraphConv' and splitter='scaffold', trains a dc.models.GCNModel in classification mode, and evaluates with dc.metrics.roc_auc_score. Uses DeepChem's pre-built dataset loaders and standardized train/valid/test splits.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "deepchem" },
+        { "type": "behavior", "value": "Uses a MoleculeNet loader (e.g. load_tox21) with scaffold splitting and a GCN/GNN model, then evaluates with ROC-AUC." }
+      ]
+    },
+    {
+      "id": "custom-csv-solubility",
+      "prompt": "I have a CSV of SMILES and measured aqueous solubility. Build me a quick Random Forest baseline using circular fingerprints, and make sure the train/test split won't leak similar molecules.",
+      "expected_output": "Invokes alterlab-deepchem. Uses dc.data.CSVLoader with a CircularFingerprint (ECFP) featurizer, splits with dc.splits.ScaffoldSplitter to prevent structural leakage, and wraps a scikit-learn RandomForestRegressor in dc.models.SklearnModel. Emphasizes scaffold splitting over random splitting for molecules.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Recommends ScaffoldSplitter (not RandomSplitter) to avoid leakage and uses CircularFingerprint with a SklearnModel RandomForest baseline." }
+      ]
+    },
+    {
+      "id": "transfer-learning-small-data",
+      "prompt": "My BBBP-style dataset only has about 400 labeled compounds. Can I fine-tune a pretrained ChemBERTa model in DeepChem instead of training a GNN from scratch?",
+      "expected_output": "Invokes alterlab-deepchem. Recommends transfer learning for the small dataset using DeepChem's Chemberta wrapper (dc.models.Chemberta) with a pretrained tokenizer such as seyonec/PubChem10M_SMILES_BPE_60k, loading raw SMILES (e.g. DummyFeaturizer), fine-tuning for a few epochs. Frames transfer learning as the right choice for <1000 samples.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ChemBERTa" }
+      ]
+    },
+    {
+      "id": "featurizer-selection",
+      "prompt": "I'm not sure how to turn my molecules into features for an XGBoost model versus a message-passing neural network. What featurizers should I use in DeepChem for each?",
+      "expected_output": "Invokes alterlab-deepchem. Walks the featurizer decision tree: for traditional ML like XGBoost recommend CircularFingerprint (ECFP) or RDKitDescriptors; for a message-passing GNN recommend graph featurizers such as DMPNNFeaturizer or MolGraphConvFeaturizer. Maps featurizer choice to model family and dataset size.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Distinguishes fingerprint/descriptor featurizers for traditional ML from graph featurizers (MolGraphConvFeaturizer/DMPNNFeaturizer) for GNNs." }
+      ]
+    },
+    {
+      "id": "near-miss-torchdrug",
+      "prompt": "I want to design my own custom message-passing GNN architecture from scratch in pure PyTorch, defining my own layers and forward pass for a molecular property task.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-torchdrug. DeepChem is for pre-built models and extensive featurizers, whereas building a custom PyTorch-native GNN architecture with hand-written layers is torchdrug's graph-first territory.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-torchdrug" }
+      ]
+    },
+    {
+      "id": "near-miss-pytdc",
+      "prompt": "Just give me the standardized ADMET benchmark group datasets with the required 5-seed evaluation protocol — I only need the curated data and the official splits, no model training.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pytdc. The user wants Therapeutics Data Commons benchmark groups (admet_group) with the official multi-seed evaluation protocol, which is PyTDC's dataset-sourcing role rather than DeepChem's modeling and featurization workflow.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pytdc" }
+      ]
+    }
+  ]
+}

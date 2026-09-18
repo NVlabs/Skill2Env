@@ -1,0 +1,63 @@
+{
+  "skill": "alterlab-statsmodels",
+  "evals": [
+    {
+      "id": "ols-with-diagnostics-robust-se",
+      "prompt": "Fit a multiple linear regression of house price on size, age, and number of rooms. I want the full coefficient table with confidence intervals, and I need to check for heteroskedasticity and use robust standard errors if it's present.",
+      "expected_output": "Invokes alterlab-statsmodels: adds a constant with sm.add_constant, fits sm.OLS and prints results.summary() for the coefficient table, p-values, and confidence intervals, runs a Breusch-Pagan test (het_breuschpagan) on the residuals, and refits with heteroskedasticity-consistent robust standard errors (cov_type HC3) if heteroskedasticity is detected.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "OLS" },
+        { "type": "behavior", "value": "Fits OLS with a constant, reports the coefficient table/CIs, tests for heteroskedasticity (Breusch-Pagan), and switches to robust SEs when needed." }
+      ]
+    },
+    {
+      "id": "poisson-overdispersion-negative-binomial",
+      "prompt": "I'm modeling count data (number of doctor visits per year) with several predictors. Fit a Poisson regression and give me the rate ratios, but I'm worried the counts are overdispersed.",
+      "expected_output": "Invokes alterlab-statsmodels: fits a Poisson GLM with sm.GLM(..., family=sm.families.Poisson()), reports rate ratios as exp(params), checks overdispersion via pearson_chi2/df_resid, and if dispersion exceeds ~1.5 refits with NegativeBinomial instead; interprets coefficients on the log link scale.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "overdispersion" },
+        { "type": "behavior", "value": "Fits a Poisson GLM, checks overdispersion, and falls back to Negative Binomial when the dispersion is high." }
+      ]
+    },
+    {
+      "id": "arima-stationarity-forecast",
+      "prompt": "I have a monthly sales time series and I want to forecast the next 10 months with confidence intervals. Help me identify the right ARIMA order and check the model is adequate.",
+      "expected_output": "Invokes alterlab-statsmodels: tests stationarity with adfuller (and differences if non-stationary), inspects ACF/PACF (plot_acf/plot_pacf) to identify p and q, fits ARIMA(p,d,q), checks residual diagnostics including the Ljung-Box test via plot_diagnostics, and produces forecasts with confidence intervals using get_forecast(steps=10).summary_frame().",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ARIMA" },
+        { "type": "behavior", "value": "Checks stationarity (ADF), identifies p/q from ACF/PACF, fits ARIMA, and forecasts with confidence intervals plus residual diagnostics." }
+      ]
+    },
+    {
+      "id": "logit-odds-ratios-marginal-effects",
+      "prompt": "Fit a logistic regression for a binary outcome (defaulted on loan: yes/no) with a few predictors and a categorical group variable. I want odds ratios and the average marginal effects, plus the AUC.",
+      "expected_output": "Invokes alterlab-statsmodels: fits a Logit model (smf.logit with C(group) for the categorical, or Logit on sm.add_constant data), reports odds ratios as exp(params), computes marginal effects via results.get_margeff().summary(), and evaluates discrimination with predicted probabilities and roc_auc_score.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "odds ratios" },
+        { "type": "behavior", "value": "Fits a logistic (Logit) model and reports odds ratios plus marginal effects with model evaluation (AUC)." }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-statistical-analysis",
+      "prompt": "I have two groups and a continuous outcome and I'm not sure which statistical test to run. Help me pick the right test, check its assumptions, run it, and write up the result in APA format for my paper.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-statistical-analysis. The user wants guided test selection (which test to use), assumption-checking, and APA-formatted write-up rather than fitting a specific named model class with coefficient tables, which is the statistical-analysis skill's territory rather than statsmodels'.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statistical-analysis" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-timesfm",
+      "prompt": "I have hundreds of weekly demand series and I want fast zero-shot forecasts for all of them without fitting or tuning any model parameters per series. I don't need coefficients or significance tests, just the forecasts quickly.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-timesfm. The user wants zero-shot foundation-model forecasting across many series with no per-series model fitting or coefficient interpretation, which is TimesFM's territory rather than statsmodels' classical ARIMA/SARIMAX inference.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-timesfm" }
+      ]
+    }
+  ]
+}

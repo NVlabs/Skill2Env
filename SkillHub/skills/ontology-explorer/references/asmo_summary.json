@@ -1,0 +1,1130 @@
+{
+  "metadata": {
+    "iri": "http://purls.helmholtz-metadaten.de/asmo/",
+    "title": null,
+    "version": "1.0.0",
+    "description": null,
+    "source_url": "https://raw.githubusercontent.com/OCDO/asmo/main/asmo.owl",
+    "generated_at": "2026-02-25T15:15:21.349259+00:00"
+  },
+  "classes": {
+    "ANNNI Model": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/ANNNImodel",
+      "parent": "Simulation Algorithm",
+      "children": [],
+      "description": "In the simplest case of the comparison in stability of fcc versus hcp lattices, fcc corresponds to the \u2018ferromagnetic\u2019 arrangement of spins and is stable in the Ising model for J\u2009>\u20090; and hcp is represented by \u2018antiferromagnetic\u2019 spin arrangement and is stable if J\u2009<\u20090."
+    },
+    "Ab Initio Molecular Dynamics": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/AbInitioMolecularDynamics",
+      "parent": "Computational Method",
+      "children": [],
+      "description": null
+    },
+    "Addition": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Addition",
+      "parent": "Mathematical Operation",
+      "children": [],
+      "description": null
+    },
+    "Barostat": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Barostat",
+      "parent": "Simulation Algorithm",
+      "children": [],
+      "description": null
+    },
+    "Bulk Modulus": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/BulkModulus",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Calculated Property": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/CalculatedProperty",
+      "parent": null,
+      "children": [
+        "Bulk Modulus",
+        "Elastic Constant",
+        "Elastic Tensor",
+        "Flow Stress",
+        "Formation Energy",
+        "Kinetic Energy",
+        "Poisson's Ratio",
+        "Potential Energy",
+        "Shear Modulus",
+        "Simulation Cell Length",
+        "Simulation Cell Volume",
+        "Specific Heat Capacity",
+        "Strain",
+        "Thermal Expansion Coefficient",
+        "Thermodynamic Free Energy",
+        "Total Energy",
+        "Total Magnetic Moment",
+        "Virial Pressure",
+        "Yield Stress",
+        "Young\u2019s Modulus"
+      ],
+      "description": "A calculated property is a property of a material resulting from a calculation or simulation."
+    },
+    "Compression Test": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/CompressionTest",
+      "parent": "Simulation Algorithm",
+      "children": [],
+      "description": null
+    },
+    "Computational Method": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/ComputationalMethod",
+      "parent": null,
+      "children": [
+        "Ab Initio Molecular Dynamics",
+        "Density Functional Theory",
+        "Molecular Dynamics",
+        "Molecular Statics",
+        "Monte Carlo Method"
+      ],
+      "description": null
+    },
+    "Density Functional Theory": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/DensityFunctionalTheory",
+      "parent": "Computational Method",
+      "children": [],
+      "description": null
+    },
+    "Division": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Division",
+      "parent": "Mathematical Operation",
+      "children": [],
+      "description": null
+    },
+    "Elastic Constant": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/ElasticConstant",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Elastic Tensor": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/ElasticTensor",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Embedded Atom Model": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/EmbeddedAtomModel",
+      "parent": "Interatomic Potential",
+      "children": [],
+      "description": null
+    },
+    "Energy": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Energy",
+      "parent": "Physical Quantity",
+      "children": [
+        "Free Energy"
+      ],
+      "description": null
+    },
+    "Energy Calculation": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/EnergyCalculation",
+      "parent": "Simulation",
+      "children": [],
+      "description": "This activity does not specify the way the energy is calculated, it can be used to refer to a rigid calculation or also to energy minimization or optimization. See RelaxationDOF class for specifics about the constraints."
+    },
+    "Energy Cutoff": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/EnergyCutoff",
+      "parent": "Input Parameter",
+      "children": [],
+      "description": null
+    },
+    "Equation of State Fit": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/EquationOfStateFit",
+      "parent": "Simulation Algorithm",
+      "children": [],
+      "description": null
+    },
+    "Exponentiation": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Exponentiation",
+      "parent": "Mathematical Operation",
+      "children": [],
+      "description": null
+    },
+    "Flow Stress": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/FlowStress",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Force": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Force",
+      "parent": "Physical Quantity",
+      "children": [],
+      "description": "According to Newton's second law of motion, force is the product of mass and acceleration (F = ma)."
+    },
+    "Formation Energy": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/FormationEnergy",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": "It is typically calculated as the difference between the total energy of the system containing the defect or structure and the total energy of the isolated constituent atoms or molecules."
+    },
+    "Free Energy": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/FreeEnergy",
+      "parent": "Energy",
+      "children": [],
+      "description": null
+    },
+    "Free Energy Calculation": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/FreeEnergyCalculation",
+      "parent": "Simulation",
+      "children": [],
+      "description": null
+    },
+    "Gibbs Free Energy": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/GibbsFreeEnergy",
+      "parent": "Thermodynamic Free Energy",
+      "children": [],
+      "description": null
+    },
+    "Helmholtz Free Energy": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/HelmholtzFreeEnergy",
+      "parent": "Thermodynamic Free Energy",
+      "children": [],
+      "description": null
+    },
+    "Input Parameter": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/InputParameter",
+      "parent": "Simulation Parameter",
+      "children": [
+        "Energy Cutoff",
+        "KPoint Mesh",
+        "Number Of Ionic Steps",
+        "Periodic Boundary Condition",
+        "Strain Rate",
+        "Time Step",
+        "Volume Range"
+      ],
+      "description": null
+    },
+    "Interatomic Potential": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/InteratomicPotential",
+      "parent": null,
+      "children": [
+        "Embedded Atom Model",
+        "Force Field",
+        "Lennard-Jones Potential",
+        "Machine Learning Potential",
+        "Modified Embedded Atom Model",
+        "Stillinger-Weber Potential"
+      ],
+      "description": null
+    },
+    "KPoint Mesh": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/KPointMesh",
+      "parent": "Input Parameter",
+      "children": [],
+      "description": null
+    },
+    "Kinetic Energy": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/KineticEnergy",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Kinetic Monte Carlo Method": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/KineticMonteCarloMethod",
+      "parent": "Monte Carlo Method",
+      "children": [],
+      "description": null
+    },
+    "Length": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Length",
+      "parent": "Physical Quantity",
+      "children": [],
+      "description": "Length is can also be understood to mean the longest dimension of an object."
+    },
+    "Lennard-Jones Potential": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Lennard-JonesPotential",
+      "parent": "Interatomic Potential",
+      "children": [],
+      "description": null
+    },
+    "Machine Learning Potential": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/MachineLearningPotential",
+      "parent": "Interatomic Potential",
+      "children": [],
+      "description": "Some of the most commonly used MLIP are: Atomic Cluster Expansion (ACE), Moment Tensor Potential (MTP) and Neural Network Potential (NNP)"
+    },
+    "Mass": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Mass",
+      "parent": "Physical Quantity",
+      "children": [],
+      "description": null
+    },
+    "Mathematical Operation": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/MathematicalOperation",
+      "parent": "Activity",
+      "children": [
+        "Addition",
+        "Division",
+        "Exponentiation",
+        "Multiplication",
+        "Subtraction"
+      ],
+      "description": null
+    },
+    "Modified Embedded Atom Model": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/ModifiedEmbeddedAtomModel",
+      "parent": "Interatomic Potential",
+      "children": [],
+      "description": null
+    },
+    "Molecular Dynamics": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/MolecularDynamics",
+      "parent": "Computational Method",
+      "children": [],
+      "description": null
+    },
+    "Force Field": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/MolecularForceField",
+      "parent": "Interatomic Potential",
+      "children": [],
+      "description": null
+    },
+    "Molecular Statics": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/MolecularStatics",
+      "parent": "Computational Method",
+      "children": [],
+      "description": null
+    },
+    "Monte Carlo Method": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/MonteCarloMethod",
+      "parent": "Computational Method",
+      "children": [
+        "Kinetic Monte Carlo Method"
+      ],
+      "description": null
+    },
+    "Multiplication": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Multiplication",
+      "parent": "Mathematical Operation",
+      "children": [],
+      "description": null
+    },
+    "Nanoindentation": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Nanoindentation",
+      "parent": "Simulation Algorithm",
+      "children": [],
+      "description": null
+    },
+    "Number Of Ionic Steps": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/NumberOfIonicSteps",
+      "parent": "Input Parameter",
+      "children": [],
+      "description": null
+    },
+    "Output Parameter": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/OutputParameter",
+      "parent": "Simulation Parameter",
+      "children": [],
+      "description": null
+    },
+    "Periodic Boundary Condition": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/PeriodicBoundaryCondition",
+      "parent": "Input Parameter",
+      "children": [],
+      "description": null
+    },
+    "Physical Quantity": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/PhysicalQuantity",
+      "parent": null,
+      "children": [
+        "Energy",
+        "Force",
+        "Length",
+        "Mass",
+        "Pressure",
+        "Stress",
+        "Temperature",
+        "Time",
+        "Volume"
+      ],
+      "description": null
+    },
+    "Point Defect Creation": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/PointDefectCreation",
+      "parent": "Structure Manipulation",
+      "children": [],
+      "description": null
+    },
+    "Poisson's Ratio": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/PoissonsRatio",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Potential Energy": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/PotentialEnergy",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Pressure": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Pressure",
+      "parent": "Physical Quantity",
+      "children": [],
+      "description": null
+    },
+    "Quasi-Harmonic Approximation": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/QuasiHarmonicApproximation",
+      "parent": "Simulation Algorithm",
+      "children": [],
+      "description": null
+    },
+    "Relaxation Degrees of Freedom": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/RelaxationDOF",
+      "parent": null,
+      "children": [],
+      "description": "The instances of this class indicate the type of relaxation allowed, i.e. relaxation of the atomic positions, cell volume and cell shape."
+    },
+    "Rotation": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Rotation",
+      "parent": "Spatial Transformation",
+      "children": [],
+      "description": null
+    },
+    "Shear": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Shear",
+      "parent": "Spatial Transformation",
+      "children": [],
+      "description": null
+    },
+    "Shear Modulus": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/ShearModulus",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Simulation": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Simulation",
+      "parent": "Activity",
+      "children": [
+        "Energy Calculation",
+        "Free Energy Calculation"
+      ],
+      "description": null
+    },
+    "Simulation Algorithm": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/SimulationAlgorithm",
+      "parent": null,
+      "children": [
+        "ANNNI Model",
+        "Barostat",
+        "Compression Test",
+        "Equation of State Fit",
+        "Nanoindentation",
+        "Quasi-Harmonic Approximation",
+        "Tensile Test",
+        "Thermodynamic Integration",
+        "Thermostat"
+      ],
+      "description": null
+    },
+    "Simulation Cell Length": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/SimulationCellLength",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Simulation Cell Volume": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/SimulationCellVolume",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Simulation Parameter": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/SimulationParameter",
+      "parent": null,
+      "children": [
+        "Input Parameter",
+        "Output Parameter"
+      ],
+      "description": null
+    },
+    "Simulation Run Time": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/SimulationRunTime",
+      "parent": "Time",
+      "children": [],
+      "description": null
+    },
+    "Simulation Time": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/SimulationTime",
+      "parent": "Time",
+      "children": [],
+      "description": null
+    },
+    "Spatial Transformation": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/SpatialTransformation",
+      "parent": "Structure Manipulation",
+      "children": [
+        "Rotation",
+        "Shear",
+        "Translation"
+      ],
+      "description": "The spatial transformations that involve translation or rotation are generally considered rigid body or Euclidean transformations, since the Euclidean distances within images are preserved. In contrast, the other ones are classified as non-rigid or elastic."
+    },
+    "Specific Heat Capacity": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/SpecificHeatCapacity",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Statistical Ensemble": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/StatisticalEnsemble",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Stillinger-Weber Potential": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/StillingerWeberPotential",
+      "parent": "Interatomic Potential",
+      "children": [],
+      "description": null
+    },
+    "Strain": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Strain",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Strain Rate": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/StrainRate",
+      "parent": "Input Parameter",
+      "children": [],
+      "description": null
+    },
+    "Stress": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Stress",
+      "parent": "Physical Quantity",
+      "children": [],
+      "description": null
+    },
+    "Structure Manipulation": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/StructureManipulation",
+      "parent": "Activity",
+      "children": [
+        "Point Defect Creation",
+        "Spatial Transformation"
+      ],
+      "description": null
+    },
+    "Subtraction": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Subtraction",
+      "parent": "Mathematical Operation",
+      "children": [],
+      "description": null
+    },
+    "Temperature": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Temperature",
+      "parent": "Physical Quantity",
+      "children": [],
+      "description": null
+    },
+    "Tensile Test": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Tensile_Test",
+      "parent": "Simulation Algorithm",
+      "children": [],
+      "description": null
+    },
+    "Thermal Expansion Coefficient": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/ThermalExpansionCoefficient",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Thermodynamic Free Energy": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/ThermodynamicFreeEnergy",
+      "parent": "Calculated Property",
+      "children": [
+        "Gibbs Free Energy",
+        "Helmholtz Free Energy"
+      ],
+      "description": null
+    },
+    "Thermodynamic Integration": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/ThermodynamicIntegration",
+      "parent": "Simulation Algorithm",
+      "children": [],
+      "description": "It is commonly used in molecular simulations to calculate free energies of solvation, binding, or phase transitions."
+    },
+    "Thermostat": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Thermostat",
+      "parent": "Simulation Algorithm",
+      "children": [],
+      "description": null
+    },
+    "Time": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Time",
+      "parent": "Physical Quantity",
+      "children": [
+        "Simulation Run Time",
+        "Simulation Time"
+      ],
+      "description": null
+    },
+    "Time Step": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/TimeStep",
+      "parent": "Input Parameter",
+      "children": [],
+      "description": null
+    },
+    "Total Energy": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/TotalEnergy",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Total Magnetic Moment": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/TotalMagneticMoment",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Translation": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Translation",
+      "parent": "Spatial Transformation",
+      "children": [],
+      "description": null
+    },
+    "Virial Pressure": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/VirialPressure",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Volume": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/Volume",
+      "parent": "Physical Quantity",
+      "children": [],
+      "description": null
+    },
+    "Volume Range": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/VolumeRange",
+      "parent": "Input Parameter",
+      "children": [],
+      "description": null
+    },
+    "Yield Stress": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/YieldStress",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Young\u2019s Modulus": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/YoungsModulus",
+      "parent": "Calculated Property",
+      "children": [],
+      "description": null
+    },
+    "Computational Sample": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/ComputationalSample",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Plane": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/Plane",
+      "parent": null,
+      "children": [],
+      "description": "The equation of a plane is \ud835\udc4e \ud835\udc65 + \ud835\udc4f \ud835\udc66 + \ud835\udc50 \ud835\udc67 + \ud835\udc51 = 0 , where \ud835\udc4e , \ud835\udc4f , and \ud835\udc50 are the components of the normal vector \u20d1 \ud835\udc5b = ( \ud835\udc4e , \ud835\udc4f , \ud835\udc50 ) , which is perpendicular to the plane or any vector parallel to the plane."
+    },
+    "Simulation Cell": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/SimulationCell",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Vector": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/Vector",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Unit": {
+      "iri": "http://qudt.org/schema/qudt/Unit",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Activity": {
+      "iri": "http://www.w3.org/ns/prov#Activity",
+      "parent": null,
+      "children": [
+        "Mathematical Operation",
+        "Simulation",
+        "Structure Manipulation"
+      ],
+      "description": null
+    },
+    "Agent": {
+      "iri": "http://www.w3.org/ns/prov#Agent",
+      "parent": null,
+      "children": [
+        "Organization",
+        "Person",
+        "SoftwareAgent"
+      ],
+      "description": null
+    },
+    "Entity": {
+      "iri": "http://www.w3.org/ns/prov#Entity",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Organization": {
+      "iri": "http://www.w3.org/ns/prov#Organization",
+      "parent": "Agent",
+      "children": [],
+      "description": null
+    },
+    "Person": {
+      "iri": "http://www.w3.org/ns/prov#Person",
+      "parent": "Agent",
+      "children": [],
+      "description": null
+    },
+    "SoftwareAgent": {
+      "iri": "http://www.w3.org/ns/prov#SoftwareAgent",
+      "parent": "Agent",
+      "children": [],
+      "description": null
+    },
+    "Exchange Correlation Energy Functional": {
+      "iri": "https://w3id.org/mdo/calculation/ExchangeCorrelationEnergyFunctional",
+      "parent": null,
+      "children": [
+        "Generalized Gradient Approximation",
+        "Hybrid Functional",
+        "Local Density Approximation",
+        "Meta Generalized Gradient Approximation"
+      ],
+      "description": "An ExchangeCorrelationEnergyFunctional is a functional to compute the exchange correlation energy."
+    },
+    "Generalized Gradient Approximation": {
+      "iri": "https://w3id.org/mdo/calculation/GeneralizedGradientApproximation",
+      "parent": "Exchange Correlation Energy Functional",
+      "children": [],
+      "description": "A GeneralizedGradientApproximation is a classification of exchange correlation energy functionals that only use the local value of the electronic density and its gradient."
+    },
+    "Hybrid Functional": {
+      "iri": "https://w3id.org/mdo/calculation/HybridFunctional",
+      "parent": "Exchange Correlation Energy Functional",
+      "children": [
+        "Hybrid Generalized Gradient Approximation",
+        "Hybrid Meta Generalized Gradient Approximation"
+      ],
+      "description": "A hybrid functional is a classification of exchange correlation energy functionals that combine exact exchange from HartreeFock theory with another exchange correlation energy approximation."
+    },
+    "Hybrid Generalized Gradient Approximation": {
+      "iri": "https://w3id.org/mdo/calculation/HybridGeneralizedGradientApproximation",
+      "parent": "Hybrid Functional",
+      "children": [],
+      "description": "A hybrid generalized gradient approximation is a classification of exchange correlation energy functionals that combine exact exchange from Hartree\u2013Fock theory with generalized gradient approximation."
+    },
+    "Hybrid Meta Generalized Gradient Approximation": {
+      "iri": "https://w3id.org/mdo/calculation/HybridMetaGeneralizedGradientApproximation",
+      "parent": "Hybrid Functional",
+      "children": [],
+      "description": "A hybrid meta generalized gradient approximation is a classification of exchange correlation energy functionals that combine exact exchange from Hartree\u2013Fock theory with meta generalized gradient approximation."
+    },
+    "Local Density Approximation": {
+      "iri": "https://w3id.org/mdo/calculation/LocalDensityApproximation",
+      "parent": "Exchange Correlation Energy Functional",
+      "children": [],
+      "description": "A LDA is a classification of exchange correlation energy functionals that only use the local value of the electronic density."
+    },
+    "Meta Generalized Gradient Approximation": {
+      "iri": "https://w3id.org/mdo/calculation/MetaGeneralizedGradientApproximation",
+      "parent": "Exchange Correlation Energy Functional",
+      "children": [],
+      "description": "A MetaGeneralizedGradientApproximation is a classification of exchange correlation energy functionals that only use the local value of the electronic density and its gradient and the Kohn\u2013Sham orbital kinetic energy density."
+    }
+  },
+  "class_hierarchy": {
+    "Activity": {
+      "Mathematical Operation": {
+        "Addition": {},
+        "Division": {},
+        "Exponentiation": {},
+        "Multiplication": {},
+        "Subtraction": {}
+      },
+      "Simulation": {
+        "Energy Calculation": {},
+        "Free Energy Calculation": {}
+      },
+      "Structure Manipulation": {
+        "Point Defect Creation": {},
+        "Spatial Transformation": {
+          "Rotation": {},
+          "Shear": {},
+          "Translation": {}
+        }
+      }
+    },
+    "Agent": {
+      "Organization": {},
+      "Person": {},
+      "SoftwareAgent": {}
+    },
+    "Calculated Property": {
+      "Bulk Modulus": {},
+      "Elastic Constant": {},
+      "Elastic Tensor": {},
+      "Flow Stress": {},
+      "Formation Energy": {},
+      "Kinetic Energy": {},
+      "Poisson's Ratio": {},
+      "Potential Energy": {},
+      "Shear Modulus": {},
+      "Simulation Cell Length": {},
+      "Simulation Cell Volume": {},
+      "Specific Heat Capacity": {},
+      "Strain": {},
+      "Thermal Expansion Coefficient": {},
+      "Thermodynamic Free Energy": {
+        "Gibbs Free Energy": {},
+        "Helmholtz Free Energy": {}
+      },
+      "Total Energy": {},
+      "Total Magnetic Moment": {},
+      "Virial Pressure": {},
+      "Yield Stress": {},
+      "Young\u2019s Modulus": {}
+    },
+    "Computational Method": {
+      "Ab Initio Molecular Dynamics": {},
+      "Density Functional Theory": {},
+      "Molecular Dynamics": {},
+      "Molecular Statics": {},
+      "Monte Carlo Method": {
+        "Kinetic Monte Carlo Method": {}
+      }
+    },
+    "Computational Sample": {},
+    "Entity": {},
+    "Exchange Correlation Energy Functional": {
+      "Generalized Gradient Approximation": {},
+      "Hybrid Functional": {
+        "Hybrid Generalized Gradient Approximation": {},
+        "Hybrid Meta Generalized Gradient Approximation": {}
+      },
+      "Local Density Approximation": {},
+      "Meta Generalized Gradient Approximation": {}
+    },
+    "Interatomic Potential": {
+      "Embedded Atom Model": {},
+      "Force Field": {},
+      "Lennard-Jones Potential": {},
+      "Machine Learning Potential": {},
+      "Modified Embedded Atom Model": {},
+      "Stillinger-Weber Potential": {}
+    },
+    "Physical Quantity": {
+      "Energy": {
+        "Free Energy": {}
+      },
+      "Force": {},
+      "Length": {},
+      "Mass": {},
+      "Pressure": {},
+      "Stress": {},
+      "Temperature": {},
+      "Time": {
+        "Simulation Run Time": {},
+        "Simulation Time": {}
+      },
+      "Volume": {}
+    },
+    "Plane": {},
+    "Relaxation Degrees of Freedom": {},
+    "Simulation Algorithm": {
+      "ANNNI Model": {},
+      "Barostat": {},
+      "Compression Test": {},
+      "Equation of State Fit": {},
+      "Nanoindentation": {},
+      "Quasi-Harmonic Approximation": {},
+      "Tensile Test": {},
+      "Thermodynamic Integration": {},
+      "Thermostat": {}
+    },
+    "Simulation Cell": {},
+    "Simulation Parameter": {
+      "Input Parameter": {
+        "Energy Cutoff": {},
+        "KPoint Mesh": {},
+        "Number Of Ionic Steps": {},
+        "Periodic Boundary Condition": {},
+        "Strain Rate": {},
+        "Time Step": {},
+        "Volume Range": {}
+      },
+      "Output Parameter": {}
+    },
+    "Statistical Ensemble": {},
+    "Unit": {},
+    "Vector": {}
+  },
+  "object_properties": {
+    "has calculated property": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasCalculatedProperty",
+      "domain": "Computational Sample",
+      "range": "Calculated Property",
+      "description": null
+    },
+    "has computational method": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasComputationalMethod",
+      "domain": "Activity",
+      "range": "Computational Method",
+      "description": null
+    },
+    "has input parameter": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasInputParameter",
+      "domain": "Simulation",
+      "range": "Input Parameter",
+      "description": null
+    },
+    "has interatomic potential": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasInteratomicPotential",
+      "domain": "Activity",
+      "range": "Interatomic Potential",
+      "description": null
+    },
+    "has output parameter": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasOutputParameter",
+      "domain": "Simulation",
+      "range": "Output Parameter",
+      "description": null
+    },
+    "has plane": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasPlane",
+      "domain": "Shear",
+      "range": "Plane",
+      "description": null
+    },
+    "has relaxation DOF": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasRelaxationDOF",
+      "domain": "Energy Calculation",
+      "range": "Relaxation Degrees of Freedom",
+      "description": null
+    },
+    "has shear plane": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasShearPlane",
+      "domain": "Shear",
+      "range": "Plane",
+      "description": null
+    },
+    "has simulation parameter": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasSimulationParameter",
+      "domain": "Simulation",
+      "range": null,
+      "description": null
+    },
+    "has statistical ensemble": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasStatisticalEnsemble",
+      "domain": "Activity",
+      "range": "Statistical Ensemble",
+      "description": null
+    },
+    "has unit": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasUnit",
+      "domain": null,
+      "range": "Unit",
+      "description": null
+    },
+    "uses simulation algorithm": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/usesSimulationAlgorithm",
+      "domain": "Simulation",
+      "range": "Simulation Algorithm",
+      "description": null
+    },
+    "was calculated by": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/wasCalculatedBy",
+      "domain": "Calculated Property",
+      "range": "Activity",
+      "description": null
+    },
+    "has vector": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasVector",
+      "domain": null,
+      "range": "Vector",
+      "description": null
+    },
+    "actedOnBehalfOf": {
+      "iri": "http://www.w3.org/ns/prov#actedOnBehalfOf",
+      "domain": "Agent",
+      "range": "Agent",
+      "description": "An object property to express the accountability of an agent towards another agent. The subordinate agent acted on behalf of the responsible agent in an actual activity."
+    },
+    "generated": {
+      "iri": "http://www.w3.org/ns/prov#generated",
+      "domain": "Activity",
+      "range": "Entity",
+      "description": null
+    },
+    "influenced": {
+      "iri": "http://www.w3.org/ns/prov#influenced",
+      "domain": null,
+      "range": null,
+      "description": null
+    },
+    "used": {
+      "iri": "http://www.w3.org/ns/prov#used",
+      "domain": "Activity",
+      "range": "Entity",
+      "description": "A prov:Entity that was used by this prov:Activity. For example, :baking prov:used :spoon, :egg, :oven ."
+    },
+    "wasAssociatedWith": {
+      "iri": "http://www.w3.org/ns/prov#wasAssociatedWith",
+      "domain": "Activity",
+      "range": "Agent",
+      "description": "An prov:Agent that had some (unspecified) responsibility for the occurrence of this prov:Activity."
+    },
+    "wasAttributedTo": {
+      "iri": "http://www.w3.org/ns/prov#wasAttributedTo",
+      "domain": "Entity",
+      "range": "Agent",
+      "description": "Attribution is the ascribing of an entity to an agent."
+    },
+    "wasDerivedFrom": {
+      "iri": "http://www.w3.org/ns/prov#wasDerivedFrom",
+      "domain": "Entity",
+      "range": "Entity",
+      "description": "The more specific subproperties of prov:wasDerivedFrom (i.e., prov:wasQuotedFrom, prov:wasRevisionOf, prov:hadPrimarySource) should be used when applicable."
+    },
+    "wasGeneratedBy": {
+      "iri": "http://www.w3.org/ns/prov#wasGeneratedBy",
+      "domain": "Entity",
+      "range": "Activity",
+      "description": null
+    },
+    "wasInfluencedBy": {
+      "iri": "http://www.w3.org/ns/prov#wasInfluencedBy",
+      "domain": null,
+      "range": null,
+      "description": "Because prov:wasInfluencedBy is a broad relation, its more specific subproperties (e.g. prov:wasInformedBy, prov:actedOnBehalfOf, prov:wasEndedBy, etc.) should be used when applicable."
+    },
+    "wasInformedBy": {
+      "iri": "http://www.w3.org/ns/prov#wasInformedBy",
+      "domain": "Activity",
+      "range": "Activity",
+      "description": "An activity a2 is dependent on or informed by another activity a1, by way of some unspecified entity that is generated by a1 and used by a2."
+    },
+    "has XC functional": {
+      "iri": "https://w3id.org/mdo/calculation/hasXCFunctional",
+      "domain": "Density Functional Theory",
+      "range": "Exchange Correlation Energy Functional",
+      "description": "hasXCFunctional represents the relationship between a density functional theory method and the exchange-correlation energy functionals it takes."
+    }
+  },
+  "data_properties": {
+    "has addend": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasAddend",
+      "domain": "Addition",
+      "range_type": "float",
+      "description": null
+    },
+    "has base": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasBase",
+      "domain": "Exponentiation",
+      "range_type": "float",
+      "description": null
+    },
+    "has difference": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasDifference",
+      "domain": "Subtraction",
+      "range_type": "float",
+      "description": null
+    },
+    "has dividend": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasDividend",
+      "domain": "Division",
+      "range_type": "float",
+      "description": null
+    },
+    "has divisor": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasDivisor",
+      "domain": "Division",
+      "range_type": "float",
+      "description": null
+    },
+    "has exponent": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasExponent",
+      "domain": "Exponentiation",
+      "range_type": "float",
+      "description": null
+    },
+    "has factor": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasFactor",
+      "domain": "Multiplication",
+      "range_type": "float",
+      "description": null
+    },
+    "has minuend": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasMinuend",
+      "domain": "Subtraction",
+      "range_type": "float",
+      "description": null
+    },
+    "has product": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasProduct",
+      "domain": "Multiplication",
+      "range_type": "float",
+      "description": null
+    },
+    "has quotient": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasQuotient",
+      "domain": "Division",
+      "range_type": "float",
+      "description": null
+    },
+    "has reference": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasReference",
+      "domain": "Thing",
+      "range_type": "anyURI",
+      "description": null
+    },
+    "has subtrahend": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasSubtrahend",
+      "domain": "Subtraction",
+      "range_type": "float",
+      "description": null
+    },
+    "has sum": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasSum",
+      "domain": "Addition",
+      "range_type": "float",
+      "description": null
+    },
+    "has value": {
+      "iri": "http://purls.helmholtz-metadaten.de/asmo/hasValue",
+      "domain": "Thing",
+      "range_type": "float",
+      "description": null
+    },
+    "endedAtTime": {
+      "iri": "http://www.w3.org/ns/prov#endedAtTime",
+      "domain": "Activity",
+      "range_type": "dateTime",
+      "description": "The time at which an activity ended. See also prov:startedAtTime."
+    },
+    "startedAtTime": {
+      "iri": "http://www.w3.org/ns/prov#startedAtTime",
+      "domain": "Activity",
+      "range_type": "dateTime",
+      "description": "The time at which an activity started. See also prov:endedAtTime."
+    }
+  },
+  "statistics": {
+    "num_classes": 105,
+    "num_object_properties": 25,
+    "num_data_properties": 16
+  }
+}

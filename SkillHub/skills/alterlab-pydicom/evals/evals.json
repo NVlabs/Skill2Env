@@ -1,0 +1,63 @@
+{
+  "skill": "alterlab-pydicom",
+  "evals": [
+    {
+      "id": "read-pixel-windowing",
+      "prompt": "I have a chest CT in DICOM format. Read the file, pull out the pixel array, apply the proper window center/width so it displays correctly, and show me the Modality and Study Date from the metadata.",
+      "expected_output": "Invokes alterlab-pydicom. Uses pydicom.dcmread() to load the Dataset, accesses ds.pixel_array, applies VOI LUT windowing via apply_voi_lut(pixel_array, ds) (or WindowCenter/WindowWidth), and reads metadata attributes like ds.Modality and ds.StudyDate. Notes pixel_array needs numpy.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "dcmread" },
+        { "type": "behavior", "value": "Uses pydicom.dcmread, ds.pixel_array, and apply_voi_lut / WindowCenter+WindowWidth windowing." }
+      ]
+    },
+    {
+      "id": "anonymize-phi",
+      "prompt": "Before I share this DICOM dataset with collaborators I need to strip all the patient identifiable info — name, ID, birth date, institution, referring physician — but keep the pixel data intact. How do I anonymize it?",
+      "expected_output": "Invokes alterlab-pydicom. Removes/replaces PHI tags (PatientName, PatientID, PatientBirthDate, InstitutionName, ReferringPhysicianName, etc.), replacing identifiers with placeholders like ANONYMOUS while preserving pixel data, then ds.save_as(). May reference scripts/anonymize_dicom.py and verifying anonymization before sharing.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "PatientName" },
+        { "type": "behavior", "value": "Removes or overwrites PHI tags (PatientName/PatientID/etc.) while keeping pixel data, and saves with ds.save_as." }
+      ]
+    },
+    {
+      "id": "decompress-transfer-syntax",
+      "prompt": "Some of my DICOM files are JPEG2000 compressed and pydicom can't decode the pixel data. I want to check the transfer syntax and decompress them to uncompressed Explicit VR Little Endian.",
+      "expected_output": "Invokes alterlab-pydicom. Inspects ds.file_meta.TransferSyntaxUID (and .name), calls ds.decompress() then ds.save_as(..., write_like_original=False), and recommends installing the missing handlers (pylibjpeg / pylibjpeg-openjpeg / python-gdcm) so the compressed pixel data can be decoded.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "TransferSyntaxUID" },
+        { "type": "behavior", "value": "References transfer syntax, ds.decompress(), and installing pylibjpeg/gdcm compression handlers." }
+      ]
+    },
+    {
+      "id": "series-3d-volume",
+      "prompt": "I have a directory of axial slices from a single DICOM series. I want to load them all, sort them into the correct anatomical order, and stack them into a 3D numpy volume with the right voxel spacing.",
+      "expected_output": "Invokes alterlab-pydicom. Globs *.dcm, dcmreads each slice, sorts by ImagePositionPatient[2] or InstanceNumber, stacks pixel arrays with np.stack into a (num_slices, rows, columns) volume, and reads PixelSpacing plus SliceThickness for voxel dimensions.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ImagePositionPatient" },
+        { "type": "behavior", "value": "Sorts slices by ImagePositionPatient/InstanceNumber and stacks into a 3D volume, reading PixelSpacing and SliceThickness." }
+      ]
+    },
+    {
+      "id": "near-miss-pyhealth",
+      "prompt": "I have a set of COVID-19 chest X-ray images and I want to train a CNN to classify them, using a healthcare ML pipeline with proper train/val/test splits and AUROC evaluation.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pyhealth. The task is a clinical imaging-classification ML pipeline (model training, dataset splitting, AUROC) rather than reading, writing, or anonymizing DICOM files. Pydicom handles DICOM I/O and pixel extraction, not model training.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pyhealth" }
+      ]
+    },
+    {
+      "id": "near-miss-media-pipeline",
+      "prompt": "I have a standard MP4 screen recording of a surgery. I want to compress it, trim the first 30 seconds, and convert it to a web-friendly format with ffmpeg.",
+      "expected_output": "Does NOT invoke this skill; defers to the media-pipeline skill. The task is transcoding/compressing/trimming an ordinary MP4 video with ffmpeg, not reading or manipulating DICOM medical-imaging files. Pydicom only handles the DICOM medical format, not consumer video formats.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "media-pipeline" }
+      ]
+    }
+  ]
+}

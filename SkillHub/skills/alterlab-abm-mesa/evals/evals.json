@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-abm-mesa",
+  "evals": [
+    {
+      "id": "schelling-segregation",
+      "prompt": "Build an agent-based model of residential segregation where agents relocate if too few neighbors share their group, and show what emerges.",
+      "expected_output": "Invokes alterlab-abm-mesa: builds a Schelling-style Mesa 3 model (Agent + Model, super().__init__(seed=...), agents.shuffle_do('step'), a grid), collects the segregation outcome, and reports emergence across replications — using the current Mesa 3 API, not removed mesa.time schedulers.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Mesa" },
+        { "type": "behavior", "value": "Builds a Mesa 3 ABM with the AgentSet scheduling API and reports emergent macro behavior, not a single run." }
+      ]
+    },
+    {
+      "id": "opinion-dynamics-sweep",
+      "prompt": "I have an opinion-dynamics agent model on a network and want to sweep the influence parameter to find where consensus breaks down.",
+      "expected_output": "Invokes alterlab-abm-mesa: uses mesa.batch_run to sweep the parameter across iterations, and interprets the emergent consensus/polarization outcome as a function of the parameter (tipping point).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "batch_run" }
+      ]
+    },
+    {
+      "id": "diffusion-emergence",
+      "prompt": "Simulate the diffusion of an innovation through a population of interacting agents and measure adoption over time.",
+      "expected_output": "Invokes alterlab-abm-mesa: builds interacting agents with a local adoption rule, collects adoption via the DataCollector, and validates with replications rather than a single trajectory.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Constructs a Mesa agent model of diffusion and validates the emergent adoption curve across seeds." }
+      ]
+    },
+    {
+      "id": "near-miss-simpy",
+      "prompt": "Model a hospital emergency room as a queueing system where patients wait for a limited number of doctors and I track waiting times.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-simpy. A queueing / discrete-event process simulation is SimPy's domain, not an agent-based emergence model.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-simpy" }
+      ]
+    },
+    {
+      "id": "near-miss-stable-baselines3",
+      "prompt": "I want to train an agent to learn an optimal policy in an environment using reinforcement learning.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-stable-baselines3. Learning an optimal policy is reinforcement learning, not generative agent-based social simulation.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-stable-baselines3" }
+      ]
+    }
+  ]
+}

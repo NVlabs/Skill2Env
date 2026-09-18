@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-boltz",
+  "evals": [
+    {
+      "id": "protein-ligand-cofold",
+      "prompt": "I have a protein sequence and a ligand SMILES. Co-fold them together to predict the ligand-bound complex structure.",
+      "expected_output": "Invokes alterlab-boltz: builds a YAML/FASTA spec with the protein chain and the ligand (SMILES), runs `boltz predict` on a GPU, and returns the co-folded holo complex with per-model confidence. Notes weights/GPU needs and dispatch via alterlab-remote-compute.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "SMILES" },
+        { "type": "behavior", "value": "Co-folds protein and ligand together (not docking into a fixed receptor)." }
+      ]
+    },
+    {
+      "id": "binding-affinity",
+      "prompt": "Can you predict both the bound pose and an approximate binding affinity for this protein–ligand pair so I can rank a small set of candidates?",
+      "expected_output": "Invokes alterlab-boltz: co-folds each protein–ligand pair and outputs its predicted binding affinity, framing affinity as a ranking signal to confirm against measured data (alterlab-bindingdb), not a measured constant.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "affinity" }
+      ]
+    },
+    {
+      "id": "protein-nucleic-complex",
+      "prompt": "Predict the structure of my transcription factor bound to its double-stranded DNA motif — I have the protein sequence and the DNA sequence.",
+      "expected_output": "Invokes alterlab-boltz to co-fold the protein with the nucleic-acid chains in one pass (an AlphaFold3-style multi-entity capability), returning the assembly with confidence.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Handles a protein + nucleic-acid multi-entity complex in a single prediction." }
+      ]
+    },
+    {
+      "id": "near-miss-alphafold",
+      "prompt": "I just want the 3D structure of a single protein from its sequence — no ligands, no other molecules.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-alphafold. Boltz is for complexes with ligands/nucleic acids; a bare protein (or protein–protein) fold is best served by AlphaFold2/ColabFold via alterlab-alphafold.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-alphafold" }
+      ]
+    },
+    {
+      "id": "near-miss-diffdock",
+      "prompt": "I already have the crystal structure of my receptor. I just need to dock this ligand into its known binding pocket.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-diffdock. When the receptor structure is fixed and known, the task is molecular docking (pose placement), not co-folding the protein — that is alterlab-diffdock's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-diffdock" }
+      ]
+    }
+  ]
+}

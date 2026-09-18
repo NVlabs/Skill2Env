@@ -1,0 +1,61 @@
+{
+  "skill": "alterlab-alphafold-db",
+  "evals": [
+    {
+      "id": "predicted-structure-by-uniprot",
+      "prompt": "I have UniProt accession P00520 and there's no experimental PDB structure for it. Can you pull the AlphaFold predicted 3D structure and download the mmCIF coordinate file?",
+      "expected_output": "Invokes alterlab-alphafold-db. Retrieves the AlphaFold prediction for P00520 (e.g. via the prediction API endpoint or Biopython's alphafold_db.get_predictions), resolves the AlphaFold ID (AF-P00520-F1), and downloads the mmCIF model coordinate file using the version-stamped cifUrl from the prediction response (currently model_v6.cif) rather than a hardcoded _v4 URL. Notes that this is an AI prediction, not an experimental structure.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "AlphaFold" },
+        { "type": "behavior", "value": "Resolves the UniProt accession to an AlphaFold prediction and downloads the mmCIF/PDB model file rather than searching for an experimental structure." }
+      ]
+    },
+    {
+      "id": "confidence-plddt-pae",
+      "prompt": "For the AlphaFold model AF-P04637-F1, how reliable is the prediction? I want the per-residue pLDDT scores and the PAE matrix so I can judge which domains are confidently placed.",
+      "expected_output": "Invokes alterlab-alphafold-db. Fetches the per-residue confidence JSON (pLDDT, from plddtDocUrl) and the PAE JSON (from paeDocUrl) for AF-P04637-F1 — using the version-stamped URLs from the prediction response, not hardcoded _v4 URLs. Interprets pLDDT bands (>90 very high, 70-90 high, 50-70 low, <50 very low) and PAE thresholds (<5 Å confident relative positioning, >15 Å uncertain domain arrangement), and explains which regions/domains are reliable.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "pLDDT" },
+        { "type": "behavior", "value": "Distinguishes pLDDT (per-residue confidence) from PAE (relative domain confidence) and applies the documented thresholds." }
+      ]
+    },
+    {
+      "id": "bulk-proteome-download",
+      "prompt": "I need every AlphaFold predicted structure for the entire human proteome for a large-scale structural analysis. What's the fastest way to grab them all in bulk?",
+      "expected_output": "Invokes alterlab-alphafold-db. Recommends bulk access via the Google Cloud Storage dataset (gs://public-datasets-deepmind-alphafold-v4/proteomes/) using gsutil to download the proteome tar by taxonomy ID 9606, rather than fetching files one at a time. May mention BigQuery metadata for filtering high-confidence entries.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Points to Google Cloud / gsutil bulk proteome download by taxonomy ID rather than per-protein API calls." }
+      ]
+    },
+    {
+      "id": "batch-plddt-stats",
+      "prompt": "I have a list of UniProt IDs (P00520, P12931, P04637). For each one, download the AlphaFold model and give me the average pLDDT and the fraction of residues above 90 confidence.",
+      "expected_output": "Invokes alterlab-alphafold-db. Loops over the UniProt IDs, retrieves each prediction and its per-residue confidence JSON (via plddtDocUrl, or reads pLDDT from the mmCIF B-factor column), and computes average pLDDT and the high-confidence (>90) fraction per protein, returning a per-protein summary table.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Iterates over multiple UniProt accessions and reports per-protein confidence statistics (mean pLDDT, high-confidence fraction)." }
+      ]
+    },
+    {
+      "id": "near-miss-pdb",
+      "prompt": "I need the actual experimental X-ray crystal structure for hemoglobin, PDB ID 1HHO — download the coordinate file from the Protein Data Bank, not a model.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pdb. The user explicitly wants an experimental, deposited X-ray structure by PDB ID from the Protein Data Bank, not an AI-predicted AlphaFold model.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pdb" }
+      ]
+    },
+    {
+      "id": "near-miss-uniprot",
+      "prompt": "Just give me the amino acid FASTA sequence for UniProt P00520 — I only need the sequence, no structure.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-uniprot. The user wants only the protein FASTA sequence from UniProt's REST API, with no structural prediction, coordinates, or confidence metrics involved.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-uniprot" }
+      ]
+    }
+  ]
+}

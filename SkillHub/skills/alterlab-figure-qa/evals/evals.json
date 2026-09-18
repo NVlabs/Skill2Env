@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-figure-qa",
+  "evals": [
+    {
+      "id": "proof-before-submission",
+      "prompt": "Here's my finished figure and the data behind it. Check it's correct and print-ready before I submit to the journal.",
+      "expected_output": "Invokes alterlab-figure-qa: runs the render-then-verify checklist — data fidelity against every row, label legibility floor/ceiling, bounding-box collisions, and 300-dpi/vector export — and returns a pass/fail report naming any offending elements.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "300" },
+        { "type": "behavior", "value": "Verifies an existing figure against a checklist rather than creating a new plot." }
+      ]
+    },
+    {
+      "id": "overlap-detection",
+      "prompt": "Something looks off in my plot — I think the legend is covering a data point and a couple of axis labels are overlapping. Can you catch these?",
+      "expected_output": "Invokes alterlab-figure-qa: computes text/legend/marker bounding boxes, detects collisions (legend over data, overlapping labels), and reports each with its location so it can be nudged.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "collision" }
+      ]
+    },
+    {
+      "id": "data-fidelity",
+      "prompt": "Double-check that my chart actually plots all the data — I want to be sure no series was dropped or plotted from the wrong column.",
+      "expected_output": "Invokes alterlab-figure-qa for a data-fidelity check: recomputes series/point counts and axis ranges from the source data and asserts they match the drawn artists, flagging any dropped subset or wrong-column series.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Cross-checks the rendered marks against every row of the source data." }
+      ]
+    },
+    {
+      "id": "near-miss-matplotlib",
+      "prompt": "Make me a grouped bar chart of these results with error bars and a clean style.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-matplotlib. Creating/plotting a figure is the plotting skill's job; figure-qa only verifies a figure that already exists.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-matplotlib" }
+      ]
+    },
+    {
+      "id": "near-miss-scientific-viz",
+      "prompt": "Assemble my six subplots into a single multi-panel publication figure with shared axes and panel labels.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-scientific-viz for multi-panel publication layout. figure-qa proofs a figure; it does not compose the panels.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scientific-viz" }
+      ]
+    }
+  ]
+}

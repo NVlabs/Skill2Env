@@ -1,0 +1,63 @@
+{
+  "skill": "alterlab-uniprot",
+  "evals": [
+    {
+      "id": "fasta-by-accession",
+      "prompt": "Fetch me the FASTA sequence for UniProt accession P12345 over the REST API.",
+      "expected_output": "Invokes alterlab-uniprot. Retrieves the entry directly from the UniProt REST endpoint https://rest.uniprot.org/uniprotkb/P12345.fasta and returns the amino acid sequence in FASTA format.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "FASTA" },
+        { "type": "behavior", "value": "Hits the UniProt REST retrieve endpoint with the accession and .fasta format to return the sequence." }
+      ]
+    },
+    {
+      "id": "search-reviewed-by-gene-organism",
+      "prompt": "Search UniProt for the reviewed (Swiss-Prot) human BRCA1 entry and give me its accession, gene name, and length as a TSV.",
+      "expected_output": "Invokes alterlab-uniprot. Builds a structured query (gene:BRCA1 AND organism_id:9606 AND reviewed:true), calls the search endpoint with selected fields=accession,gene_names,organism_name,length and format=tsv, returning the reviewed entry.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "reviewed" },
+        { "type": "behavior", "value": "Uses field-specific UniProt query syntax with reviewed:true and a fields/format selection on the search endpoint." }
+      ]
+    },
+    {
+      "id": "id-mapping",
+      "prompt": "I have a list of Ensembl gene IDs and I need their corresponding UniProtKB accessions. Map them using UniProt's ID mapping service.",
+      "expected_output": "Invokes alterlab-uniprot. Runs the three-step ID mapping workflow against rest.uniprot.org/idmapping: submit the job (run), poll status, then fetch results, mapping the Ensembl IDs to UniProtKB accessions.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ID mapping" },
+        { "type": "behavior", "value": "Uses the submit/poll-status/fetch-results idmapping workflow to convert between identifier types." }
+      ]
+    },
+    {
+      "id": "stream-large-query",
+      "prompt": "Download all reviewed human kinase entries from UniProt — there are too many for normal pagination, so stream the whole result set as FASTA.",
+      "expected_output": "Invokes alterlab-uniprot. Uses the stream endpoint https://rest.uniprot.org/uniprotkb/stream with a query like 'kinase AND organism_id:9606 AND reviewed:true' and format=fasta to download the complete result set without pagination.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "stream" },
+        { "type": "behavior", "value": "Uses the UniProt stream endpoint for large result sets instead of paginated search." }
+      ]
+    },
+    {
+      "id": "near-miss-interpro",
+      "prompt": "For UniProt P04637, classify its protein family and give me the full InterPro domain architecture and the Pfam signatures.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-interpro. The user wants protein family/domain classification and member-database (Pfam) signatures, which is InterPro's territory, not raw UniProt entry retrieval, search, or ID mapping.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-interpro" }
+      ]
+    },
+    {
+      "id": "near-miss-alphafold-db",
+      "prompt": "Get me the AlphaFold predicted 3D structure (mmCIF) and pLDDT confidence scores for UniProt P04637.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-alphafold-db. The user wants the predicted 3D structure and confidence metrics keyed by the UniProt accession, not the UniProt sequence entry, search, or ID mapping.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-alphafold-db" }
+      ]
+    }
+  ]
+}

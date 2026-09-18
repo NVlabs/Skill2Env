@@ -1,0 +1,309 @@
+{
+  "skill_name": "nonlinear-solvers",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "My Newton solver for a phase-field simulation (50,000 DOFs) is converging very slowly. Residuals over 10 iterations: 1, 0.8, 0.65, 0.52, 0.42, 0.35, 0.28, 0.22, 0.18, 0.15. The Jacobian is expensive to compute.",
+      "expected_output": "Diagnoses linear convergence, recommends Newton-Krylov or quasi-Newton (L-BFGS/Broyden) with globalization.",
+      "assertions": [
+        "Uses convergence_analyzer.py with the given residual history",
+        "Identifies convergence as linear or sublinear rather than quadratic",
+        "Uses solver_selector.py with --size 50000 and Jacobian cost consideration",
+        "Recommends Newton-Krylov, L-BFGS, or Broyden as alternatives to full Newton"
+      ],
+      "script_checks": [
+        {
+          "description": "Slowly-decreasing residual history classified as linear convergence",
+          "cmd": [
+            "scripts/convergence_analyzer.py",
+            "--residuals",
+            "1,0.8,0.65,0.52,0.42,0.35,0.28,0.22,0.18,0.15",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.convergence_type",
+              "op": "eq",
+              "value": "linear"
+            },
+            {
+              "path": "results.converged",
+              "op": "eq",
+              "value": false
+            },
+            {
+              "path": "results.estimated_rate",
+              "op": "approx",
+              "value": 0.8100838975838975,
+              "rel_tol": 1e-6
+            },
+            {
+              "path": "results.iterations",
+              "op": "eq",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "description": "Large (50000 DOF) + expensive Jacobian -> matrix-free Newton-Krylov",
+          "cmd": [
+            "scripts/solver_selector.py",
+            "--size",
+            "50000",
+            "--jacobian-available",
+            "--jacobian-expensive",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.recommended.0",
+              "op": "contains",
+              "value": "Newton-Krylov"
+            },
+            {
+              "path": "results.alternatives.0",
+              "op": "eq",
+              "value": "Modified Newton"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I need to choose between line search and trust region for a nonlinear FEM elasticity problem. The Jacobian is well-conditioned but my initial guess might be far from the solution.",
+      "expected_output": "Recommends trust region for robustness with poor initial guess (strategy=trust-region).",
+      "assertions": [
+        "Uses globalization_advisor.py with --problem-type root-finding --jacobian-quality good --far-from-solution",
+        "Output reports strategy=trust-region (the --far-from-solution flag is the decisive factor for the distant initial guess)",
+        "Explains that trust region controls step size more conservatively than line search",
+        "Uses step_quality.py to demonstrate how trust region evaluates step acceptance"
+      ],
+      "script_checks": [
+        {
+          "description": "Distant initial guess -> trust-region (dogleg) for well-conditioned root-finding",
+          "cmd": [
+            "scripts/globalization_advisor.py",
+            "--problem-type",
+            "root-finding",
+            "--jacobian-quality",
+            "good",
+            "--far-from-solution",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.strategy",
+              "op": "eq",
+              "value": "trust-region"
+            },
+            {
+              "path": "results.trust_region_type",
+              "op": "eq",
+              "value": "dogleg"
+            },
+            {
+              "path": "results.line_search_type",
+              "op": "eq",
+              "value": null
+            },
+            {
+              "path": "results.initial_damping",
+              "op": "approx",
+              "value": 0.01,
+              "rel_tol": 1e-9
+            }
+          ]
+        },
+        {
+          "description": "Trust-region step acceptance demo: good agreement accepts and maintains radius",
+          "cmd": [
+            "scripts/step_quality.py",
+            "--predicted-reduction",
+            "0.5",
+            "--actual-reduction",
+            "0.4",
+            "--step-norm",
+            "0.8",
+            "--gradient-norm",
+            "1.0",
+            "--trust-radius",
+            "1.0",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.ratio",
+              "op": "approx",
+              "value": 0.8,
+              "rel_tol": 1e-9
+            },
+            {
+              "path": "results.step_quality",
+              "op": "eq",
+              "value": "excellent"
+            },
+            {
+              "path": "results.accept_step",
+              "op": "eq",
+              "value": true
+            },
+            {
+              "path": "results.trust_radius_action",
+              "op": "eq",
+              "value": "maintain"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "evaluate this trust region step: predicted reduction 0.5, actual reduction -0.1, step norm 0.8, gradient norm 1.0, trust radius 1.0",
+      "expected_output": "Step quality is very poor (negative ratio), step should be rejected and trust radius shrunk aggressively.",
+      "assertions": [
+        "Uses step_quality.py with --predicted-reduction 0.5 --actual-reduction -0.1 --step-norm 0.8 --gradient-norm 1.0 --trust-radius 1.0",
+        "Reports negative ratio (rho = -0.2) indicating very poor step quality",
+        "Recommends rejecting the step",
+        "Recommends aggressive trust radius shrinkage"
+      ],
+      "script_checks": [
+        {
+          "description": "Negative ratio (rho=-0.2) -> very_poor, reject, shrink aggressively",
+          "cmd": [
+            "scripts/step_quality.py",
+            "--predicted-reduction",
+            "0.5",
+            "--actual-reduction",
+            "-0.1",
+            "--step-norm",
+            "0.8",
+            "--gradient-norm",
+            "1.0",
+            "--trust-radius",
+            "1.0",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.ratio",
+              "op": "approx",
+              "value": -0.2,
+              "rel_tol": 1e-9
+            },
+            {
+              "path": "results.step_quality",
+              "op": "eq",
+              "value": "very_poor"
+            },
+            {
+              "path": "results.accept_step",
+              "op": "eq",
+              "value": false
+            },
+            {
+              "path": "results.trust_radius_action",
+              "op": "eq",
+              "value": "shrink_aggressive"
+            },
+            {
+              "path": "results.suggested_trust_radius",
+              "op": "approx",
+              "value": 0.25,
+              "rel_tol": 1e-9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I'm fitting experimental stress-strain data to a hyperelastic model. 200 data points, 6 material parameters, analytic Jacobian available. Which nonlinear solver should I use?",
+      "expected_output": "Recommends Levenberg-Marquardt for nonlinear least-squares with trust region; Gauss-Newton as alternative.",
+      "assertions": [
+        "Uses solver_selector.py with --problem-type least-squares and a small --size (e.g. 6 parameters)",
+        "Output recommends Levenberg-Marquardt as the primary choice for nonlinear least-squares",
+        "Output lists Gauss-Newton in alternatives (given the analytic Jacobian)",
+        "Uses globalization_advisor.py --problem-type least-squares, which reports trust_region_type=Levenberg-Marquardt"
+      ],
+      "script_checks": [
+        {
+          "description": "Least-squares fit -> Levenberg-Marquardt",
+          "cmd": [
+            "scripts/solver_selector.py",
+            "--problem-type",
+            "least-squares",
+            "--size",
+            "20",
+            "--jacobian-available",
+            "--json"
+          ],
+          "assert": [
+            {
+              "path": "results.recommended.0",
+              "op": "contains",
+              "value": "Levenberg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "My nonlinear residuals are oscillating: 1, 0.8, 0.9, 0.7, 0.85, 0.65, 0.8. What's going on and how do I fix it?",
+      "expected_output": "Detects oscillatory pattern suggesting poor globalization or near-singular Jacobian.",
+      "assertions": [
+        "Uses residual_monitor.py with the oscillating residual sequence",
+        "Detects oscillatory pattern in the residual history",
+        "Recommends checking Jacobian quality with jacobian_diagnostics.py",
+        "Suggests adding or adjusting line search damping or switching to trust region"
+      ],
+      "script_checks": [
+        {
+          "description": "Oscillating residual sequence flagged as oscillating with trust-region recommendation",
+          "cmd": [
+            "scripts/residual_monitor.py",
+            "--residuals",
+            "1,0.8,0.9,0.7,0.85,0.65,0.8",
+            "--target-tolerance",
+            "1e-8",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.patterns_detected",
+              "op": "contains",
+              "value": "oscillating"
+            },
+            {
+              "path": "results.converged",
+              "op": "eq",
+              "value": false
+            },
+            {
+              "path": "results.alerts.0",
+              "op": "contains",
+              "value": "oscillation"
+            },
+            {
+              "path": "results.recommendations.0",
+              "op": "contains",
+              "value": "trust region"
+            },
+            {
+              "path": "results.iterations",
+              "op": "eq",
+              "value": 7
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

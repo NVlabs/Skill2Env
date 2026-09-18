@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-ssci-measurement-gate",
+  "evals": [
+    {
+      "id": "alpha-only-not-enough",
+      "prompt": "My Cronbach's alpha is 0.82 for my 8-item motivation scale, so the scale is good to use, right?",
+      "expected_output": "Invokes alterlab-ssci-measurement-gate: explains that alpha assumes tau-equivalence (equal loadings) and is only a lower bound, so it asks for McDonald's omega alongside alpha and a dimensionality check, and stresses that internal consistency is not evidence of validity. Does not bless the scale on alpha alone.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "omega" },
+        { "type": "behavior", "value": "Refuses to treat a single alpha as sufficient; requires omega (or a stated tau-equivalence caveat) and separates reliability from validity." }
+      ]
+    },
+    {
+      "id": "reliability-is-not-validity",
+      "prompt": "My anxiety questionnaire has excellent internal consistency, so that proves it's a valid measure of anxiety, doesn't it?",
+      "expected_output": "Invokes alterlab-ssci-measurement-gate and corrects the reliability=validity conflation: high consistency only means items move together, not that they capture the intended construct. Requires separate validity evidence (content, criterion, convergent/discriminant construct validity).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "States that reliability does not establish validity and enumerates the distinct validity evidence required." }
+      ]
+    },
+    {
+      "id": "new-measure-validation",
+      "prompt": "I built a new 6-item measure of teacher burnout. How do I show it actually works before I use it in my study?",
+      "expected_output": "Invokes alterlab-ssci-measurement-gate: lays out the validation program — define the construct, content validity, dimensionality/CFA, reliability with omega, and criterion/convergent/discriminant construct validity — and routes the factor-model execution to the psychometrics skill.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Prescribes construct definition + dimensionality + reliability (omega) + multiple validity evidences, not just an alpha." }
+      ]
+    },
+    {
+      "id": "cross-group-invariance",
+      "prompt": "I want to compare mean trust in government across three countries using the same 5-item scale. Can I just compare the group averages?",
+      "expected_output": "Invokes alterlab-ssci-measurement-gate: requires measurement invariance testing (configural -> metric -> scalar multi-group CFA) before comparing latent means, warning that without at least scalar invariance a group difference may be a measurement artifact rather than a real difference.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "invariance" }
+      ]
+    },
+    {
+      "id": "near-miss-survey-design",
+      "prompt": "I'm writing a brand-new questionnaire. Help me word the items and choose the response-scale anchors for each question.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-survey-design. Writing and wording items and choosing response scales is instrument construction, upstream of measurement validation.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-survey-design" }
+      ]
+    },
+    {
+      "id": "near-miss-statistical-analysis",
+      "prompt": "I already trust my scale. Just compute the mean and standard deviation of the total score for me.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-statistical-analysis for descriptive computation. There is no measurement-quality question to gate here.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statistical-analysis" }
+      ]
+    }
+  ]
+}

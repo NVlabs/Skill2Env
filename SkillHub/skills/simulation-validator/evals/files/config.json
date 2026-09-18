@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "dt": 0.1,
+    "dx": 1e-2,
+    "kappa": 0.5
+  },
+  "material_source": "materials_project"
+}

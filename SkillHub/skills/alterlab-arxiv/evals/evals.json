@@ -1,0 +1,52 @@
+{
+  "skill": "alterlab-arxiv",
+  "evals": [
+    {
+      "id": "keyword-category-search",
+      "prompt": "Find me recent preprints on sparse autoencoders and mechanistic interpretability in machine learning — I want the latest stuff in cs.LG, maybe the 20 newest.",
+      "expected_output": "Triggers the arXiv skill. Runs a keyword search (e.g. arxiv_search.py with --keywords 'sparse autoencoders' 'mechanistic interpretability') constrained to the cs.LG category, sorted by submittedDate, returning structured JSON with titles, abstracts, authors, categories, and links. Does not claim citation counts (arXiv has none).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "cs.LG" },
+        { "type": "behavior", "value": "Performs a keyword search filtered by arXiv category sorted by submission date." }
+      ]
+    },
+    {
+      "id": "arxiv-id-lookup",
+      "prompt": "Pull the metadata and PDF link for arXiv 2309.10668 and 2406.04093 so I can add them to my reading list.",
+      "expected_output": "Triggers the arXiv skill. Resolves the bare arXiv IDs via ID lookup (--ids / get_by_ids), returning title, authors, abstract, categories, published/updated dates, DOI, and pdf_url for each. Treats the values as arXiv identifiers, not search keywords.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "2309.10668" },
+        { "type": "behavior", "value": "Resolves specific arXiv IDs to their metadata and PDF links rather than running a free-text search." }
+      ]
+    },
+    {
+      "id": "author-tracking",
+      "prompt": "Track the recent cs.LG preprints coming out of Anthropic — I want to monitor what their interpretability team is posting.",
+      "expected_output": "Triggers the arXiv skill. Builds an author search (au:anthropic) optionally combined with the cs.LG category and abstract terms like interpretability, sorted by submittedDate descending. Returns the recent preprint list. Uses arXiv query syntax with uppercase boolean operators.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Constructs an author-based arXiv query (au: prefix) to monitor a group's recent submissions." }
+      ]
+    },
+    {
+      "id": "near-miss-pubmed",
+      "prompt": "I need peer-reviewed clinical journal articles on metformin and cardiovascular outcomes — indexed, with MeSH terms.",
+      "expected_output": "Should NOT trigger the arXiv skill. This is biomedical, peer-reviewed, MeSH-indexed literature, which arXiv does not cover (arXiv is preprints in physics/math/CS/quant-bio). The skill should defer to the pubmed database skill (alterlab-pubmed) for indexed clinical journal articles.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "pubmed" }
+      ]
+    },
+    {
+      "id": "near-miss-openalex",
+      "prompt": "For the 'Attention Is All You Need' transformer paper, how many times has it been cited and what's its citation trajectory over the years?",
+      "expected_output": "Should NOT trigger the arXiv skill. arXiv provides no citation counts or impact metrics. The request for citation counts and a citation trajectory should defer to the openalex database skill (alterlab-openalex), which exposes citation and impact data.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "openalex" }
+      ]
+    }
+  ]
+}

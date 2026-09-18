@@ -1,0 +1,63 @@
+{
+  "skill": "alterlab-umap",
+  "evals": [
+    {
+      "id": "2d-visualization-embedding",
+      "prompt": "I have a high-dimensional dataset (about 200 numeric features) and I want to project it down to 2D so I can plot it colored by my class labels and see the structure. What's a good fast approach?",
+      "expected_output": "Invokes alterlab-umap: standardizes the features with StandardScaler first (critical preprocessing), fits umap.UMAP(n_neighbors=15, min_dist=0.1, n_components=2, metric='euclidean', random_state=42).fit_transform, and scatter-plots the 2D embedding colored by labels; notes setting random_state for reproducibility since UMAP optimization is stochastic.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "UMAP" },
+        { "type": "behavior", "value": "Standardizes features then fits 2D UMAP (n_components=2) with a fixed random_state and plots the embedding colored by labels." }
+      ]
+    },
+    {
+      "id": "clustering-preprocessing-hdbscan",
+      "prompt": "I want to cluster my data with HDBSCAN but it does badly on the raw high-dimensional features. Should I reduce dimensions first, and if so how do I configure it so I don't create fake clusters?",
+      "expected_output": "Invokes alterlab-umap as clustering preprocessing: after scaling, configures UMAP differently from visualization — n_neighbors around 30, min_dist=0.0 to pack points densely, and n_components 5-10 to preserve density better than 2D — then runs hdbscan.HDBSCAN on the embedding; warns that UMAP does not fully preserve density and can create artificial divisions so clusters must be validated.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "min_dist" },
+        { "type": "behavior", "value": "Uses clustering-tuned UMAP (n_neighbors~30, min_dist=0.0, n_components 5-10) before HDBSCAN and warns about UMAP not fully preserving density." }
+      ]
+    },
+    {
+      "id": "supervised-metric-learning-transform",
+      "prompt": "I have labeled training data and unlabeled test data. I want to learn a low-dimensional embedding that separates my known classes on the training set, then project the test set into that same space to use as features for a classifier.",
+      "expected_output": "Invokes alterlab-umap for supervised metric learning: fits umap.UMAP().fit(train_data, train_labels) passing labels via y to get cleanly separated classes, then projects unseen data with mapper.transform(test_data), and feeds the embeddings to a downstream classifier (e.g. SVC); notes the transform assumes a consistent distribution and Parametric UMAP is the alternative when that fails.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "transform" },
+        { "type": "behavior", "value": "Trains supervised UMAP with labels via y, then uses transform() to project new data as features for a downstream classifier." }
+      ]
+    },
+    {
+      "id": "document-embedding-cosine-metric",
+      "prompt": "I have TF-IDF document vectors and I want to embed them down to 2D for visualization. The vectors are sparse and high-dimensional text features, what metric should I use?",
+      "expected_output": "Invokes alterlab-umap: for text/document vectors recommends metric='cosine' (or 'correlation') rather than euclidean, fitting umap.UMAP(n_neighbors=15, min_dist=0.1, n_components=2, metric='cosine', random_state=42), and projects the documents to 2D for visualization.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "cosine" },
+        { "type": "behavior", "value": "Selects the cosine metric for document/text vectors when configuring UMAP rather than defaulting to euclidean." }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-scikit-learn",
+      "prompt": "Reduce my data to a few components using PCA so I can keep the linear directions that explain the most variance, and tell me the explained variance ratio per component.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scikit-learn. The user specifically wants linear PCA with explained-variance-ratio per component, which is scikit-learn's PCA territory, not UMAP's nonlinear manifold embedding.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scikit-learn" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-eda",
+      "prompt": "Before any modeling, just profile my dataset — give me a structural overview, summary statistics, missing-value counts, and feature distributions in a report.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-eda. The user wants exploratory profiling (structure, summary statistics, missing values, distributions), not a dimensionality-reduction embedding, so this belongs to the eda skill rather than UMAP.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-eda" }
+      ]
+    }
+  ]
+}

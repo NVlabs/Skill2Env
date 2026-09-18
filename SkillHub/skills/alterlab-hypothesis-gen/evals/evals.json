@@ -1,0 +1,62 @@
+{
+  "skill": "alterlab-hypothesis-gen",
+  "evals": [
+    {
+      "id": "observations-to-competing-hypotheses",
+      "prompt": "In my knockout experiments the mutant mice show elevated fasting glucose only when housed at 30C, not at standard 22C. Help me turn this observation into a few testable, falsifiable hypotheses with mechanisms.",
+      "expected_output": "Should trigger the hypothesis-generation skill. It clarifies the phenomenon and its boundary conditions (temperature-dependent glycemic phenotype), then generates 3-5 distinct competing hypotheses, each with a mechanistic explanation (how/why, e.g. thermogenesis/brown-fat, sympathetic tone, insulin signaling) grounded in literature, and frames them as falsifiable. Each hypothesis is mutually distinguishable.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Generates 3-5 distinct competing hypotheses, each with a mechanistic (how/why) explanation rather than mere description." },
+        { "type": "behavior", "value": "Frames hypotheses as falsifiable/testable and notes how the competing hypotheses can be distinguished." }
+      ]
+    },
+    {
+      "id": "design-experiment-and-predictions",
+      "prompt": "I think the algal bloom collapse in our mesocosm is driven by viral lysis rather than nutrient depletion. Design experiments to test this and give me the specific predictions each hypothesis makes.",
+      "expected_output": "Should trigger. Treats viral-lysis vs nutrient-depletion as competing hypotheses, proposes experimental designs with appropriate controls and measurements (e.g. comparisons, what is measured, confounds), and formulates specific testable predictions that discriminate between the two hypotheses, noting which observations would falsify each.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Proposes concrete experimental designs with controls/comparisons and measurable variables for the competing hypotheses." },
+        { "type": "behavior", "value": "States distinguishing, falsifiable predictions for each hypothesis." }
+      ]
+    },
+    {
+      "id": "evaluate-hypothesis-quality-criteria",
+      "prompt": "I drafted three explanations for why our deep-learning model degrades on out-of-distribution medical images. Can you evaluate each one on testability, falsifiability, parsimony, and explanatory power, and tell me which is strongest?",
+      "expected_output": "Should trigger. Evaluates each candidate hypothesis against the quality criteria (testability, falsifiability, parsimony, explanatory power, scope, consistency), explicitly noting strengths and weaknesses, and reasons toward which hypothesis is best supported. Optionally suggests experiments to discriminate them.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Assesses each hypothesis against explicit quality criteria such as testability, falsifiability, parsimony, and explanatory power, naming strengths and weaknesses." }
+      ]
+    },
+    {
+      "id": "literature-grounded-mechanistic-hypotheses",
+      "prompt": "We keep seeing faster tumor regrowth after intermittent fasting in our breast-cancer xenografts. Search the literature and propose mechanistic hypotheses grounded in known pathways.",
+      "expected_output": "Should trigger. Conducts a literature search (PubMed/web) to ground the work, synthesizes existing evidence and known pathways, and proposes mechanistic, literature-grounded hypotheses with citations, plus how each could be tested. Mechanism, not just description.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Grounds the hypotheses in a literature search and synthesizes existing evidence/known mechanisms with citations." },
+        { "type": "behavior", "value": "Proposes mechanistic hypotheses (explains how/why) tied to specific pathways or prior findings." }
+      ]
+    },
+    {
+      "id": "near-miss-literature-review",
+      "prompt": "Write me a comprehensive systematic literature review of CRISPR base-editing off-target effects across PubMed, arXiv, and bioRxiv, formatted as a markdown document with a synthesis table.",
+      "expected_output": "Should NOT trigger hypothesis-generation. This is a request to produce a comprehensive systematic literature review document across multiple databases, which is the alterlab-literature-review skill's territory, not deriving testable hypotheses from an observation. The correct response defers to alterlab-literature-review; hypothesis-gen only does a focused literature search as input to forming hypotheses, not a standalone review deliverable.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "literature-review" }
+      ]
+    },
+    {
+      "id": "near-miss-open-ended-brainstorming",
+      "prompt": "I want to brainstorm wide-open, blue-sky research directions for our lab on AI in virtual production over the next five years. Just throw out lots of creative ideas, no need for testable mechanisms yet.",
+      "expected_output": "Should NOT trigger hypothesis-generation. This is open-ended, divergent ideation ('blue-sky', 'no testable mechanisms yet') rather than formulating falsifiable, mechanistic hypotheses from a specific observation. The correct response engages in wide-open idea generation rather than forcing the structured competing-hypotheses / experimental-design workflow this skill is built for.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "behavior", "value": "Does not impose the structured competing-hypotheses, predictions, and experimental-design workflow; instead offers open-ended, divergent research directions as requested." }
+      ]
+    }
+  ]
+}

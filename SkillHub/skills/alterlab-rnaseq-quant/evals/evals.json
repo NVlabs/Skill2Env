@@ -1,0 +1,62 @@
+{
+  "skill": "alterlab-rnaseq-quant",
+  "evals": [
+    {
+      "id": "salmon-decoy-quant",
+      "prompt": "I have paired-end bulk RNA-seq FASTQs for 6 samples and a human transcriptome plus the genome FASTA. Can you set up salmon to quantify them properly? I want it done the accurate way.",
+      "expected_output": "Invokes alterlab-rnaseq-quant on the salmon path. Builds a DECOY-AWARE gentrome index first (decoys.txt from the genome sequence names, gentrome = transcripts concatenated before genome) and runs `salmon index`, then quantifies each sample with `salmon quant -l A --validateMappings --gcBias`. Explicitly warns that the salmon index must be rebuilt for the current SSHash index format (v1.11.2+) rather than reusing an old index, and checks the inferred library type in lib_format_counts.json. Stops at per-sample quant.sf and offers to summarize to a gene matrix.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "decoy" },
+        { "type": "behavior", "value": "Builds a decoy-aware gentrome index and runs salmon quant with --validateMappings --gcBias -l A, and warns that the SSHash index format requires rebuilding pre-v1.11.2 indices." }
+      ]
+    },
+    {
+      "id": "tximport-to-deseq2-handoff",
+      "prompt": "I already ran salmon and I have a folder of quant.sf files, one per sample. I need to turn these into a gene-level count matrix I can feed into DESeq2. Can you help me aggregate them?",
+      "expected_output": "Invokes alterlab-rnaseq-quant in the import/aggregation mode: builds a tx2gene map from the annotation (scripts/build_tx2gene.py) and summarizes the per-sample quant.sf files to a gene-level count matrix via tximport semantics (countsFromAbundance lengthScaledTPM), e.g. scripts/import_quant.py. Produces gene_counts.tsv and then hands the differential-expression step off to alterlab-pydeseq2 rather than calling DEGs itself.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "tximport" },
+        { "type": "behavior", "value": "Aggregates quant.sf to a gene-level matrix using a tx2gene map and a lengthScaledTPM import (tximport semantics), then routes the actual differential-expression analysis to alterlab-pydeseq2." }
+      ]
+    },
+    {
+      "id": "kallisto-kb-pseudoalign",
+      "prompt": "I'd rather use kallisto than salmon for speed on my bulk RNA-seq. Can you show me how to build the index and run kb count on my paired-end reads?",
+      "expected_output": "Invokes alterlab-rnaseq-quant on the kallisto / kb-python path: builds a kallisto index (or `kb ref`) from the transcriptome and runs `kb count -x bulk` (or `kallisto quant`) on the paired-end reads. Notes that kallisto uses a plain transcriptome index (no decoy/gentrome construction), points to lr-kallisto `--long` for long reads, and explains that abundance.tsv/.h5 feeds tximport identically to salmon before handoff to alterlab-pydeseq2.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "kb count" },
+        { "type": "behavior", "value": "Drives the kallisto/kb-python pseudoalignment workflow (kb ref / kb count -x bulk or kallisto index/quant) and notes kallisto needs no decoy construction." }
+      ]
+    },
+    {
+      "id": "near-miss-pydeseq2-de",
+      "prompt": "I already have a gene-level count matrix (genes x samples) and a sample sheet with treated vs control. Run the differential expression analysis and give me the significant DEGs with a volcano plot.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pydeseq2. The user already has the count matrix and wants differential expression (size-factor normalization, dispersion, Wald tests, BH-FDR, volcano plot) — that is pydeseq2's job. alterlab-rnaseq-quant only produces the abundance/count matrix from FASTQs; it does not call DEGs.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pydeseq2" }
+      ]
+    },
+    {
+      "id": "near-miss-single-cell-alevin",
+      "prompt": "I have 10x Chromium single-cell RNA-seq FASTQs with cell barcodes and UMIs. Can I quantify them with salmon alevin to get a cell-by-gene matrix?",
+      "expected_output": "Does NOT invoke this skill's bulk path. Explains that `salmon alevin` was REMOVED in salmon v1.11.x and that single-cell quantification now uses the piscem + alevin-fry pipeline, then routes downstream single-cell analysis to alterlab-scanpy / alterlab-scvi-tools. This skill covers bulk RNA-seq only and must not force barcoded single-cell data through the bulk salmon/kallisto path.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alevin-fry" }
+      ]
+    },
+    {
+      "id": "near-miss-sarek-variants",
+      "prompt": "I have whole-exome sequencing FASTQs and I need to align them and call germline SNPs and indels to get a VCF for variant annotation.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-nf-core-sarek. The user wants FASTQ-to-VCF germline variant calling (alignment, BQSR, variant calling), not transcript abundance quantification. alterlab-rnaseq-quant is for RNA-seq expression quantification with salmon/kallisto and does not align to a genome for variant calling.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-nf-core-sarek" }
+      ]
+    }
+  ]
+}

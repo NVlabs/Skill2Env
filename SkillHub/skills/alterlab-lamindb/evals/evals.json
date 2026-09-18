@@ -1,0 +1,62 @@
+{
+  "skill": "alterlab-lamindb",
+  "evals": [
+    {
+      "id": "register-track-artifact",
+      "prompt": "I want every analysis notebook to automatically record which code produced which output dataset, and register my processed AnnData as a versioned, queryable artifact. How do I set this up with LaminDB?",
+      "expected_output": "Invokes alterlab-lamindb. Uses ln.track() at the start and ln.finish() at the end to capture lineage (Run/Transform), creates a versioned Artifact (e.g. ln.Artifact.from_anndata(...).save()) with a hierarchical key, and notes view_lineage() for provenance.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ln.track" },
+        { "type": "behavior", "value": "Captures lineage with ln.track()/ln.finish() and saves a versioned Artifact." }
+      ]
+    },
+    {
+      "id": "ontology-validate-celltypes",
+      "prompt": "Before I curate my scRNA-seq dataset I want to validate and standardize the cell type labels in adata.obs against a proper ontology so my annotations are FAIR.",
+      "expected_output": "Invokes alterlab-lamindb. Imports the cell-type ontology via Bionty (bt.CellType.import_source()), standardizes labels with bt.CellType.standardize(...), validates/curates with AnnDataCurator, and links ontology annotations to the saved artifact.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "bionty" },
+        { "type": "behavior", "value": "Uses Bionty cell-type ontology to validate and standardize obs labels before curation." }
+      ]
+    },
+    {
+      "id": "query-data-lakehouse",
+      "prompt": "I've registered dozens of scRNA-seq batches in LaminDB annotated with tissue and condition. Now I want to query for all PBMC treated datasets and load them for analysis.",
+      "expected_output": "Invokes alterlab-lamindb. Uses ln.Artifact.filter(...) with feature/key filters (e.g. key__startswith='scrna/', tissue='PBMC', condition='treated'), retrieves the matching artifacts, and loads them with artifact.load(). May mention to_dataframe() and querying metadata before loading large files.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "filter" },
+        { "type": "behavior", "value": "Queries artifacts by annotated features/keys, then loads the matching datasets." }
+      ]
+    },
+    {
+      "id": "nextflow-lineage-integration",
+      "prompt": "I run a Nextflow pipeline and want each process to pull its input dataset from LaminDB and register its output back so the whole pipeline's lineage is tracked.",
+      "expected_output": "Invokes alterlab-lamindb. Shows ln.track() inside the process, ln.Artifact.get(key=...) + .cache() to fetch inputs, saving outputs as new Artifacts with keys, and ln.finish(), describing the Nextflow/workflow-manager integration pattern.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Wires ln.track()/ln.finish() and Artifact get/save into a Nextflow workflow for lineage." }
+      ]
+    },
+    {
+      "id": "near-miss-scanpy",
+      "prompt": "I have a raw scRNA-seq AnnData object and want to run QC filtering, normalization, PCA, neighbors, Leiden clustering and UMAP.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scanpy. The user wants the single-cell analysis pipeline (QC, normalization, dimensionality reduction, clustering), not data registration, curation, or lineage management.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scanpy" }
+      ]
+    },
+    {
+      "id": "near-miss-cellxgene",
+      "prompt": "I want to pull a public cell-by-gene dataset from the CELLxGENE Census and subset it to lung tissue for my analysis.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-cellxgene. The user wants to query/download from the CELLxGENE Census atlas, not register/curate/version their own datasets in a LaminDB instance.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-cellxgene" }
+      ]
+    }
+  ]
+}

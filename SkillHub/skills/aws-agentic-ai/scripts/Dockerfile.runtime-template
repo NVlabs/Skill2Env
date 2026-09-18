@@ -1,0 +1,40 @@
+# AgentCore Runtime Dockerfile Template (ARM64)
+# Multi-stage build for AgentCore Runtime container
+#
+# Requirements:
+#   - ARM64 platform (AgentCore requirement)
+#   - Non-root user (uid=1000)
+#   - Port 8080
+#   - /invocations and /ping endpoints
+#
+# Usage:
+#   docker build --platform linux/arm64 -t my-agent .
+#   docker run -p 8080:8080 my-agent
+
+FROM --platform=linux/arm64 ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+
+# UV_PROJECT_ENVIRONMENT specifies venv location
+ENV UV_PROJECT_ENVIRONMENT=/app/.venv
+RUN uv venv /app/.venv && \
+    uv sync --frozen --no-dev --no-cache && \
+    test -f /app/.venv/bin/uvicorn || (echo "ERROR: uvicorn not found!" && exit 1)
+
+FROM --platform=linux/arm64 ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+
+# Security patches
+RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY --from=builder /app/.venv ./.venv
+
+ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH=/app/.venv/lib/python3.12/site-packages
+
+COPY . ./
+
+RUN useradd -m -u 1000 bedrock_agentcore
+USER bedrock_agentcore
+EXPOSE 8080
+CMD python3 -m uvicorn main:app --host 0.0.0.0 --port 8080

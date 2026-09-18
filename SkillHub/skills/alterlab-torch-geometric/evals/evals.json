@@ -1,0 +1,96 @@
+{
+  "skill": "alterlab-torch-geometric",
+  "evals": [
+    {
+      "id": "gcn-node-classification-cora",
+      "prompt": "Load the Cora citation dataset and train a two-layer GCN for node classification, using the train mask for the loss and reporting test accuracy.",
+      "expected_output": "Invokes alterlab-torch-geometric: loads Planetoid(root=..., name='Cora'), defines a GCN with two GCNConv layers and log_softmax, trains with F.nll_loss on out[data.train_mask], and reports accuracy on data.test_mask. Uses PyG's Data object (data.x, data.edge_index).",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "gcnconv"
+        },
+        {
+          "type": "behavior",
+          "value": "Uses torch_geometric Planetoid/Cora and GCNConv layers with train_mask/test_mask masking rather than a generic dense network."
+        }
+      ]
+    },
+    {
+      "id": "graph-classification-tudataset",
+      "prompt": "I want to classify whole molecules from the ENZYMES dataset. Build a GNN that pools node features to a graph-level embedding and train it with mini-batching.",
+      "expected_output": "Invokes alterlab-torch-geometric: loads TUDataset(name='ENZYMES'), batches with torch_geometric.loader.DataLoader, builds a model with GCNConv layers and global_mean_pool over data.batch to get graph-level embeddings, and trains for graph classification with nll_loss on batch.y.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "global_mean_pool"
+        },
+        {
+          "type": "behavior",
+          "value": "Uses a graph-level readout (global_mean_pool over data.batch) and the PyG DataLoader for mini-batching multiple graphs, loading TUDataset/ENZYMES."
+        }
+      ]
+    },
+    {
+      "id": "gat-attention-citeseer",
+      "prompt": "Set up a Graph Attention Network with multi-head attention for node classification on CiteSeer, with dropout on the attention.",
+      "expected_output": "Invokes alterlab-torch-geometric: loads Planetoid CiteSeer, defines a model with GATConv layers (multiple heads, dropout), applying elu activations and log_softmax, and trains node classification. Uses attention-based PyG convolution.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "gatconv"
+        },
+        {
+          "type": "behavior",
+          "value": "Uses GATConv with multiple attention heads and dropout (PyG attention layer) rather than a plain GCN or non-PyG attention implementation."
+        }
+      ]
+    },
+    {
+      "id": "heterogeneous-knowledge-graph",
+      "prompt": "I have a knowledge graph with paper and author nodes and 'writes' and 'cites' edges. Set up a heterogeneous GNN over these multiple node and edge types.",
+      "expected_output": "Invokes alterlab-torch-geometric: represents the graph with HeteroData (data['paper'].x, data['author'].x, typed edge_index like ('author','writes','paper')), and builds a heterogeneous GNN via to_hetero on a homogeneous model or HeteroConv with per-edge-type convolutions.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "heterodata"
+        },
+        {
+          "type": "behavior",
+          "value": "Uses HeteroData with typed nodes/edges and a heterogeneous model (to_hetero or HeteroConv) rather than collapsing the graph to a single homogeneous type."
+        }
+      ]
+    },
+    {
+      "id": "near-miss-networkx",
+      "prompt": "I just need to compute betweenness centrality and detect communities on my collaboration graph and visualize it - no machine learning, just classical graph metrics.",
+      "expected_output": "Does NOT invoke alterlab-torch-geometric. Computing classical centrality and community-detection metrics and drawing the graph is plain graph analytics with no learned model, which is alterlab-networkx territory rather than GNN/geometric deep learning. Should defer to alterlab-networkx.",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "networkx"
+        }
+      ]
+    }
+  ]
+}

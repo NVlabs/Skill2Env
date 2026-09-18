@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-qca",
+  "evals": [
+    {
+      "id": "fsqca-sufficiency",
+      "prompt": "I have 22 cases and want to find which combinations of conditions are sufficient for policy success using fuzzy-set QCA.",
+      "expected_output": "Invokes alterlab-qca: calibrates conditions into fuzzy membership, builds a truth table, minimizes to conservative/parsimonious/intermediate solutions with consistency and coverage, and (because there is no maintained Python library) shells to R's QCA package via Rscript.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "calibrat" },
+        { "type": "behavior", "value": "Runs the calibrate -> truthTable -> minimize workflow in R's QCA package and reports consistency/coverage." }
+      ]
+    },
+    {
+      "id": "calibration-help",
+      "prompt": "How do I calibrate my raw survey variables into set membership for a QCA, and what thresholds do I pick?",
+      "expected_output": "Invokes alterlab-qca: explains direct-method calibration with three anchors (exclusion, crossover, inclusion), warns against membership exactly 0.5, and stresses that anchors are theoretical choices — using R QCA's calibrate().",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "crossover" }
+      ]
+    },
+    {
+      "id": "necessary-sufficient",
+      "prompt": "Across my configurational dataset, which conditions are necessary and which combinations are sufficient for the outcome?",
+      "expected_output": "Invokes alterlab-qca: tests necessity separately (superSubset) before minimizing for sufficiency, and reports set-relation fit (inclN/RoN for necessity, inclS/PRI/covS/covU for sufficiency) rather than net effects.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Separates necessity from sufficiency analysis and reports set-theoretic consistency/coverage, not average effects." }
+      ]
+    },
+    {
+      "id": "near-miss-causal-inference",
+      "prompt": "I just want the average net effect of one treatment on my outcome, controlling for covariates — a regression.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-causal-inference. A single-treatment net-effect estimate is a correlational/marginal-effects problem, not set-theoretic configurational analysis.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-causal-inference" }
+      ]
+    },
+    {
+      "id": "near-miss-qualitative-methods",
+      "prompt": "I have 15 interview transcripts and want to develop themes through grounded-theory coding.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-qualitative-methods. Interpretive thematic/grounded-theory analysis is not set-theoretic QCA.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-qualitative-methods" }
+      ]
+    }
+  ]
+}

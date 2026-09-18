@@ -1,0 +1,68 @@
+{
+  "skill": "alterlab-astropy",
+  "evals": [
+    {
+      "id": "icrs-to-galactic-transform",
+      "prompt": "I have a source at RA 05h23m34.5s, Dec -69d45m22s in ICRS. Can you give me its Galactic l and b coordinates in degrees?",
+      "expected_output": "Triggers the astropy skill. Builds a SkyCoord in the icrs frame from the sexagesimal RA/Dec, transforms to the galactic frame via the .galactic attribute, and reports the Galactic longitude l and latitude b in degrees. Should use astropy.coordinates.SkyCoord with astropy.units.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "SkyCoord"},
+        {"type": "output_contains", "value": "galactic"},
+        {"type": "behavior", "value": "Transforms from the ICRS frame to the Galactic frame and reports l and b, rather than just describing the frames abstractly."}
+      ]
+    },
+    {
+      "id": "luminosity-distance-planck18",
+      "prompt": "Using Planck18 cosmology, what is the luminosity distance and lookback time for a galaxy at redshift z=1.5? I also want the age of the universe at that redshift.",
+      "expected_output": "Triggers the astropy skill. Uses astropy.cosmology.Planck18 to compute luminosity_distance(1.5), lookback_time(1.5), and age(1.5), returning unit-aware Quantities (e.g. Mpc and Gyr). Should reference the astropy.cosmology module.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "Planck18"},
+        {"type": "output_contains", "value": "luminosity_distance"},
+        {"type": "behavior", "value": "Computes all three quantities (luminosity distance, lookback time, age at z) using a built-in astropy cosmology and returns them with units."}
+      ]
+    },
+    {
+      "id": "fits-header-and-stats",
+      "prompt": "I have observation.fits. Open it, show me the HDU structure, pull the EXPTIME and FILTER header keywords from the image HDU, and give me the mean and median of the pixel data.",
+      "expected_output": "Triggers the astropy skill. Uses astropy.io.fits.open with a context manager, calls hdul.info() for structure, reads header['EXPTIME'] and header['FILTER'], and computes mean/median of the data array. Should use astropy.io.fits.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "fits"},
+        {"type": "output_contains", "value": "EXPTIME"},
+        {"type": "behavior", "value": "Opens the FITS file with a context manager, inspects HDU structure, extracts the named header keywords, and reports pixel statistics."}
+      ]
+    },
+    {
+      "id": "catalog-crossmatch-arcsec",
+      "prompt": "I have two FITS catalogs with RA/DEC columns. Cross-match them and keep only pairs within 1 arcsecond of each other. How many matches do I get?",
+      "expected_output": "Triggers the astropy skill. Reads both catalogs with astropy.table.Table.read, builds SkyCoord objects from the RA/DEC columns, calls match_to_catalog_sky, and filters by a separation threshold of 1 arcsec to count matches. Should use astropy.coordinates matching plus astropy.table.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "match_to_catalog_sky"},
+        {"type": "behavior", "value": "Performs an on-sky catalog cross-match with an angular separation cut in arcseconds and reports the number of surviving matches."}
+      ]
+    },
+    {
+      "id": "time-scale-utc-to-tdb",
+      "prompt": "Convert the observation timestamp 2023-01-15 12:30:00 to a Julian Date, and also give me the time on the TDB scale.",
+      "expected_output": "Triggers the astropy skill. Creates an astropy.time.Time object from the ISO string, reads .jd for the Julian Date, and converts the time scale to TDB (e.g. t.tdb). Should use astropy.time.Time and its scale conversions.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "Time"},
+        {"type": "output_contains", "value": "jd"},
+        {"type": "behavior", "value": "Uses an astropy Time object to produce the Julian Date and to convert between time scales (UTC to TDB)."}
+      ]
+    },
+    {
+      "id": "near-miss-geopandas-shapefile-buffer",
+      "prompt": "I have a shapefile of monitoring stations in EPSG:4326. Reproject it to a metric CRS, buffer each station by 500 meters, and spatially join the buffers against a land-use GeoJSON.",
+      "expected_output": "Should NOT trigger the astropy skill. This is terrestrial geospatial vector analysis (shapefiles, CRS reprojection, buffering, spatial joins) which is the territory of the geopandas skill, not astronomical coordinates/FITS. Defer to geopandas.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "geopandas"}
+      ]
+    }
+  ]
+}

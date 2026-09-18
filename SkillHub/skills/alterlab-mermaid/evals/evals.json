@@ -1,0 +1,58 @@
+{
+  "skill": "alterlab-mermaid",
+  "evals": [
+    {
+      "id": "flowchart-in-markdown",
+      "prompt": "Add a diagram of our experimental decision logic to the methods README so it lives in git and renders on GitHub.",
+      "expected_output": "Invokes alterlab-mermaid: expresses the decision logic as a Mermaid flowchart embedded in a Markdown file (Phase 1, the source of truth), following the mermaid style guide — accTitle/accDescr present, snake_case node IDs, no %%{init} directive, no inline style (classDef only). The text-based diagram diffs cleanly in git and renders natively on GitHub without a build step.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Produces a Mermaid flowchart inside a Markdown code block with accTitle and accDescr, not a rendered PNG or AI image." }
+      ]
+    },
+    {
+      "id": "scientific-report-with-diagrams",
+      "prompt": "Draft a scientific analysis report of our data pipeline as a markdown document, with the workflow and the project timeline visualized.",
+      "expected_output": "Invokes alterlab-mermaid: starts from the research_paper / status_report template, applies the markdown style guide (one H1, emoji on H2 only, footnote citations, tables over prose), and embeds the right diagram type per relationship — a flowchart for the data pipeline workflow and a Gantt or timeline diagram for the project timeline — placed inline with related text rather than in a separate figures section.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Picks the appropriate Mermaid diagram type per relationship (timeline/gantt for chronology, flowchart for the pipeline) instead of defaulting everything to a flowchart." }
+      ]
+    },
+    {
+      "id": "er-data-model",
+      "prompt": "Document the schema relationships between our experiments, samples, and measurements tables in a markdown doc I can version-control.",
+      "expected_output": "Invokes alterlab-mermaid: represents the data model as a Mermaid ER diagram inside a Markdown file, following the mermaid style guide (accTitle/accDescr, snake_case IDs, classDef-only styling), committed as version-controllable text that is the source of truth.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "mermaid" }
+      ]
+    },
+    {
+      "id": "sequence-api-interactions",
+      "prompt": "I want to add a diagram of the API call sequence between our client, auth service, and database to the project documentation.",
+      "expected_output": "Invokes alterlab-mermaid: chooses a sequence diagram (not a flowchart) for service interactions and API calls per the type-selection guidance, embeds it as Mermaid in the project_documentation markdown template with accTitle/accDescr and style-guide rules applied.",
+      "assertions": [
+        { "type": "should_trigger", "value": true }
+      ]
+    },
+    {
+      "id": "near-miss-scientific-schematics",
+      "prompt": "Generate a polished, publication-quality PNG of a transformer encoder-decoder architecture with multi-head attention for my journal paper figure.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scientific-schematics. The user wants an AI-rendered publication-quality image (PNG), not a version-controllable text diagram, and the skill's own description routes AI-rendered publication schematics to alterlab-scientific-schematics.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scientific-schematics" }
+      ]
+    },
+    {
+      "id": "near-miss-seaborn",
+      "prompt": "Plot a scatter of total_bill vs tip from my pandas DataFrame, colored by day, so I can see the relationship in the real data.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-seaborn. This is a data chart of real DataFrame values (a scatter plot), which Mermaid cannot express — the skill explicitly routes scatter plots with real data to Phase 2 (Python plotting via seaborn/matplotlib), not text-based diagrams.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-seaborn" }
+      ]
+    }
+  ]
+}

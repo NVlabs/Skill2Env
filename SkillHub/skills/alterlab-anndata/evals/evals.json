@@ -1,0 +1,62 @@
+{
+  "skill": "alterlab-anndata",
+  "evals": [
+    {
+      "id": "concat-batches-inner-join",
+      "prompt": "I have three .h5ad files from separate sequencing runs (batch1.h5ad, batch2.h5ad, batch3.h5ad). I want to combine them into one AnnData object along the cells axis, keep only the genes shared across all three, and add a 'batch' column so I can tell where each cell came from.",
+      "expected_output": "Invokes alterlab-anndata: uses ad.concat with axis=0, join='inner', and label/keys to tag the batch source, reading each file with ad.read_h5ad first. Stays in data-wrangling territory (concatenation), does not jump into a full scanpy analysis pipeline.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "concat" },
+        { "type": "behavior", "value": "Uses join='inner' to keep shared genes and a label/keys argument to record the batch of origin." }
+      ]
+    },
+    {
+      "id": "backed-mode-large-h5ad",
+      "prompt": "My .h5ad file is about 90 GB and won't fit in my 48 GB of RAM. I just need to filter to cells where obs['quality_score'] > 0.8 and then pull that subset into memory. How do I do this without loading the whole thing?",
+      "expected_output": "Invokes alterlab-anndata: opens the file with ad.read_h5ad(..., backed='r'), filters on the obs metadata mask without loading X, then materializes the subset with .to_memory() (or chunked iteration). Memory-efficient backed-mode pattern.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "backed" },
+        { "type": "behavior", "value": "Recommends backed='r' read and .to_memory() (or chunked reads) rather than a full in-memory load." }
+      ]
+    },
+    {
+      "id": "build-anndata-from-matrix",
+      "prompt": "I have a numpy expression matrix (cells x genes), a pandas DataFrame of cell annotations, and a DataFrame of gene info. How do I assemble these into a proper AnnData object and write it out as a compressed .h5ad?",
+      "expected_output": "Invokes alterlab-anndata: constructs ad.AnnData(X=..., obs=..., var=...) ensuring index alignment, optionally converts strings to categoricals, and writes with adata.write_h5ad('out.h5ad', compression='gzip'). Pure object construction and I/O.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "AnnData" },
+        { "type": "behavior", "value": "Builds the object via ad.AnnData(X, obs, var) and writes h5ad with gzip compression." }
+      ]
+    },
+    {
+      "id": "combine-rna-protein-modalities",
+      "prompt": "I have two AnnData objects on the same cells - one with RNA expression and one with surface protein (ADT) counts. I want to stack them so each cell carries both modalities' features in a single matrix.",
+      "expected_output": "Invokes alterlab-anndata: uses ad.concat([adata_rna, adata_protein], axis=1) to concatenate along variables (features). May note muon/MuData as the dedicated multimodal container. Stays a concatenation/format task.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Concatenates along axis=1 (variables) to combine modalities, not axis=0." }
+      ]
+    },
+    {
+      "id": "near-miss-scanpy",
+      "prompt": "I've loaded my .h5ad into an AnnData object. Now run the standard preprocessing - normalize total counts, log1p, find the top 2000 highly variable genes, run PCA, build the neighbor graph, and give me Leiden clusters on a UMAP.",
+      "expected_output": "Should NOT trigger alterlab-anndata. This is the established single-cell analysis pipeline (normalize_total, log1p, highly_variable_genes, pca, neighbors, leiden, umap) which is alterlab-scanpy territory. anndata is the data-format skill and defers the analysis workflow to scanpy.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "scanpy" }
+      ]
+    },
+    {
+      "id": "near-miss-cellxgene",
+      "prompt": "I want to pull a reference set of human lung B cells from the CZ CELLxGENE Census so I can benchmark my own dataset against a curated public atlas. Filter by tissue and cell type and return it as AnnData.",
+      "expected_output": "Should NOT trigger alterlab-anndata. Querying the population-scale CZ CELLxGENE Census (cellxgene_census.get_anndata, obs_value_filter, TileDB-SOMA) is alterlab-cellxgene territory. anndata handles local objects and defers public-atlas queries to cellxgene-census, even though the result is an AnnData.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "cellxgene" }
+      ]
+    }
+  ]
+}

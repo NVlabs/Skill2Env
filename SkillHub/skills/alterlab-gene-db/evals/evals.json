@@ -1,0 +1,62 @@
+{
+  "skill": "alterlab-gene-db",
+  "evals": [
+    {
+      "id": "symbol-to-id",
+      "prompt": "What is the NCBI Gene ID for BRCA1 in human? I keep mixing it up with other species.",
+      "expected_output": "Triggers the NCBI Gene skill. Runs scripts/query_gene.py with E-utilities ESearch using an organism-qualified query (e.g. 'BRCA1[gene name] AND human[organism]' or symbol BRCA1 with --organism human) to resolve the symbol to its Gene ID (672). Emphasizes specifying organism to avoid cross-species ambiguity.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses ESearch via query_gene.py with an organism-qualified query to resolve the symbol to a Gene ID, not a guessed number." },
+        { "type": "behavior", "value": "Specifies the organism (human) to disambiguate the gene symbol." }
+      ]
+    },
+    {
+      "id": "fetch-gene-metadata",
+      "prompt": "Pull the full annotation for TP53 from NCBI — RefSeq transcripts and proteins, chromosomal location, and GO terms.",
+      "expected_output": "Triggers NCBI Gene. Uses scripts/fetch_gene_data.py against the NCBI Datasets v2 API (e.g. --symbol TP53 --taxon human or --gene-id 7157) to retrieve nomenclature/aliases, chromosomal location, and Gene Ontology annotations from the gene report, and notes that the individual transcript/protein RefSeq accessions come from the product_report endpoint (GET /gene/id/{id}/product_report) rather than the base report. Prefers the Datasets API over E-utilities for comprehensive single-gene retrieval.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "RefSeq" },
+        { "type": "behavior", "value": "Uses the NCBI Datasets API via fetch_gene_data.py for genomic location and GO annotations, and gets transcript/protein RefSeq accessions from the product_report endpoint." }
+      ]
+    },
+    {
+      "id": "batch-gene-lookup",
+      "prompt": "I have a panel of about 40 gene symbols from a screen. Annotate them all with their Gene IDs and basic metadata in one pass, human.",
+      "expected_output": "Triggers NCBI Gene. Uses scripts/batch_gene_lookup.py (e.g. --file gene_list.txt --organism human or --ids ...) to process the panel efficiently, handling rate limiting automatically (10 req/s with API key). Recommends validating symbols before batch processing and including an NCBI API key for higher rate limits. Produces an annotation table for the gene list.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "batch_gene_lookup" },
+        { "type": "behavior", "value": "Uses batch_gene_lookup.py for the multi-gene panel and notes automatic rate limiting / API-key benefit." }
+      ]
+    },
+    {
+      "id": "search-by-phenotype",
+      "prompt": "Which genes does NCBI associate with muscular dystrophy? I'd start from dystrophin and related phenotype matches.",
+      "expected_output": "Triggers NCBI Gene. Uses E-utilities via query_gene.py with biological-context query syntax such as 'dystrophin[gene name] AND muscular dystrophy[disease]' or a phenotype/GO-term filter, returning matching Gene IDs. Demonstrates the search-by-biological-context workflow with organism filtering.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Constructs an E-utilities query combining gene/phenotype/disease field tags to find associated genes." }
+      ]
+    },
+    {
+      "id": "near-miss-uniprot",
+      "prompt": "Give me the canonical protein sequence and functional domain annotations for the human TP53 protein from UniProt, with the InterPro domain boundaries.",
+      "expected_output": "Should NOT trigger NCBI Gene. This requests curated protein-level data — canonical protein sequence and functional/domain annotations — which is UniProt's domain. NCBI Gene provides gene-centric nomenclature, RefSeqs, genomic location, and GO terms, not curated protein feature annotations or InterPro domain boundaries. Defers to alterlab-uniprot.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "uniprot" }
+      ]
+    },
+    {
+      "id": "near-miss-ensembl",
+      "prompt": "For ENSG00000141510, give me all transcript isoforms with their exon-intron coordinates and the genome-browser view on GRCh38.",
+      "expected_output": "Should NOT trigger NCBI Gene. This is an Ensembl-identifier query asking for transcript isoform structure, exon-intron coordinates, and genome-browser context, which Ensembl serves. NCBI Gene works from gene symbols/Gene IDs and returns RefSeq-based annotation, not Ensembl transcript architecture with exon coordinates. Defers to alterlab-ensembl.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "ensembl" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "skill": "alterlab-iso13485",
+  "evals": [
+    {
+      "id": "gap-analysis-existing-qms",
+      "prompt": "We're a medical device startup with a handful of procedures in a folder but we don't know what we're missing for ISO 13485 certification. Can you run a gap analysis and tell us what's missing?",
+      "expected_output": "Invokes alterlab-iso13485. Asks for the documentation directory and runs scripts/gap_analyzer.py --docs-dir <path> --output gap-report.json, identifies which of the 31 required procedures are present versus missing, flags missing key documents (Quality Manual, Medical Device File), calculates a compliance percentage, and returns a prioritized action plan.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "gap" },
+        { "type": "behavior", "value": "Runs/describes gap_analyzer.py, references the 31 required procedures, and produces a prioritized list of missing documentation with a compliance percentage." }
+      ]
+    },
+    {
+      "id": "quality-manual-creation",
+      "prompt": "Help me draft an ISO 13485 Quality Manual for our company. We're a contract manufacturer so we don't do any design work.",
+      "expected_output": "Invokes alterlab-iso13485. Uses the quality-manual-template.md and quality-manual-guide.md, gathers company info, and produces a Quality Manual addressing Clauses 4-8 at policy level. Critically, it justifies the Clause 7.3 Design and Development exclusion properly (contract manufacturer rationale) in Section 2.4, references all 31 procedures in Appendix A, and includes a process map and org chart.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "exclusion" },
+        { "type": "behavior", "value": "Produces a Quality Manual from the template and justifies the design-and-development (Clause 7.3) exclusion for the contract manufacturer." }
+      ]
+    },
+    {
+      "id": "capa-procedure-sop",
+      "prompt": "I need to write a CAPA procedure (corrective and preventive action) that will pass an ISO 13485 audit. What clauses does it need to satisfy and what should it contain?",
+      "expected_output": "Invokes alterlab-iso13485. References ISO 13485 Clauses 8.5.2 (corrective) and 8.5.3 (preventive), uses the CAPA-procedure-template.md, structures the SOP with Purpose/Scope/Definitions/Responsibilities/Procedure/Records/References, and includes supporting forms (CAPA request form, root cause analysis worksheet, action plan, effectiveness verification checklist).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "CAPA" },
+        { "type": "behavior", "value": "Cites Clauses 8.5.2/8.5.3, uses the CAPA template structure, and specifies records and effectiveness verification." }
+      ]
+    },
+    {
+      "id": "qmsr-transition",
+      "prompt": "We need to update our QMS for the FDA QMSR harmonization that's replacing 21 CFR Part 820. What changes and how do we consolidate our DHF, DMR, and DHR?",
+      "expected_output": "Invokes alterlab-iso13485. Explains that 21 CFR Part 820 is harmonized with ISO 13485 as the QMSR (effective Feb 2, 2026), that the Medical Device File replaces the separate DHF/DMR/DHR, and provides a transition plan: update QSR references to QMSR, consolidate device history files into Medical Device Files per Clause 4.2.3, add any missing ISO 13485 requirements, and train personnel.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "QMSR" },
+        { "type": "behavior", "value": "Explains the QMSR harmonization and consolidating DHF/DMR/DHR into the Medical Device File (Clause 4.2.3)." }
+      ]
+    },
+    {
+      "id": "near-miss-clinical-reports",
+      "prompt": "I need to write an ICH-E3 clinical study report (CSR) for our Phase 3 trial, including the serious adverse event narratives and the efficacy summary for regulatory submission.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-clinical-reports. The task is a clinical trial study report (ICH-E3 CSR, SAE narratives) for a drug/clinical trial, not Quality Management System documentation for a medical device under ISO 13485. ISO 13485 covers QMS procedures and device files, not clinical study reports.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-clinical-reports" }
+      ]
+    },
+    {
+      "id": "near-miss-treatment-plans",
+      "prompt": "Create an individualized treatment plan for a 55-year-old patient newly diagnosed with type 2 diabetes, with SMART goals and a monitoring schedule.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-treatment-plans. The task is an individual patient care plan with SMART goals, not Quality Management System certification documentation for a medical device manufacturer. ISO 13485 is about QMS/regulatory documentation, not bedside patient care.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-treatment-plans" }
+      ]
+    }
+  ]
+}

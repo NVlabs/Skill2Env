@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-scvi-tools",
+  "evals": [
+    {
+      "id": "scvi-batch-correction",
+      "prompt": "I have a scRNA-seq AnnData with raw counts collected across several donors and batches. I want a batch-corrected latent embedding I can use for clustering. How do I set this up?",
+      "expected_output": "Invokes alterlab-scvi-tools. Uses scVI: scvi.model.SCVI.setup_anndata(adata, layer='counts', batch_key='batch', categorical_covariate_keys=['donor']), trains the model, and extracts model.get_latent_representation() into adata.obsm['X_scVI'] for downstream scanpy clustering. Emphasizes raw counts are required. Probabilistic batch correction/integration is the core use case.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "scVI" }
+      ]
+    },
+    {
+      "id": "totalvi-citeseq",
+      "prompt": "My dataset is CITE-seq with paired RNA and surface-protein (ADT) measurements. I want a joint model that integrates both modalities. Which scvi-tools model and workflow?",
+      "expected_output": "Invokes alterlab-scvi-tools. Recommends totalVI for joint CITE-seq RNA + protein modeling, registering the protein/ADT data in setup_anndata, training, and extracting a joint latent representation. Multimodal CITE-seq integration via totalVI is an in-scope capability.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "totalVI" }
+      ]
+    },
+    {
+      "id": "probabilistic-de",
+      "prompt": "Using my trained scVI model, run a differential expression test between cell type A and cell type B with proper uncertainty and an effect-size threshold.",
+      "expected_output": "Invokes alterlab-scvi-tools. Calls model.differential_expression(groupby='cell_type', group1='TypeA', group2='TypeB', mode='change', delta=0.25) to run probabilistic DE with composite hypothesis testing and a minimum effect-size threshold. Model-based DE with uncertainty is a documented scvi-tools task.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "differential_expression" }
+      ]
+    },
+    {
+      "id": "scarches-reference-mapping",
+      "prompt": "I have a reference scVI/scANVI model trained on an atlas and a new query dataset. I want to map the query onto the reference and transfer the cell type labels.",
+      "expected_output": "Invokes alterlab-scvi-tools. Uses scArches-style reference mapping / transfer learning (scANVI for semi-supervised label transfer), loading the reference model and updating it with the query AnnData to embed the query in the reference latent space and predict cell types. Reference-mapping transfer learning is an explicit capability.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "scANVI" }
+      ]
+    },
+    {
+      "id": "near-miss-scanpy",
+      "prompt": "I already have a log-normalized scRNA-seq AnnData. Run a standard PCA, build the neighbor graph, compute UMAP, and do Leiden clustering with rank_genes_groups for markers.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scanpy. The ask is the standard non-probabilistic single-cell pipeline (PCA/neighbors/UMAP/Leiden/marker genes) on already-normalized data, with no deep generative model, batch correction via scVI, or multimodal integration. scanpy owns the routine analysis pipeline.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scanpy" }
+      ]
+    },
+    {
+      "id": "near-miss-scvelo",
+      "prompt": "I want to estimate RNA velocity from spliced/unspliced counts and project the velocity stream onto my UMAP to infer differentiation directionality.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scvelo. The ask is classic RNA velocity estimation and stream projection (scVelo's dynamical/stochastic models), not deep generative integration or probabilistic DE. Although scvi-tools has VeloVI, standard spliced/unspliced velocity with UMAP stream projection is scvelo's domain.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scvelo" }
+      ]
+    }
+  ]
+}

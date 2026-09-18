@@ -1,0 +1,105 @@
+{
+  "skill_name": "time-stepping",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm running a 10-hour phase-field simulation. Each checkpoint takes about 2 minutes to write. How often should I save so I don't lose more than 30 minutes of work if it crashes?",
+      "expected_output": "Checkpoint every 30 minutes with ~6.7% overhead (Acceptable per the 5-10% band), max 30 min lost work on crash.",
+      "assertions": [
+        "Uses checkpoint_planner.py with --run-time 36000 --checkpoint-cost 120 --max-lost-time 1800",
+        "Recommends checkpoint interval of approximately 30 minutes",
+        "Reports overhead of approximately 6-7% (5-10% Acceptable band)",
+        "Mentions tradeoff between checkpoint frequency and computational overhead"
+      ],
+      "script_checks": [
+        {
+          "description": "checkpoint cadence for 10h run, 2min cost, 30min max lost work",
+          "cmd": ["scripts/checkpoint_planner.py", "--run-time", "36000", "--checkpoint-cost", "120", "--max-lost-time", "1800", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.checkpoint_interval", "op": "approx", "value": 1800.0, "rel_tol": 1e-9},
+            {"path": "results.checkpoints", "op": "eq", "value": 20},
+            {"path": "results.overhead_fraction", "op": "approx", "value": 0.06666666666666667, "rel_tol": 1e-9},
+            {"path": "results.method", "op": "eq", "value": "cap"},
+            {"path": "results.warnings", "op": "eq", "value": []}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "dt_limit from CFL is 2e-4 s but I want dt=1e-4. Should I ramp up from a smaller step? My IC has a sharp gradient.",
+      "expected_output": "Plan with ramping from 1e-5 to 1e-4 over 10 steps due to sharp gradients.",
+      "assertions": [
+        "Uses timestep_planner.py with --dt-target 1e-4 --dt-limit 2e-4 and safety factor",
+        "Recommends ramping for sharp gradient IC (5-10 ramp steps)",
+        "Suggests initial dt of approximately 0.1 * dt_target",
+        "Confirms dt_target is within stability limit after applying safety factor"
+      ],
+      "script_checks": [
+        {
+          "description": "timestep plan with safety 0.8 and 10-step ramp for sharp-gradient IC",
+          "cmd": ["scripts/timestep_planner.py", "--dt-target", "1e-4", "--dt-limit", "2e-4", "--safety", "0.8", "--ramp-steps", "10", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.dt_limit", "op": "approx", "value": 0.0002, "rel_tol": 1e-9},
+            {"path": "results.dt_recommended", "op": "approx", "value": 8e-05, "rel_tol": 1e-9},
+            {"path": "results.notes", "op": "eq", "value": []},
+            {"path": "results.ramp_schedule", "op": "type", "value": "list"},
+            {"path": "results.ramp_schedule.0", "op": "approx", "value": 1.52e-05, "rel_tol": 1e-9},
+            {"path": "results.ramp_schedule.9", "op": "approx", "value": 8e-05, "rel_tol": 1e-9}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Set up output times for a solidification sim from t=0 to t=5s. I want snapshots every 0.05s to capture the dendritic growth front.",
+      "expected_output": "Output schedule with 101 output frames (100 intervals) at 0.05 s spacing, including endpoints t=0 and t=5.",
+      "assertions": [
+        "Uses output_schedule.py with --t-start 0 --t-end 5 --interval 0.05",
+        "Reports 101 output frames (100 intervals, both endpoints t=0 and t=5 included)",
+        "Lists output times starting at 0 and ending at 5",
+        "Notes interval should be consistent with physical timescale of dendrite growth"
+      ],
+      "script_checks": [
+        {
+          "description": "output schedule t=0..5 at 0.05 spacing, endpoint-inclusive",
+          "cmd": ["scripts/output_schedule.py", "--t-start", "0", "--t-end", "5", "--interval", "0.05", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.count", "op": "eq", "value": 101},
+            {"path": "results.interval", "op": "approx", "value": 0.05, "rel_tol": 1e-9},
+            {"path": "results.output_times.0", "op": "approx", "value": 0.0, "rel_tol": 1e-9, "abs_tol": 1e-12},
+            {"path": "results.output_times.100", "op": "approx", "value": 5.0, "rel_tol": 1e-9}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "my sim is too slow. dt is 1e-6 but CFL limit says I can go up to 5e-5. total run time is 1 second. any advice?",
+      "expected_output": "Increase dt to ~4e-5 (with safety factor 0.8), reducing total steps from 1M to 25k.",
+      "assertions": [
+        "Uses timestep_planner.py with --dt-target 5e-5 --dt-limit 5e-5 --safety 0.8",
+        "Recommends increasing dt from 1e-6 toward the stability limit with safety margin",
+        "Quantifies speedup factor (roughly 40x fewer steps)",
+        "Mentions safety factor to stay below the strict CFL limit"
+      ],
+      "script_checks": [
+        {
+          "description": "timestep plan: push dt to CFL limit with safety 0.8, no ramp",
+          "cmd": ["scripts/timestep_planner.py", "--dt-target", "5e-5", "--dt-limit", "5e-5", "--safety", "0.8", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.dt_limit", "op": "approx", "value": 5e-05, "rel_tol": 1e-9},
+            {"path": "results.dt_recommended", "op": "approx", "value": 4e-05, "rel_tol": 1e-9},
+            {"path": "results.dt_recommended", "op": "le", "value": 5e-05},
+            {"path": "results.notes", "op": "eq", "value": []},
+            {"path": "results.ramp_schedule", "op": "eq", "value": []}
+          ]
+        }
+      ]
+    }
+  ]
+}

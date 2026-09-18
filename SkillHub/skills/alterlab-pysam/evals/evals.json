@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-pysam",
+  "evals": [
+    {
+      "id": "fetch-reads-region",
+      "prompt": "Open my indexed BAM file example.bam and pull all reads overlapping chr1:1000-2000, printing each read's name and reference start position.",
+      "expected_output": "Invokes alterlab-pysam. Opens the file with pysam.AlignmentFile('example.bam', 'rb'), iterates samfile.fetch('chr1', 999, 2000) (or the 1-based region string), and prints read.query_name and read.reference_start, noting the .bai index requirement and 0-based vs 1-based coordinate convention. Region-based BAM fetching is a core capability.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "AlignmentFile" }
+      ]
+    },
+    {
+      "id": "per-base-coverage-pileup",
+      "prompt": "I need per-base read depth across an exon region of a BAM. What's the right pysam approach for column-wise coverage?",
+      "expected_output": "Invokes alterlab-pysam. Uses the pileup() method on an AlignmentFile for column-wise per-base coverage (preferred over repeated fetch), warns to keep the pileup iterator alive to avoid 'PileupProxy accessed after iterator finished', and mentions count()/count_coverage as alternatives. Pileup-based coverage analysis is a documented capability.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "pileup" }
+      ]
+    },
+    {
+      "id": "filter-variants-vcf",
+      "prompt": "Read variants.vcf, keep only records with QUAL above 30, and extract the genotype for each sample. Write the kept variants to a new VCF.",
+      "expected_output": "Invokes alterlab-pysam. Opens pysam.VariantFile('variants.vcf'), iterates records filtering on variant.qual, reads sample genotypes from the FORMAT/samples fields, and writes survivors to a new VariantFile opened in write mode using the source header. VCF reading, filtering, genotype access, and writing are in scope.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "VariantFile" }
+      ]
+    },
+    {
+      "id": "extract-reference-sequence",
+      "prompt": "From my indexed reference FASTA, extract the sequence for chr1:1000-2000 so I can validate a variant's reference allele.",
+      "expected_output": "Invokes alterlab-pysam. Opens pysam.FastaFile('reference.fasta') (requires the .fai index from pysam.faidx), calls fetch('chr1', 1000, 2000) with 0-based half-open coordinates, and can compare the extracted reference base to a VCF record's ref allele. Random-access reference sequence extraction is a core capability.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "FastaFile" }
+      ]
+    },
+    {
+      "id": "near-miss-bioservices",
+      "prompt": "Look up the human BRCA1 protein record in UniProt and map its accession to the matching KEGG and Ensembl IDs across those web databases.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-bioservices. The ask is querying and mapping identifiers across remote bioinformatics web databases (UniProt/KEGG/Ensembl), not reading or writing local alignment/variant/sequence files. pysam operates on BAM/CRAM/VCF/FASTA files via htslib, not web services.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-bioservices" }
+      ]
+    },
+    {
+      "id": "near-miss-tiledbvcf",
+      "prompt": "I have thousands of single-sample VCFs from a population cohort and I want to ingest them into a scalable columnar store so I can run fast cross-sample queries over millions of variants.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-tiledbvcf. The ask is large-scale cohort VCF ingestion into a scalable variant store for population-level queries, not single-file parsing/filtering with htslib. pysam reads individual VCF/BAM files; tiledbvcf handles the cohort-scale columnar database.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-tiledbvcf" }
+      ]
+    }
+  ]
+}

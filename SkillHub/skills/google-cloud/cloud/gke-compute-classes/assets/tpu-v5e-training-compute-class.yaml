@@ -1,0 +1,44 @@
+# EXAMPLE TEMPLATE - DO NOT DEPLOY
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: tpu-v5e-training
+spec:
+  # TPU v5e training class. Reservation → On-Demand → Spot. Spot sits *below* On-Demand because mid-step preemption forces a checkpoint restart, which is more disruptive for training than a slightly longer wait. Topology pinned to 2x4 (8 chips). Single-zone — TPU reservations are zonal.
+  nodePoolAutoCreation:
+    enabled: true
+  # NOTE: no priorityDefaults.location — would conflict with the Specific
+  # reservation on priority 1. Reservation zone scope lives in
+  # reservations.specific[].zones; non-reservation priorities set
+  # location.zones explicitly.
+  priorities:
+  # 1. Specific reservation — pre-paid TPU capacity, no queue, no preemption
+  - tpu:
+      type: tpu-v5-lite-podslice
+      count: 8
+      topology: 2x4
+    spot: false
+    reservations:
+      affinity: Specific
+      specific:
+      - name: tpu-v5e-training-reservation
+        zones: ['us-central1-a']    # TPU reservations are zonal — pin explicitly
+
+  # 2. On-Demand — guarantees forward progress when reservation is exhausted
+  - tpu:
+      type: tpu-v5-lite-podslice
+      count: 8
+      topology: 2x4
+    spot: false
+    location:
+      zones: ['us-central1-a']
+
+  # 3. Spot — cheapest path; only safe with frequent checkpointing
+  #    (mid-step preemption requires restart from last checkpoint)
+  - tpu:
+      type: tpu-v5-lite-podslice
+      count: 8
+      topology: 2x4
+    spot: true
+    location:
+      zones: ['us-central1-a']

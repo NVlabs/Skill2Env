@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-sna",
+  "evals": [
+    {
+      "id": "brokerage-centrality",
+      "prompt": "In my collaboration network, who are the brokers that connect otherwise-separate groups?",
+      "expected_output": "Invokes alterlab-sna: identifies betweenness centrality as the measure that matches a brokerage claim (not degree), computes it via networkx, and reports the top brokers with the reasoning.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "betweenness" },
+        { "type": "behavior", "value": "Selects betweenness for a brokerage question and routes computation to networkx." }
+      ]
+    },
+    {
+      "id": "community-detection",
+      "prompt": "Detect the community structure / clusters in my social network and tell me how good the partition is.",
+      "expected_output": "Invokes alterlab-sna: uses Louvain (native in networkx) or Leiden via igraph for large graphs, and scores the partition with modularity.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "modularity" }
+      ]
+    },
+    {
+      "id": "ergm-tie-formation",
+      "prompt": "I want to explain why ties form in my advice network — is there reciprocity and homophily by department? Fit an ERGM.",
+      "expected_output": "Invokes alterlab-sna: specifies an ERGM with edges + mutual + nodematch + a triadic-closure term, notes there is no mature Python ERGM so it uses R statnet/ergm, and warns about model degeneracy / MCMC diagnostics.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Specifies an ERGM in R statnet for tie-formation inference and flags degeneracy/dependence rather than using plain regression." }
+      ]
+    },
+    {
+      "id": "near-miss-networkx",
+      "prompt": "How do I read a GraphML file into a graph object and compute shortest paths between two nodes?",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-networkx. That is general graph I/O and algorithm execution, not a social-network method-choice question.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-networkx" }
+      ]
+    },
+    {
+      "id": "near-miss-torch-geometric",
+      "prompt": "I want to train a graph neural network to predict node labels from the graph structure.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-torch-geometric. Node-label prediction with a GNN is deep learning on graphs, not descriptive/inferential SNA.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-torch-geometric" }
+      ]
+    }
+  ]
+}

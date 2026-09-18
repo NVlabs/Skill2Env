@@ -1,0 +1,26 @@
+---
+type: <source|entity|concept|synthesis>
+title: ""
+tags: []
+sources: []
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+---
+
+# Title
+
+Lead paragraph: a clear, encyclopedic definition or framing of what this page is about. Should answer "what is this and why does it matter" in one or two sentences.
+
+## Section 1
+
+Body content. Use `[[wikilinks]]` liberally to cross-reference other pages. (Frontmatter `sources:` list above uses bare slugs; only the body uses double-bracket wikilinks.)
+
+## Section 2
+
+More body content. Hedge claims that aren't yet corroborated by multiple sources ("Source X claims Y, though this is not yet corroborated by other sources in the wiki").
+
+## Where this fits
+
+(For source pages.) List the entity and concept pages this source touches:
+- [[entity-page-1]]
+- [[concept-page-1]]

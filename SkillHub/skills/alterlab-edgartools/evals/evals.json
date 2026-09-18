@@ -1,0 +1,77 @@
+{
+  "skill": "alterlab-edgartools",
+  "evals": [
+    {
+      "id": "latest-10k-financials",
+      "prompt": "I need Apple's most recent 10-K and its income statement, balance sheet, and cash flow statement pulled straight from SEC EDGAR for a financial-statement analysis assignment.",
+      "expected_output": "Triggers edgartools. Calls set_identity() first (SEC requires it), then Company(\"AAPL\"), get_filings(form=\"10-K\").latest(), and get_financials() to access income_statement(), balance_sheet(), and cashflow_statement(). Reminds the user that filing.financials does not exist and to use filing.obj().financials.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "set_identity"},
+        {"type": "output_contains", "value": "10-K"},
+        {"type": "behavior", "value": "Sets identity before any call and retrieves the three statements via get_financials(); does not use the nonexistent filing.financials."}
+      ]
+    },
+    {
+      "id": "insider-form4",
+      "prompt": "I'm studying insider trading signals. How do I extract Form 4 insider transactions for a given company from EDGAR using edgartools?",
+      "expected_output": "Triggers edgartools. Gets the company's Form 4 filings, calls filing.obj() to get the Form4 object, and reads its reporting_owner and transactions properties. Notes set_identity() is required.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "Form 4"},
+        {"type": "behavior", "value": "Maps Form 4 to the Form4 object via filing.obj() and reads transactions/reporting_owner."}
+      ]
+    },
+    {
+      "id": "13f-institutional-holdings",
+      "prompt": "For a study on institutional ownership I want the 13F holdings (the infotable) for a hedge fund's most recent quarterly filing. How do I get that with edgartools?",
+      "expected_output": "Triggers edgartools. Retrieves the 13F-HR filing, calls filing.obj() to get the ThirteenF object, and reads its infotable and total_value properties. Mentions set_identity() and that get_filings has no limit param (use .latest(n) or .head(n)).",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "13F"},
+        {"type": "output_contains", "value": "infotable"},
+        {"type": "behavior", "value": "Maps 13F-HR to the ThirteenF object and its infotable, using .latest() rather than a nonexistent limit param."}
+      ]
+    },
+    {
+      "id": "xbrl-multi-period",
+      "prompt": "I want to pull the XBRL-tagged income statement across the last several years for a company so I can do a multi-period revenue trend analysis. What's the edgartools approach?",
+      "expected_output": "Triggers edgartools. Uses filing.xbrl() and xbrl.statements.income_statement() for tagged facts, and for multi-period analysis uses the financials/entity-facts API with amendments=False (amended filings may be incomplete). Notes set_identity() requirement.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "XBRL"},
+        {"type": "behavior", "value": "Reaches XBRL via filing.xbrl().statements and recommends amendments=False for multi-period stitching."}
+      ]
+    },
+    {
+      "id": "company-screening",
+      "prompt": "Look up a company by ticker AAPL and tell me its CIK, SIC code, industry, shares outstanding, and fiscal year end from EDGAR.",
+      "expected_output": "Triggers edgartools. Instantiates Company(\"AAPL\") and reads the company properties cik, sic, industry, shares_outstanding, and fiscal_year_end. Notes set_identity() must be set first.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "Company"},
+        {"type": "behavior", "value": "Uses the Company object and its metadata properties (cik, sic, industry, shares_outstanding, fiscal_year_end)."}
+      ]
+    },
+    {
+      "id": "near-miss-alpha-vantage",
+      "prompt": "Give me Apple's latest real-time stock quote and its daily OHLCV price history so I can chart the share price over the past year.",
+      "expected_output": "Should NOT trigger edgartools. EDGAR holds regulatory filings, not market price/quote data. Defer to the alterlab-alpha-vantage skill, which serves GLOBAL_QUOTE and TIME_SERIES_DAILY OHLCV price data.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-alpha-vantage"},
+        {"type": "behavior", "value": "Recognizes price/quote data is not in SEC filings and routes to the Alpha Vantage market-data skill."}
+      ]
+    },
+    {
+      "id": "near-miss-fred",
+      "prompt": "I need the aggregate U.S. corporate profits and national GDP time series from the Federal Reserve's FRED database to benchmark against my company sample.",
+      "expected_output": "Should NOT trigger edgartools. These are macroeconomic time series (FRED series, not company filings). Defer to the alterlab-fred skill, which queries the FRED API for GDP and related national series.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-fred"},
+        {"type": "behavior", "value": "Distinguishes macroeconomic FRED aggregates from company-level SEC filings and defers to the FRED skill."}
+      ]
+    }
+  ]
+}

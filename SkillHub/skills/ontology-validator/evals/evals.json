@@ -1,0 +1,141 @@
+{
+  "skill_name": "ontology-validator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Validate this CMSO annotation: {\"class\": \"Unit Cell\", \"properties\": {\"has Bravais lattice\": \"cF\", \"has lattice parameter\": 3.615}}. Is the class valid and are the properties correct?",
+      "expected_output": "Agent runs schema_checker.py to validate the annotation against CMSO; the class exists and both property names are recognized, so results.valid is true with no errors.",
+      "assertions": [
+        "Invokes scripts/schema_checker.py with --ontology cmso --annotation '{\"class\":\"Unit Cell\",\"properties\":{\"has Bravais lattice\":\"cF\",\"has lattice parameter\":3.615}}' --json",
+        "Output includes results.valid boolean, results.class_valid, and results.properties_valid",
+        "Validates that 'Unit Cell' is a recognized CMSO class",
+        "Confirms results.valid is true because 'has Bravais lattice' and 'has lattice parameter' are valid properties for Unit Cell"
+      ],
+      "script_checks": [
+        {
+          "description": "schema_checker validates a correct Unit Cell annotation",
+          "cmd": ["scripts/schema_checker.py", "--ontology", "cmso", "--annotation", "{\"class\":\"Unit Cell\",\"properties\":{\"has Bravais lattice\":\"cF\",\"has lattice parameter\":3.615}}", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.valid", "op": "eq", "value": true},
+            {"path": "results.errors", "op": "eq", "value": []},
+            {"path": "results.class_valid.Unit Cell", "op": "eq", "value": true},
+            {"path": "results.properties_valid.has Bravais lattice", "op": "eq", "value": true},
+            {"path": "results.properties_valid.has lattice parameter", "op": "eq", "value": true}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Check if my Crystal Structure annotation is complete. I've provided 'has unit cell' and 'has space group' properties. What am I missing?",
+      "expected_output": "Agent runs completeness_checker.py to assess what required, recommended, and optional properties are present or missing for Crystal Structure.",
+      "assertions": [
+        "Invokes scripts/completeness_checker.py with --ontology cmso --class 'Crystal Structure' --provided 'has unit cell,has space group' --json",
+        "Output includes results.completeness_score as a ratio between 0 and 1",
+        "Reports results.required_missing, results.recommended_missing, and results.optional_missing",
+        "Identifies any additional properties needed for a complete Crystal Structure annotation"
+      ],
+      "script_checks": [
+        {
+          "description": "completeness_checker reports a fully complete Crystal Structure annotation",
+          "cmd": ["scripts/completeness_checker.py", "--ontology", "cmso", "--class", "Crystal Structure", "--provided", "has unit cell,has space group", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.class_name", "op": "eq", "value": "Crystal Structure"},
+            {"path": "results.completeness_score", "op": "approx", "value": 1.0, "rel_tol": 1e-9},
+            {"path": "results.required_missing", "op": "eq", "value": []},
+            {"path": "results.recommended_missing", "op": "eq", "value": []},
+            {"path": "results.optional_missing", "op": "eq", "value": []},
+            {"path": "results.unrecognized", "op": "eq", "value": []}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Validate these relationships: Computational Sample has material Material, Material has structure Crystal Structure, Crystal Structure has unit cell Unit Cell. Are the domain/range constraints satisfied?",
+      "expected_output": "Agent runs relationship_checker.py to verify that all three subject-property-object triples have correct domain and range in CMSO.",
+      "assertions": [
+        "Invokes scripts/relationship_checker.py with --ontology cmso --relationships '[{\"subject_class\":\"Computational Sample\",\"property\":\"has material\",\"object_class\":\"Material\"},{\"subject_class\":\"Material\",\"property\":\"has structure\",\"object_class\":\"Crystal Structure\"},{\"subject_class\":\"Crystal Structure\",\"property\":\"has unit cell\",\"object_class\":\"Unit Cell\"}]' --json",
+        "Output includes results.valid boolean and results.results for each triple",
+        "Checks domain and range consistency for each relationship",
+        "Reports any domain/range mismatches as errors or warnings"
+      ],
+      "script_checks": [
+        {
+          "description": "relationship_checker confirms all three triples satisfy domain/range",
+          "cmd": ["scripts/relationship_checker.py", "--ontology", "cmso", "--relationships", "[{\"subject_class\":\"Computational Sample\",\"property\":\"has material\",\"object_class\":\"Material\"},{\"subject_class\":\"Material\",\"property\":\"has structure\",\"object_class\":\"Crystal Structure\"},{\"subject_class\":\"Crystal Structure\",\"property\":\"has unit cell\",\"object_class\":\"Unit Cell\"}]", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.valid", "op": "eq", "value": true},
+            {"path": "results.errors", "op": "eq", "value": []},
+            {"path": "results.results.0.valid", "op": "eq", "value": true},
+            {"path": "results.results.0.property", "op": "eq", "value": "has material"},
+            {"path": "results.results.1.valid", "op": "eq", "value": true},
+            {"path": "results.results.2.valid", "op": "eq", "value": true},
+            {"path": "results.results.2.object_class", "op": "eq", "value": "Unit Cell"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I annotated my sample with class 'CrystalStructurr' and property 'has_unit_cell'. Validate this please.",
+      "expected_output": "Agent runs schema_checker.py and detects the misspelled class name and incorrectly formatted property name, flagging both as errors with nearest-match suggestions.",
+      "assertions": [
+        "Invokes scripts/schema_checker.py with --ontology cmso --annotation '{\"class\":\"CrystalStructurr\",\"properties\":{\"has_unit_cell\":true}}' --json",
+        "Detects 'CrystalStructurr' as an unknown class (typo for Crystal Structure)",
+        "Detects 'has_unit_cell' as an unrecognized property (should be 'has unit cell')",
+        "Output results.valid is false with specific errors for both the class and property",
+        "The unknown_class error includes a suggestions array containing 'Crystal Structure' and the unknown_property error includes a suggestions array containing 'has unit cell'"
+      ],
+      "script_checks": [
+        {
+          "description": "schema_checker flags the misspelled class and property with nearest-match suggestions",
+          "cmd": ["scripts/schema_checker.py", "--ontology", "cmso", "--annotation", "{\"class\":\"CrystalStructurr\",\"properties\":{\"has_unit_cell\":true}}", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.valid", "op": "eq", "value": false},
+            {"path": "results.class_valid.CrystalStructurr", "op": "eq", "value": false},
+            {"path": "results.properties_valid.has_unit_cell", "op": "eq", "value": false},
+            {"path": "results.errors.0.error_type", "op": "eq", "value": "unknown_class"},
+            {"path": "results.errors.0.field", "op": "eq", "value": "CrystalStructurr"},
+            {"path": "results.errors.0.suggestions", "op": "contains", "value": "Crystal Structure"},
+            {"path": "results.errors.1.error_type", "op": "eq", "value": "unknown_property"},
+            {"path": "results.errors.1.field", "op": "eq", "value": "has_unit_cell"},
+            {"path": "results.errors.1.suggestions", "op": "contains", "value": "has unit cell"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Check completeness for my Atomic Scale Sample annotation. I only provided 'has material'. What else do I need for a thorough annotation?",
+      "expected_output": "Agent runs completeness_checker.py to show what required and recommended properties are missing for Atomic Scale Sample beyond 'has material'; the required property 'has simulation cell' is absent so completeness_score is low (0.2).",
+      "assertions": [
+        "Invokes scripts/completeness_checker.py with --ontology cmso --class 'Atomic Scale Sample' --provided 'has material' --json",
+        "Reports a low completeness_score (0.2) since only one of the tracked properties is provided",
+        "Lists required_missing including 'has simulation cell' that must be added",
+        "Lists recommended_missing properties (has species, has attribute, has number of atoms) that would improve annotation quality"
+      ],
+      "script_checks": [
+        {
+          "description": "completeness_checker reports low score and missing required/recommended props for Atomic Scale Sample",
+          "cmd": ["scripts/completeness_checker.py", "--ontology", "cmso", "--class", "Atomic Scale Sample", "--provided", "has material", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.class_name", "op": "eq", "value": "Atomic Scale Sample"},
+            {"path": "results.completeness_score", "op": "approx", "value": 0.2, "rel_tol": 1e-9},
+            {"path": "results.required_missing", "op": "contains", "value": "has simulation cell"},
+            {"path": "results.recommended_missing", "op": "contains", "value": "has species"},
+            {"path": "results.recommended_missing", "op": "contains", "value": "has attribute"},
+            {"path": "results.recommended_missing", "op": "contains", "value": "has number of atoms"},
+            {"path": "results.optional_missing", "op": "eq", "value": []},
+            {"path": "results.unrecognized", "op": "eq", "value": []}
+          ]
+        }
+      ]
+    }
+  ]
+}

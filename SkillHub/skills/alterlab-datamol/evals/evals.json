@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-datamol",
+  "evals": [
+    {
+      "id": "standardize-and-descriptors",
+      "prompt": "I have a CSV of ~3000 vendor compounds with a SMILES column. Standardize them (disconnect metals, normalize, reionize), drop anything that fails to parse, and compute MW, logP, HBD, HBA and TPSA for the survivors so I can filter by Lipinski.",
+      "expected_output": "Invokes alterlab-datamol: reads the CSV with dm.read_csv, standardizes each molecule via dm.standardize_mol (disconnect_metals/normalize/reionize) while dropping None parses from dm.to_mol, then runs dm.descriptors.batch_compute_many_descriptors with n_jobs=-1 to get mw/logp/hbd/hba/tpsa, returning a clean DataFrame ready for a Rule-of-Five mask.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses datamol (dm.*) for parsing, standardization, and dm.descriptors.batch_compute_many_descriptors rather than raw RDKit, handles failed SMILES parses, and references the descriptors by datamol's own key names (clogp, n_lipinski_hbd, n_lipinski_hba) — not RDKit's logp/hbd/hba." }
+      ]
+    },
+    {
+      "id": "butina-clustering-diversity",
+      "prompt": "Cluster these 800 hits by structural similarity at a Tanimoto distance cutoff of 0.2, then pick the 50 most diverse representatives for follow-up.",
+      "expected_output": "Invokes alterlab-datamol: runs dm.cluster_mols with cutoff=0.2 and n_jobs=-1 (Butina clustering, noting it builds a full distance matrix suitable at this ~800 scale), reports cluster membership, and uses dm.pick_diverse / dm.pick_centroids to select 50 representatives.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses dm.cluster_mols (Butina) at the 0.2 cutoff and a datamol diversity picker, and notes the full-distance-matrix scale limit." }
+      ]
+    },
+    {
+      "id": "scaffold-grouping-sar",
+      "prompt": "Extract the Bemis-Murcko scaffold for each molecule in my series, group the compounds by scaffold, and show me the 10 most common scaffolds.",
+      "expected_output": "Invokes alterlab-datamol: computes Bemis-Murcko scaffolds with dm.to_scaffold_murcko, canonicalizes each via dm.to_smiles, groups molecules per scaffold and uses a Counter to surface the 10 most frequent scaffold SMILES.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "dm.to_scaffold_murcko" }
+      ]
+    },
+    {
+      "id": "conformers-and-viz",
+      "prompt": "Generate 3D conformers for this molecule with ETKDGv3, minimize them, filter near-duplicates by RMSD, and save an aligned grid image of the molecules to a PNG.",
+      "expected_output": "Invokes alterlab-datamol: calls dm.conformers.generate (method='ETKDGv3', minimize_energy=True, rms_cutoff to drop duplicates), then renders with dm.viz.to_image (align=True, outfile PNG). 3D conformer embedding plus visualization are datamol's wheelhouse.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses dm.conformers.generate with ETKDGv3 and dm.viz.to_image to write the PNG grid." }
+      ]
+    },
+    {
+      "id": "near-miss-molfeat",
+      "prompt": "I want to turn these SMILES into ML-ready feature matrices and benchmark ECFP vs MACCS vs ChemBERTa embeddings for a QSAR random forest. Build the featurizers and a scikit-learn pipeline.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-molfeat. The user wants ML featurizer objects, pretrained ChemBERTa embeddings, and a scikit-learn-compatible transformer pipeline to compare representations, which is molfeat's territory, not datamol's everyday descriptor/cleanup wrapper.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-molfeat" }
+      ]
+    },
+    {
+      "id": "near-miss-rdkit",
+      "prompt": "I need fine-grained control over a custom RDKit reaction with explicit atom-map sanitization flags and a hand-tuned conformer embedding using my own ETKDG parameters and bounds matrix. Show me the raw RDKit calls.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-rdkit. The user explicitly wants low-level, custom-parameter RDKit control rather than datamol's sensible-default wrapper, which the datamol skill itself recommends deferring to for advanced control.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-rdkit" }
+      ]
+    }
+  ]
+}

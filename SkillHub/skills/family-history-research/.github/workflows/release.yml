@@ -1,0 +1,88 @@
+name: Create Release Package
+
+permissions:
+  contents: write
+  packages: write
+  actions: write
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  package:
+    name: Create Distribution Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            echo "version=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=latest" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create distribution package
+        run: |
+          # Create a clean directory for the package
+          mkdir -p dist/genealogy-research-skill
+
+          # Copy skill files
+          cp SKILL.md dist/genealogy-research-skill/
+          # cp README.md dist/genealogy-research-skill/
+          # cp LICENSE dist/genealogy-research-skill/
+          # cp CHANGELOG.md dist/genealogy-research-skill/
+
+          # Copy directories
+          cp -r references dist/genealogy-research-skill/
+          cp -r assets dist/genealogy-research-skill/
+
+          # Create the zip file
+          cd dist
+          zip -r genealogy-research-skill-${{ steps.get_version.outputs.version }}.zip genealogy-research-skill/
+          cd ..
+
+      - name: Calculate SHA256
+        id: sha256
+        run: |
+          cd dist
+          sha256sum genealogy-research-skill-${{ steps.get_version.outputs.version }}.zip > genealogy-research-skill-${{ steps.get_version.outputs.version }}.zip.sha256
+          echo "checksum=$(cat genealogy-research-skill-${{ steps.get_version.outputs.version }}.zip.sha256)" >> $GITHUB_OUTPUT
+
+      - name: Upload package to release
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./dist/genealogy-research-skill-${{ steps.get_version.outputs.version }}.zip
+          asset_name: genealogy-research-skill-${{ steps.get_version.outputs.version }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload SHA256 to release
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./dist/genealogy-research-skill-${{ steps.get_version.outputs.version }}.zip.sha256
+          asset_name: genealogy-research-skill-${{ steps.get_version.outputs.version }}.zip.sha256
+          asset_content_type: text/plain
+
+      - name: Upload artifact (for manual workflow runs)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: genealogy-research-skill-${{ steps.get_version.outputs.version }}
+          path: |
+            dist/genealogy-research-skill-${{ steps.get_version.outputs.version }}.zip
+            dist/genealogy-research-skill-${{ steps.get_version.outputs.version }}.zip.sha256
+          retention-days: 30

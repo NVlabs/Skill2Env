@@ -1,0 +1,25 @@
+{
+  "name": "MARKETPLACE-NAME",
+  "owner": {
+    "name": "Your Organization",
+    "email": "team@your-org.com"
+  },
+  "metadata": {
+    "description": "A curated collection of Claude Code plugins",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "plugin-name",
+      "description": "What the plugin does",
+      "version": "1.0.0",
+      "author": {
+        "name": "Author Name"
+      },
+      "source": "./plugins/plugin-name",
+      "category": "utilities",
+      "tags": ["tag1", "tag2"],
+      "keywords": ["keyword1", "keyword2"]
+    }
+  ]
+}

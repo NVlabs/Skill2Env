@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-timesfm",
+  "evals": [
+    {
+      "id": "single-series-forecast",
+      "prompt": "I have weekly_demand.csv with about two years of weekly demand. Forecast the next 52 weeks with prediction intervals — I don't want to train anything, just get a forecast fast.",
+      "expected_output": "Invokes alterlab-timesfm: runs the mandatory preflight check_system.py first, loads TimesFM 2.5 (google/timesfm-2.5-200m-pytorch) via from_pretrained, calls model.compile() with a ForecastConfig (normalize_inputs=True, use_continuous_quantile_head=True, fix_quantile_crossing=True), passes a list of 1-D arrays to model.forecast(horizon=52), and extracts the point forecast plus 80% prediction interval (q index 1 and 9).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Runs the system preflight check before loading, uses zero-shot TimesFM 2.5 with no training, and returns point forecasts plus calibrated prediction intervals." }
+      ]
+    },
+    {
+      "id": "batch-forecast-many-series",
+      "prompt": "I have a wide CSV with one sales column per store — about 800 stores. I need a 30-step-ahead forecast for every store efficiently.",
+      "expected_output": "Invokes alterlab-timesfm: after the preflight check, loads and compiles TimesFM 2.5, converts each column to a 1-D float32 array forming a list of inputs, calls model.forecast(horizon=30, inputs=inputs) to batch-forecast all series at once, tuning per_core_batch_size for the hardware, and exports per-series point/PI results.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Forecasts all series in one batched call passing a list of 1-D arrays (not a 2-D matrix) and scales per_core_batch_size to hardware." }
+      ]
+    },
+    {
+      "id": "covariates-forecast",
+      "prompt": "Forecast my retail demand but use price and a holiday flag as known future drivers — both vary over time and I know their future values for the horizon.",
+      "expected_output": "Invokes alterlab-timesfm: uses TimesFM 2.5 forecast_with_covariates() (requires timesfm[xreg]), passing dynamic_numerical_covariates for price and dynamic_categorical_covariates for the holiday flag, notes that the covariates must span both context and the full horizon, and selects an xreg_mode.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "covariates" }
+      ]
+    },
+    {
+      "id": "anomaly-via-prediction-intervals",
+      "prompt": "Using my sensor time series, flag the readings that are statistically unusual relative to what the model expects — I want warning and critical severity levels.",
+      "expected_output": "Invokes alterlab-timesfm: forecasts with quantile prediction intervals and flags values outside the 60% PI (q20/q80, indices 2/8) as Warning and outside the 80% PI (q10/q90, indices 1/9) as Critical, noting TimesFM has no built-in anomaly detector but the calibrated quantiles serve as the interval test (detrend before any context Z-scoring).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses the quantile prediction intervals (60% PI for warning, 80% PI for critical) to assign severity rather than claiming a built-in anomaly detector." }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-statsmodels",
+      "prompt": "Fit a SARIMAX model to my monthly series and give me the coefficient table with significance tests and confidence intervals so I can interpret the AR and seasonal terms.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-statsmodels. The user wants a classical statistical model with interpretable coefficients and significance tests, whereas TimesFM is a zero-shot foundation model with no coefficient interpretation.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statsmodels" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-eda",
+      "prompt": "Before I forecast anything, just explore my time_series.csv — show me its structure, missing values, trend, and seasonality with a summary report.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-eda. The user wants exploratory data analysis and a structural/quality report of the file, not a forecast; forecasting comes after EDA.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-eda" }
+      ]
+    }
+  ]
+}

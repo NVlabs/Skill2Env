@@ -1,0 +1,96 @@
+{
+  "skill": "alterlab-pytorch-lightning",
+  "evals": [
+    {
+      "id": "refactor-loop-to-lightningmodule",
+      "prompt": "I have a hand-written PyTorch training loop for an image classifier. Refactor it into a LightningModule with training_step, validation_step, and configure_optimizers so I can drop the boilerplate.",
+      "expected_output": "Invokes alterlab-pytorch-lightning: reorganizes the raw loop into an L.LightningModule implementing training_step(batch, batch_idx), validation_step, and configure_optimizers, logging metrics via self.log and calling self.save_hyperparameters() in __init__. Removes the manual loop in favor of Trainer.fit.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "lightningmodule"
+        },
+        {
+          "type": "behavior",
+          "value": "Produces a LightningModule with training_step/validation_step/configure_optimizers and uses self.log for metrics rather than a manual optimizer.step loop."
+        }
+      ]
+    },
+    {
+      "id": "multi-gpu-ddp-checkpointing",
+      "prompt": "Scale my training across 4 GPUs with DDP and add checkpointing that keeps the best model on validation loss plus early stopping when it plateaus.",
+      "expected_output": "Invokes alterlab-pytorch-lightning: configures L.Trainer(accelerator='gpu', devices=4, strategy='ddp'), adds a ModelCheckpoint callback monitoring val_loss (save best) and an EarlyStopping callback on the same metric. Recommends DDP for sub-500M-param models.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "ddp"
+        },
+        {
+          "type": "behavior",
+          "value": "Sets Trainer strategy to ddp with devices=4 and wires ModelCheckpoint (monitor val_loss) plus EarlyStopping callbacks rather than custom checkpoint logic."
+        }
+      ]
+    },
+    {
+      "id": "datamodule-and-wandb",
+      "prompt": "Organize my data pipeline into a reusable LightningDataModule with prepare_data and setup, and log my training metrics to Weights & Biases.",
+      "expected_output": "Invokes alterlab-pytorch-lightning: builds an L.LightningDataModule implementing prepare_data(), setup(), and train/val/test_dataloader methods, and attaches a WandbLogger to the Trainer for experiment tracking via self.log.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "datamodule"
+        },
+        {
+          "type": "behavior",
+          "value": "Implements a LightningDataModule with prepare_data/setup/dataloader methods and configures WandbLogger on the Trainer."
+        }
+      ]
+    },
+    {
+      "id": "fsdp-large-transformer",
+      "prompt": "My transformer has about 1.2 billion parameters and won't fit with plain DDP. Set up sharded training so it fits, and turn on mixed precision.",
+      "expected_output": "Invokes alterlab-pytorch-lightning: recommends FSDP for 500M+ parameter models, configures L.Trainer(strategy='fsdp', precision='16-mixed' or 'bf16-mixed', accelerator='gpu', devices=...), enabling automatic mixed precision and parameter sharding.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "fsdp"
+        },
+        {
+          "type": "behavior",
+          "value": "Selects FSDP (not DDP) for the large model and enables mixed-precision via the Trainer precision flag."
+        }
+      ]
+    },
+    {
+      "id": "near-miss-transformers",
+      "prompt": "I want to fine-tune a pretrained BERT from the Hugging Face hub on my text classification dataset using the Trainer API and the datasets library.",
+      "expected_output": "Does NOT invoke alterlab-pytorch-lightning. Fine-tuning a pretrained Hugging Face model with the transformers Trainer and datasets library is alterlab-transformers territory, not PyTorch Lightning's LightningModule/Trainer. Should defer to alterlab-transformers.",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "transformers"
+        }
+      ]
+    }
+  ]
+}

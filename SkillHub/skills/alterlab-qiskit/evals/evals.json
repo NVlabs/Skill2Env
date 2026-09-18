@@ -1,0 +1,66 @@
+{
+  "skill": "alterlab-qiskit",
+  "evals": [
+    {
+      "id": "bell-state-sampler",
+      "prompt": "Build a 2-qubit Bell state in Qiskit and sample it for 1024 shots on a local simulator. I want the measurement counts.",
+      "expected_output": "Triggers the qiskit skill. Builds a QuantumCircuit(2) with h(0), cx(0,1), measure_all(), then runs a StatevectorSampler for 1024 shots and reads get_counts(), expecting roughly equal '00' and '11'. Should use qiskit.QuantumCircuit and the StatevectorSampler primitive.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "QuantumCircuit"},
+        {"type": "output_contains", "value": "Sampler"},
+        {"type": "behavior", "value": "Constructs a Bell state with H + CNOT, measures, and samples on a local simulator returning counts dominated by 00 and 11."}
+      ]
+    },
+    {
+      "id": "transpile-for-ibm-hardware",
+      "prompt": "I want to run my circuit on ibm_brisbane via Qiskit Runtime. Transpile it with optimization level 3 for that backend and submit a SamplerV2 job for 1024 shots.",
+      "expected_output": "Triggers the qiskit skill. Uses QiskitRuntimeService to get the ibm_brisbane backend, transpiles with optimization_level=3 targeting that backend, then runs SamplerV2 (Sampler) for 1024 shots and retrieves the result. Should reference qiskit_ibm_runtime and transpile.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "transpile"},
+        {"type": "output_contains", "value": "Runtime"},
+        {"type": "behavior", "value": "Transpiles for the named IBM backend at optimization_level 3 and submits via a Qiskit Runtime SamplerV2 primitive, not a local simulator."}
+      ]
+    },
+    {
+      "id": "vqe-estimator-session",
+      "prompt": "Set up a VQE loop in Qiskit Runtime: I have a parameterized ansatz and a Hamiltonian, and I want to use an Estimator inside a Session with COBYLA minimizing the expectation value.",
+      "expected_output": "Triggers the qiskit skill. Opens a Session on the backend, creates an EstimatorV2, defines a cost_function that assigns parameters, transpiles, and runs the estimator to return result[0].data.evs, then minimizes with scipy.optimize.minimize method='COBYLA'. Should reference Estimator, Session, and the VQE pattern.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "Estimator"},
+        {"type": "output_contains", "value": "Session"},
+        {"type": "behavior", "value": "Builds a variational VQE loop using an Estimator primitive inside a Runtime Session with a classical COBYLA optimizer over expectation values."}
+      ]
+    },
+    {
+      "id": "error-mitigation-resilience",
+      "prompt": "My results from IBM hardware are noisy. How do I apply error mitigation when running with the Runtime primitives, and what knob controls the mitigation strength?",
+      "expected_output": "Triggers the qiskit skill. Explains applying error mitigation via the Runtime primitives' resilience_level option and related strategies, plus testing with noisy simulators first. Should reference resilience_level / error mitigation in the IBM Runtime context.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "resilience"},
+        {"type": "behavior", "value": "Points to the Runtime primitives' error-mitigation controls (resilience_level) for reducing hardware noise."}
+      ]
+    },
+    {
+      "id": "near-miss-cirq-google-hardware",
+      "prompt": "I'm targeting Google's Sycamore-class hardware on Google Quantum AI and want to design a noise-aware circuit with explicit noise models for a characterization experiment. Which framework and how?",
+      "expected_output": "Should NOT trigger the qiskit skill. Targeting Google Quantum AI hardware with noise-aware, low-level circuit design and characterization is the cirq skill's territory, which qiskit's own description points to for Google hardware. Defer to cirq.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "cirq"}
+      ]
+    },
+    {
+      "id": "near-miss-pennylane-quantum-ml-autodiff",
+      "prompt": "I want to train a hybrid quantum-classical model where gradients flow through the quantum circuit via automatic differentiation and integrate it with my PyTorch training loop. Which framework?",
+      "expected_output": "Should NOT trigger the qiskit skill. Gradient-based quantum ML with automatic differentiation and PyTorch integration is the pennylane skill's territory, which qiskit's own description points to for gradient-based quantum ML. Defer to pennylane.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "pennylane"}
+      ]
+    }
+  ]
+}

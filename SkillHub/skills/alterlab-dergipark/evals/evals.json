@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-dergipark",
+  "evals": [
+    {
+      "id": "harvest-whole-journal",
+      "prompt": "I'm doing a literature review and need every article from the journal Mülkiye Dergisi on DergiPark — title, authors, year, and abstract — as a structured file I can filter. Can you pull the whole archive?",
+      "expected_output": "Invokes alterlab-dergipark in OAI-harvest mode: resolves the journal slug via list-journals (setSpec == slug), then runs scripts/dergipark_oai.py harvest with metadataPrefix=oai_dc against https://dergipark.org.tr/api/public/oai/, following resumptionToken paging until the set is exhausted, and emits a structured JSON record per article (title, creators, dc:date, identifiers, abstract). Notes that to slice by publication year it must filter on dc:date locally, because the OAI datestamp is the re-index time, not the publication date.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses the OAI-PMH ListRecords path (not the gated search page), follows resumptionToken paging, and explicitly filters by dc:date rather than trusting the OAI datestamp for publication year." }
+      ]
+    },
+    {
+      "id": "bibtex-single-article",
+      "prompt": "Give me a clean BibTeX entry for this DergiPark article so I can drop it into my .bib file: https://dergipark.org.tr/en/pub/mulkiye/article/10",
+      "expected_output": "Invokes alterlab-dergipark in article-meta mode: runs scripts/article_meta.py on the URL, parses the page's citation_* and DC.* meta tags, and formats a BibTeX @article entry LOCALLY from those fields (author, title, journal, year, volume, number, pages, issn, url) — preserving Turkish diacritics in the title. Does not call any unverified on-site Cite/export backend and does not fabricate fields.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "@article" },
+        { "type": "behavior", "value": "Builds BibTeX locally from the parsed citation_*/DC.* meta tags and keeps Turkish diacritics intact in author/title fields." }
+      ]
+    },
+    {
+      "id": "turkish-pdf-and-scope",
+      "prompt": "Mülkiye Dergisi adlı derginin DergiPark'taki amaç ve kapsamını (öz) özetler misin, bir de son makalelerinden birinin tam metin PDF'ini nasıl indirebileceğimi gösterir misin?",
+      "expected_output": "Invokes alterlab-dergipark: runs scripts/journal_info.py for the journal's aim-and-scope (öz/kapsam) text, and for the PDF uses scripts/article_meta.py to read the article page's citation_pdf_url meta tag and download from /{lang}/download/article-file/{file-id}. Critically takes the PDF link from citation_pdf_url rather than constructing it from the article id (file id != article id), and replies preserving Turkish diacritics (Mülkiye).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Summarizes the aim-and-scope and resolves the PDF from the citation_pdf_url meta tag, not from the article id, and keeps Turkish characters intact." }
+      ]
+    },
+    {
+      "id": "near-miss-trdizin-indexing",
+      "prompt": "Bir makale göndermeden önce, bu derginin (Mülkiye Dergisi) şu anda TR Dizin'de taranıp taranmadığını, aktif mi yoksa çıkarılmış mı olduğunu kontrol eder misin?",
+      "expected_output": "Does NOT invoke this skill for the authoritative answer; defers to alterlab-trdizin. The user wants live TR Dizin indexing STATUS (active vs rejected years, first-index date), which is the national citation index — a separate system from DergiPark hosting. alterlab-dergipark only fetches the journal's self-declared /indexes page (unverified) and points to TR Dizin; the real status verdict comes from alterlab-trdizin.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-trdizin" }
+      ]
+    },
+    {
+      "id": "near-miss-yok-tez",
+      "prompt": "I need to find Turkish master's and PhD theses on sustainable architecture for my literature review — can you search the national thesis database and list the relevant ones with author, year, and university?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-yok-tez. The user wants graduate theses from YÖK Ulusal Tez Merkezi, not journal articles from DergiPark. alterlab-dergipark harvests DergiPark journal content only; thesis discovery and metadata is alterlab-yok-tez's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-yok-tez" }
+      ]
+    },
+    {
+      "id": "near-miss-citation-verifier",
+      "prompt": "My co-author's reference list has 18 citations and I'm worried some are AI-hallucinated. Can you check whether each cited paper actually exists and the DOIs resolve to the right articles?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-citation-verifier. The user wants an existence / hallucination audit of an arbitrary bibliography against scholarly databases, not harvesting from DergiPark. alterlab-dergipark only retrieves DergiPark's own records; verifying that cited works exist and that DOIs resolve correctly is alterlab-citation-verifier's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-citation-verifier" }
+      ]
+    }
+  ]
+}

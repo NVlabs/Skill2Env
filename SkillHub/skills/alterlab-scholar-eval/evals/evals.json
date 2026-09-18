@@ -1,0 +1,53 @@
+{
+  "skill": "alterlab-scholar-eval",
+  "evals": [
+    {
+      "id": "comprehensive-paper-score",
+      "prompt": "Can you evaluate this empirical machine-learning-for-drug-discovery paper across all the research-quality dimensions and give me numeric scores plus an overall assessment?",
+      "expected_output": "Invokes alterlab-scholar-eval applying the ScholarEval framework: identifies work type (empirical paper) and comprehensive scope, evaluates each core dimension (problem formulation, literature review, methodology, data/sources, analysis, results, writing, citations) with strengths/weaknesses, assigns 5-point dimension scores, optionally uses scripts/calculate_scores.py for aggregate scoring, and synthesizes an overall assessment with prioritized actionable recommendations.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ScholarEval" }
+      ],
+      "files": [
+        { "name": "ml_drug_discovery_paper.txt", "content": "Title: Deep Graph Networks for Binding Affinity Prediction. Abstract: We propose a GNN architecture trained on a kinase inhibitor dataset and report improved RMSE over baselines. Methods, results, and discussion sections follow. (truncated fixture)" }
+      ]
+    },
+    {
+      "id": "targeted-methodology-score",
+      "prompt": "I only want a focused evaluation of the methodology and research design of my survey study — rigor, validity, reproducibility, and a rubric score for that dimension. Don't grade the writing.",
+      "expected_output": "Invokes alterlab-scholar-eval in a targeted scope on a single dimension: assesses Methodology & Research Design (appropriateness for research questions, rigor and validity, reproducibility/transparency, ethics, limitations acknowledgment) against the ScholarEval rubric, gives a 5-point score with strengths and areas for improvement, and does not score unrelated dimensions like writing.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Scopes the evaluation to the methodology dimension with a rubric score and does not grade writing/presentation." }
+      ]
+    },
+    {
+      "id": "publication-readiness-benchmark",
+      "prompt": "Score my literature review chapter against publication standards and tell me whether it's ready to submit to a target journal, with quantitative ratings I can track across revisions.",
+      "expected_output": "Invokes alterlab-scholar-eval to benchmark publication readiness: evaluates the literature-review dimension (comprehensiveness, critical synthesis vs summarization, gap identification, currency) plus relevant dimensions with 5-point scores, assesses suitability for the target venue, and frames the quantitative scores so improvement can be tracked across revisions (e.g. producing a SCHOLAR_EVALUATION-style report).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Produces quantitative dimension scores and a publication-readiness judgment that can be re-run to track improvement across revisions." }
+      ]
+    },
+    {
+      "id": "near-miss-peer-review",
+      "prompt": "Write me a full peer-review report for this manuscript as if for the journal — summary, major and minor comments organized by section, and an accept/minor-revision/major-revision/reject recommendation letter to the editor.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-peer-review. The user wants a checklist-style narrative peer-review report with an editorial recommendation and a letter to the editor, not the rubric-based quantitative dimension scoring that ScholarEval produces.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-peer-review" }
+      ]
+    },
+    {
+      "id": "near-miss-scientific-thinking",
+      "prompt": "I'm not grading the whole paper — I just want to stress-test whether the central causal claim is actually supported by the evidence presented, and spot any logical fallacies or unwarranted leaps in the argument.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scientific-thinking. The user wants evidence/claim-quality and argument-soundness analysis (fallacies, unwarranted inferences), not a structured multi-dimension rubric score of the scholarly work.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "scientific-thinking" }
+      ]
+    }
+  ]
+}

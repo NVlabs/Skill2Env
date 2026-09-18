@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-biorxiv",
+  "evals": [
+    {
+      "id": "keyword-category-date-search",
+      "prompt": "Find me bioRxiv preprints on CRISPR base editing posted in the cancer-biology category between January and December 2024. I want titles, abstracts, and DOIs.",
+      "expected_output": "Invokes alterlab-biorxiv to run scripts/biorxiv_search.py with --keywords, --category cancer-biology, and --start-date/--end-date over 2024, returning structured JSON metadata (titles, abstracts, DOIs, authors). Should ground the search in bioRxiv's category list and the keyword search over title+abstract.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses the bioRxiv search script with a valid category filter and a date range, and returns preprint metadata including DOIs and abstracts." }
+      ]
+    },
+    {
+      "id": "author-tracking",
+      "prompt": "Track all bioRxiv preprints posted by the author Doudna over the last year so I can monitor their recent unpublished work.",
+      "expected_output": "Invokes alterlab-biorxiv in author-search mode using --author with a date range (defaulting to the last year), returning the author's recent preprints as JSON metadata. Should make clear this targets bioRxiv preprints, not peer-reviewed publications.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Performs an author search on bioRxiv and returns that author's recent preprints." }
+      ]
+    },
+    {
+      "id": "doi-details-pdf-download",
+      "prompt": "Pull the full metadata for bioRxiv preprint 10.1101/2024.01.15.123456 and download its PDF for me.",
+      "expected_output": "Invokes alterlab-biorxiv to fetch paper details by DOI and download the full-text PDF (e.g. --doi with --download-pdf, or BioRxivSearcher.get_paper_details/download_pdf), returning the structured record plus the saved PDF path.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "doi" }
+      ]
+    },
+    {
+      "id": "trend-analysis",
+      "prompt": "I'm writing a review on the rise of machine-learning methods in the bioinformatics literature. Pull bioRxiv preprints mentioning machine learning in bioinformatics from 2020 through 2024 so I can analyze how the volume changed over time.",
+      "expected_output": "Invokes alterlab-biorxiv to run a keyword search filtered to the bioinformatics category over a multi-year date range, returning JSON results suitable for temporal/trend analysis of preprint counts. Should suggest splitting long ranges into smaller queries per best practices.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Searches bioRxiv preprints over a multi-year window in a relevant category and returns data usable for trend analysis over time." }
+      ]
+    },
+    {
+      "id": "near-miss-arxiv",
+      "prompt": "Find me recent preprints on transformer architectures for large language models. They'll be on arXiv in the cs.CL and cs.LG categories.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-arxiv. bioRxiv only covers life-sciences preprints and its categories are biology subjects, whereas the user wants computer-science/ML preprints from arXiv.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-arxiv" }
+      ]
+    },
+    {
+      "id": "near-miss-pubmed",
+      "prompt": "Build me a MeSH-term Boolean query and search PubMed for peer-reviewed randomized controlled trials on metformin in type 2 diabetes published 2020 to 2024.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pubmed. The user wants peer-reviewed published literature with MeSH terms and publication-type filters via NCBI E-utilities, not not-yet-peer-reviewed bioRxiv preprints.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pubmed" }
+      ]
+    }
+  ]
+}

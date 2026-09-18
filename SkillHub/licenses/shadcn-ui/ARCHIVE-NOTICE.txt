@@ -1,0 +1,9 @@
+This distribution includes shadcn/ui components under the MIT license.
+Copyright (c) 2023 shadcn
+
+The archive adapts framework directives and import paths.
+The following upstream attribution from hooks/use-toast.ts was removed during preparation of the archive and is retained here:
+
+// Inspired by react-hot-toast library
+
+The MIT license and copyright notice for react-hot-toast by Timo Lins are also included.

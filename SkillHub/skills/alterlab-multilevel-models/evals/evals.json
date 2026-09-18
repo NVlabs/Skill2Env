@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-multilevel-models",
+  "evals": [
+    {
+      "id": "students-in-schools",
+      "prompt": "I have test scores for students nested within schools and want to model the effect of study hours, allowing it to vary by school. What model and what should I report?",
+      "expected_output": "Invokes alterlab-multilevel-models: fits a random-intercept-and-slope model (statsmodels MixedLM or R lmer with (1 + hours | school)), reports the ICC and variance components, and lists the full specification / estimation / assumptions / effect-size reporting items.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ICC" },
+        { "type": "behavior", "value": "Specifies random intercept + slope by school and enforces the multilevel reporting checklist (variance components, estimation, assumptions)." }
+      ]
+    },
+    {
+      "id": "repeated-measures-glmm",
+      "prompt": "Repeated binary outcomes measured on the same patients over time — fit a multilevel logistic regression.",
+      "expected_output": "Invokes alterlab-multilevel-models: fits a GLMM (random intercept per patient) via statsmodels/bambi or R glmer(family=binomial), and reports the random-effects structure and estimation method.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses a generalized linear mixed model with a patient-level random effect for repeated binary measures." }
+      ]
+    },
+    {
+      "id": "variance-partition",
+      "prompt": "How much of the variation in employee satisfaction is between teams versus within teams?",
+      "expected_output": "Invokes alterlab-multilevel-models: fits an intercept-only (null) model and reports the ICC as the between-team share of variance, noting whether multilevel structure is even warranted.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "variance" }
+      ]
+    },
+    {
+      "id": "near-miss-statsmodels",
+      "prompt": "Just run an ordinary least squares regression of price on square footage — no grouping.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-statsmodels. Single-level OLS with no nesting has no random-effects structure to model.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statsmodels" }
+      ]
+    },
+    {
+      "id": "near-miss-causal-inference",
+      "prompt": "I have panel data and want two-way fixed effects to identify the causal effect of a policy.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-causal-inference. Panel fixed effects for causal identification is a design/estimation problem, not variance-partitioning multilevel modeling.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-causal-inference" }
+      ]
+    }
+  ]
+}

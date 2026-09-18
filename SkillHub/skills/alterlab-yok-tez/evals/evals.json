@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-yok-tez",
+  "evals": [
+    {
+      "id": "originality-check-turkish",
+      "prompt": "Bir yüksek lisans öğrencim \"sanal prodüksiyonun sinemada kullanımı\" üzerine doktora yapmak istiyor. YÖK Ulusal Tez Merkezi'nde daha önce benzer bir tez yapılmış mı, danışman olarak onaylamadan önce kontrol eder misin?",
+      "expected_output": "Invokes alterlab-yok-tez in originality-check mode: builds paired Turkish AND English Detaylı Tarama queries across Konu/Tez Adı/Özet (subject_headings, thesis_title, abstract_text), constrains thesis_type to Doktora, and CRUCIALLY sets permission_status to Tümü (All) so İzinsiz (restricted, abstract-only) theses still surface as prior art. Runs them via the saidsurucu/yoktez-mcp search_yok_tez_detailed tool, merges and dedupes on Tez No, and returns a newest-first table of {Tez No, year, university, danışman, title, izin}. States explicitly that this is registry/prior-art coverage, not a plagiarism or text-similarity score.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Sets permission_status=Tümü so restricted (İzinsiz) theses surface, runs both a Turkish and an English query, and frames the result as registry prior-art coverage rather than an originality/plagiarism verdict." }
+      ]
+    },
+    {
+      "id": "advisor-dissertation-discovery",
+      "prompt": "I need every doctoral dissertation supervised by Prof. Ayşe Yılmaz at İzmir Ekonomi Üniversitesi for a department report. Can you pull them from the national thesis center?",
+      "expected_output": "Invokes alterlab-yok-tez for advisor-based discovery: queries YÖK Ulusal Tez Merkezi via search_yok_tez_detailed with advisor_name (Danışman) set to the supervisor, university_name set to the institution, and thesis_type Doktora. Handles Turkish-name diacritic variants when matching, and returns the deduplicated thesis list with Tez No, title, year, and permission status.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Searches by advisor_name (danışman) + university on YÖK Ulusal Tez Merkezi and returns the supervised-thesis list, accounting for Turkish diacritic variants in the name." }
+      ]
+    },
+    {
+      "id": "cite-yok-thesis-apa7",
+      "prompt": "Bu YÖK tezini kaynakçama ekleyeceğim, Türkçe APA 7'ye göre nasıl atıf yaparım? Yılmaz, A. (2021), Sanal prodüksiyonun sinematografiye etkileri, Doktora tezi, İzmir Ekonomi Üniversitesi, Tez No 654321, izinli.",
+      "expected_output": "Invokes alterlab-yok-tez in citation mode: formats a Türkçe APA-7 thesis reference, mapping the YÖK Tez No (654321) to APA's Yayın No., producing 'Yılmaz, A. (2021). Sanal prodüksiyonun sinematografiye etkileri (Yayın No. 654321) [Doktora tezi, İzmir Ekonomi Üniversitesi]. YÖK Ulusal Tez Merkezi.' Optionally emits a matching BibTeX @phdthesis with note={YÖK Ulusal Tez Merkezi, Tez No. 654321}. Distinguishes the published/İzinli template from the unpublished/İzinsiz one.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Yayın No" },
+        { "type": "behavior", "value": "Maps the YÖK Tez No to APA Yayın No. and uses the published (İzinli) thesis template, italic title, [Doktora tezi, Üniversite], archive 'YÖK Ulusal Tez Merkezi'." }
+      ]
+    },
+    {
+      "id": "topic-thesis-literature-discovery",
+      "prompt": "I'm writing a literature review and want to find existing Turkish master's and doctoral theses on sustainable architecture. Search the national thesis repository and give me what's there.",
+      "expected_output": "Invokes alterlab-yok-tez for topic literature discovery: builds paired Turkish (e.g. 'sürdürülebilir mimari', using the root form for auto-stemming) and English ('sustainable architecture') queries across Konu/Tez Adı/Özet, runs them through search_yok_tez_detailed, and returns a deduplicated thesis list. Notes the 2000-results-per-search cap and the split-by-year/university workaround if the topic is broad.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Runs both Turkish (root-form) and English queries across subject/title/abstract fields and warns about the 2000-result-per-search cap for broad topics." }
+      ]
+    },
+    {
+      "id": "near-miss-dergipark-journal-article",
+      "prompt": "Sürdürülebilir mimari üzerine Türkçe dergi makaleleri arıyorum. DergiPark'tan bu konuda yayımlanmış makaleleri bulabilir misin?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-dergipark. The user wants Turkish journal ARTICLES from DergiPark, not graduate theses. alterlab-yok-tez only searches YÖK Ulusal Tez Merkezi (yüksek lisans/doktora theses); journal-article search and harvesting on DergiPark is alterlab-dergipark's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-dergipark" }
+      ]
+    },
+    {
+      "id": "near-miss-thesis-supervisor-writing",
+      "prompt": "My PhD student finished a rough draft of her methodology chapter and we have her viva in two months. Can you give chapter-level feedback and help us prep for the defense?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-thesis-supervisor. The user wants hands-on thesis writing and defense/viva coaching (chapter feedback, committee prep), not a search of the national thesis registry. alterlab-yok-tez only does thesis discovery, originality checks, and citation against YÖK Ulusal Tez Merkezi; supervising the writing and defense is alterlab-thesis-supervisor's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-thesis-supervisor" }
+      ]
+    }
+  ]
+}

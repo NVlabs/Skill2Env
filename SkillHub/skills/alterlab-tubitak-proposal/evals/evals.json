@@ -1,0 +1,70 @@
+{
+  "skill": "alterlab-tubitak-proposal",
+  "evals": [
+    {
+      "id": "scaffold-1001-full",
+      "prompt": "I'm a faculty member at IEU putting together a TÜBİTAK 1001 başvurusu on AI-assisted virtual production for film education. Can you give me the full proposal outline in the official ARDEB section order so I can start drafting?",
+      "expected_output": "Invokes alterlab-tubitak-proposal in scaffold mode for the 1001 variant: generates the verified ARDEB form tree in the directorate's own Turkish heading order (Özet → 1. ÖZGÜN DEĞER with 1.1/1.2/1.3 → 2. YÖNTEM → 3. PROJE YÖNETİMİ incl. İş-Zaman Çizelgesi/İş Paketleri + B-Planı and Araştırma Olanakları → 4. YAYGIN ETKİ → EK-1 Kaynaklar → EK-2 Bütçe ve Gerekçesi → EK-3), via scripts/scaffold_proposal.py --program 1001, with an English gloss per heading and a drafting brief. States the 600-word TR/EN özet cap and the ≤36-month / 3,000,000 TRY (2026-1) ceilings WITH the verify-current-call disclaimer rather than as guaranteed numbers. Does not silently remap the form into IMRaD.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "özgün değer" },
+        { "type": "behavior", "value": "Produces the directorate's Turkish section order (özet, özgün değer, yöntem, proje yönetimi with a B-Planı, yaygın etki, EK-1/EK-2) and prints a verify-current-call disclaimer on the period-specific caps instead of asserting fixed figures." }
+      ]
+    },
+    {
+      "id": "draft-yaygin-etki-section",
+      "prompt": "My ARDEB 1001 draft is mostly done but the reviewers always complain my yaygın etki section is thin. Can you help me write the öngörülen çıktılar and öngörülen etkiler parts properly?",
+      "expected_output": "Invokes alterlab-tubitak-proposal to draft the §4 YAYGIN ETKİ (broader impact) section: populates all three sub-parts — Öngörülen Çıktılar (expected outputs: publications, theses, datasets, software, patents), Öngörülen Etkiler (scientific/economic/societal impacts), and Bilim İletişimi / Yayılım (science communication / dissemination) — mapping the user's material to the TÜBİTAK yaygın-etki structure rather than a generic broader-impacts paragraph. Notes that this axis is a frequent panel weakness and ties outputs to the work packages.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Splits yaygın etki into çıktılar, etkiler, and bilim iletişimi sub-parts (not one generic paragraph) using TÜBİTAK terminology." }
+      ]
+    },
+    {
+      "id": "scaffold-1002a-turkish-prompt",
+      "prompt": "1002-A Hızlı Destek Modülü için kısa bir proje önerisi taslağı hazırlar mısın? Konum mikroplastiklerin toprak mikrobiyomuna etkisi. İş paketleri ve B-Planı dahil bütün başlıkları istiyorum.",
+      "expected_output": "Invokes alterlab-tubitak-proposal in scaffold mode for the 1002-A (Hızlı Destek Modülü / Fast Support Module) variant via scripts/scaffold_proposal.py --program 1002a: emits the trimmed ARDEB section tree (Özet, ÖZGÜN DEĞER, YÖNTEM, İş-Zaman Çizelgesi/İş Paketleri + B-Planı, YAYGIN ETKİ, EK-1 Kaynaklar, EK-2 Bütçe) without the EK-3 heavy-form extras. Surfaces the 1002-A specifics — ≤12 months, 150,000 TRY upper limit, rolling/year-round (sürekli) submission, ≤12-page form — each WITH the verify-current-call disclaimer, and notes TÜBİTAK has announced major 1002 program changes.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "1002-A" },
+        { "type": "behavior", "value": "Produces the lighter 1002-A scaffold (rolling submission, ≤12 months, ≤12-page form) in Turkish headings and flags the caps as period-specific and volatile." }
+      ]
+    },
+    {
+      "id": "translate-broader-impacts-to-tubitak",
+      "prompt": "I already have an NSF proposal. I want to repurpose it for TÜBİTAK. How do I turn my 'broader impacts' and 'intellectual merit' sections into what TÜBİTAK expects?",
+      "expected_output": "Invokes alterlab-tubitak-proposal to map international grant framing onto TÜBİTAK terminology: intellectual merit/significance → özgün değer (§1, the most weighted axis), broader impacts → yaygın etki (§4, split into çıktılar/etkiler/bilim iletişimi), feasibility → yapılabilirlik (across §2 YÖNTEM and §3), risk/contingency → the required B-Planı in §3.1. Translates the concept into the directorate's headings and explicitly delegates generic grant-craft and Gantt rendering to alterlab-research-grants.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Maps intellectual merit → özgün değer and broader impacts → yaygın etki (not a literal translation) and hands generic grant-craft off to alterlab-research-grants." }
+      ]
+    },
+    {
+      "id": "near-miss-research-grants",
+      "prompt": "Help me sharpen the broader-impacts argument and feasibility narrative in my NSF CAREER proposal, and make the Gantt chart look professional.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-research-grants. The request is a generic US/international grant-craft task (NSF CAREER narrative quality, feasibility argumentation, Gantt aesthetics) with no TÜBİTAK ARDEB form, 1001/1002-A structure, or Turkish-terminology mapping involved. alterlab-tubitak-proposal owns only the Turkish-specific ARDEB form structure, caps, and terminology; broader-impacts argumentation and Gantt rendering belong to alterlab-research-grants.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-research-grants" }
+      ]
+    },
+    {
+      "id": "near-miss-grant-reporting",
+      "prompt": "My TÜBİTAK 1001 project was funded two years ago and now I need to write the gelişme raporu (progress report) for the period. Can you help me structure the interim report?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-grant-reporting. The project is already AWARDED and the ask is an interim/progress report (gelişme raporu) against work completed, not authoring or scaffolding a new ARDEB proposal. alterlab-tubitak-proposal scaffolds the pre-award 1001/1002-A application form; periodic and final reporting for funded projects is alterlab-grant-reporting's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-grant-reporting" }
+      ]
+    },
+    {
+      "id": "near-miss-trdizin",
+      "prompt": "Hedef dergim TR Dizin'de güncel olarak taranıyor mu, yoksa listeden çıkarıldı mı? Makalemi göndermeden önce kontrol etmek istiyorum.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-trdizin. The user wants to verify a journal's live TR Dizin (national citation index) indexing status before submitting a manuscript — a database lookup, not a TÜBİTAK grant proposal. alterlab-tubitak-proposal scaffolds ARDEB 1001/1002-A proposals and does not check journal indexing; the TR Dizin status check is alterlab-trdizin's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-trdizin" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-scientific-writing",
+  "evals": [
+    {
+      "id": "draft-introduction-imrad-prose",
+      "prompt": "Draft the Introduction for my manuscript on transformer models for ECG arrhythmia detection. I want flowing paragraphs, not bullet points — establish the context, the gap, and our objectives.",
+      "expected_output": "Should trigger the scientific-writing skill. Produces an IMRAD Introduction in full flowing prose paragraphs (never bullet points), establishing context, identifying the gap, and stating objectives. Uses the two-stage outline-then-prose approach and grounds claims in literature via research-lookup.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Writes the Introduction as full flowing paragraphs (not bullet points), establishing context, gap, and objectives in IMRAD form." }
+      ]
+    },
+    {
+      "id": "results-and-reporting-guideline",
+      "prompt": "Help me write the Results section of my randomized controlled trial manuscript, and make sure the reporting follows CONSORT.",
+      "expected_output": "Should trigger. Drafts a Results section that reports findings objectively (primary then secondary outcomes, effect sizes with statistics, integration with figures/tables) in prose, and applies the CONSORT reporting guideline appropriate to an RCT.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "CONSORT" },
+        { "type": "behavior", "value": "Writes objective Results prose and applies the CONSORT reporting guideline for the randomized controlled trial." }
+      ]
+    },
+    {
+      "id": "structured-abstract-and-citation-style",
+      "prompt": "Write a 250-word structured abstract for my observational cohort study and format the in-text citations in AMA style.",
+      "expected_output": "Should trigger. Produces a structured abstract within the word limit capturing purpose/methods/results/conclusions, and applies AMA citation style (numbered superscript). May note STROBE relevance for the observational design.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Writes a structured abstract at the requested length and formats in-text citations in AMA style." }
+      ]
+    },
+    {
+      "id": "revise-prose-clarity-discussion",
+      "prompt": "My Discussion is a wall of vague, wordy sentences. Tighten it for clarity and conciseness while keeping it as flowing prose, and make sure it relates results to prior work and states limitations honestly.",
+      "expected_output": "Should trigger. Revises the Discussion for clarity, conciseness, and precision while preserving flowing prose (no bullet points), ensuring it relates findings to prior literature, acknowledges limitations honestly, and suggests implications/future directions.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Improves clarity and conciseness of the Discussion as flowing prose, relating results to prior work and stating limitations." }
+      ]
+    },
+    {
+      "id": "near-miss-venue-templates",
+      "prompt": "I'm submitting to NeurIPS this year — give me the official LaTeX template, the page-limit and formatting rules, and the venue's house style for the abstract.",
+      "expected_output": "Should NOT trigger scientific-writing. Supplying a specific venue's LaTeX template, formatting/page-limit rules, and house style is the alterlab-venue-templates skill's territory. Per this skill's own guidance, venue-specific formatting and style should defer to venue-templates; scientific-writing covers general IMRAD/clarity/citation principles, not venue boilerplate.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "venue-templates" }
+      ]
+    },
+    {
+      "id": "near-miss-citation-mgmt-bibtex",
+      "prompt": "Find the papers I cite, pull accurate metadata from Google Scholar and PubMed, and generate clean validated BibTeX entries for my reference manager.",
+      "expected_output": "Should NOT trigger scientific-writing. Searching databases for papers, extracting metadata, and generating/validating BibTeX entries is the alterlab-citation-mgmt skill's territory, not drafting manuscript prose. The correct response defers to citation-mgmt; scientific-writing applies citation styles in text but does not build the BibTeX library.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "citation-mgmt" }
+      ]
+    }
+  ]
+}

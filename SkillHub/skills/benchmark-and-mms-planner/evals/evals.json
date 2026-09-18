@@ -1,0 +1,98 @@
+{
+  "evals": [
+    {
+      "id": "diffusion_mms_plan",
+      "prompt": "Plan V&V for a 2D diffusion solver with an analytic reference and second-order finite volumes. The quantity of interest is L2 error in temperature and the result feeds a high-risk decision.",
+      "expected_outputs": ["MMS", "observed order", "L2"],
+      "assertions": [
+        "mentions manufactured solution",
+        "includes refinement protocol",
+        "sets pass/fail criteria",
+        "reports verification_strategy='MMS plus benchmark validation' from benchmark_mms_planner.py",
+        "reports refinement_protocol.accept_observed_order_min=1.8 (10% relative tolerance for high risk, floored at first order)",
+        "reports refinement_protocol.levels=4 and include_time_refinement=true for the diffusion family",
+        "lists the diffusion benchmark '2D manufactured source' from the planner output"
+      ],
+      "script_checks": [
+        {
+          "description": "diffusion analytic high-risk plan pins strategy, observed-order band, and benchmark set",
+          "cmd": ["scripts/benchmark_mms_planner.py", "--model", "diffusion", "--quantity", "L2 error in temperature", "--dimension", "2", "--expected-order", "2", "--reference", "analytic", "--risk", "high", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.verification_strategy", "op": "eq", "value": "MMS plus benchmark validation"},
+            {"path": "results.effective_model", "op": "eq", "value": "diffusion"},
+            {"path": "results.mms_plan.manufacture_solution", "op": "eq", "value": true},
+            {"path": "results.refinement_protocol.accept_observed_order_min", "op": "approx", "value": 1.8, "rel_tol": 1e-6},
+            {"path": "results.refinement_protocol.levels", "op": "eq", "value": 4},
+            {"path": "results.refinement_protocol.include_time_refinement", "op": "eq", "value": true},
+            {"path": "results.benchmark_cases", "op": "contains", "value": "2D manufactured source"},
+            {"path": "results.warnings", "op": "eq", "value": []}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase_field_benchmark",
+      "prompt": "Choose benchmark checks for phase-field grain growth without a closed-form analytic solution. The quantity of interest is the grain size coarsening exponent at medium risk.",
+      "expected_outputs": ["coarsening", "convergence", "warning"],
+      "assertions": [
+        "does not overclaim validation",
+        "uses benchmark-led strategy",
+        "includes physical consistency checks",
+        "reports verification_strategy='verification-only convergence audit' from benchmark_mms_planner.py when no reference exists",
+        "sets mms_plan.manufacture_solution=false because there is no analytic reference",
+        "emits the warning about using convergence and conservation only, not full validation",
+        "lists the phase-field benchmark 'grain-growth coarsening law' and uses 3 refinement levels at medium risk"
+      ],
+      "script_checks": [
+        {
+          "description": "phase-field no-reference plan pins verification-only strategy, no-MMS, and the no-reference warning",
+          "cmd": ["scripts/benchmark_mms_planner.py", "--model", "phase-field", "--quantity", "grain size coarsening exponent", "--dimension", "2", "--expected-order", "2", "--reference", "none", "--risk", "medium", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.verification_strategy", "op": "eq", "value": "verification-only convergence audit"},
+            {"path": "results.effective_model", "op": "eq", "value": "phase-field"},
+            {"path": "results.mms_plan.manufacture_solution", "op": "eq", "value": false},
+            {"path": "results.refinement_protocol.accept_observed_order_min", "op": "approx", "value": 1.6, "rel_tol": 1e-6},
+            {"path": "results.refinement_protocol.levels", "op": "eq", "value": 3},
+            {"path": "results.refinement_protocol.include_time_refinement", "op": "eq", "value": true},
+            {"path": "results.benchmark_cases", "op": "contains", "value": "grain-growth coarsening law"},
+            {"path": "results.warnings", "op": "contains", "value": "No reference source provided; use convergence and conservation only, not full validation."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "high_risk_uncertainty",
+      "prompt": "Create a validation plan for high-risk 3D elasticity results with experimental inputs. The quantity of interest is the stress concentration factor.",
+      "expected_outputs": ["uncertainty", "benchmark", "acceptance criteria"],
+      "assertions": [
+        "requires uncertainty propagation",
+        "separates model and discretization error",
+        "flags reference limitations",
+        "reports verification_strategy='benchmark-led validation' from benchmark_mms_planner.py for an experimental reference",
+        "reports uncertainty_plan.propagate_inputs=true and report_error_bars=true for high-risk experimental inputs",
+        "sets refinement_protocol.include_time_refinement=false because elasticity is not time-dependent",
+        "emits the warning that high-risk claims need an independent analytic or published benchmark"
+      ],
+      "script_checks": [
+        {
+          "description": "elasticity experimental high-risk plan pins uncertainty flags, time-refinement off, and the high-risk warning",
+          "cmd": ["scripts/benchmark_mms_planner.py", "--model", "elasticity", "--quantity", "stress concentration factor", "--dimension", "3", "--expected-order", "2", "--reference", "experimental", "--risk", "high", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.verification_strategy", "op": "eq", "value": "benchmark-led validation"},
+            {"path": "results.effective_model", "op": "eq", "value": "elasticity"},
+            {"path": "results.uncertainty_plan.propagate_inputs", "op": "eq", "value": true},
+            {"path": "results.uncertainty_plan.report_error_bars", "op": "eq", "value": true},
+            {"path": "results.uncertainty_plan.separate_discretization_and_model_error", "op": "eq", "value": true},
+            {"path": "results.refinement_protocol.include_time_refinement", "op": "eq", "value": false},
+            {"path": "results.refinement_protocol.accept_observed_order_min", "op": "approx", "value": 1.8, "rel_tol": 1e-6},
+            {"path": "results.benchmark_cases", "op": "contains", "value": "Kirsch plate with hole"},
+            {"path": "results.warnings", "op": "contains", "value": "High-risk claims need an independent analytic or published benchmark where possible."}
+          ]
+        }
+      ]
+    }
+  ]
+}

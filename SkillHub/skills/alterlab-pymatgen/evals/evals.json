@@ -1,0 +1,62 @@
+{
+  "skill": "alterlab-pymatgen",
+  "evals": [
+    {
+      "id": "structure-convert-symmetry",
+      "prompt": "I have a POSCAR file and I need its space group, crystal system, and the reduced formula, and then I want to save it out as a CIF. Can you do that?",
+      "expected_output": "Invokes alterlab-pymatgen for structure I/O and symmetry. Loads with Structure.from_file('POSCAR'), runs SpacegroupAnalyzer to report get_space_group_symbol/number and get_crystal_system, reads composition.reduced_formula, and writes struct.to(filename='structure.cif'). May reference the structure_analyzer.py / structure_converter.py scripts.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "SpacegroupAnalyzer" },
+        { "type": "behavior", "value": "Uses pymatgen Structure.from_file and to() for format conversion and SpacegroupAnalyzer for the space group, with correct CIF/POSCAR handling." }
+      ]
+    },
+    {
+      "id": "phase-diagram-stability",
+      "prompt": "Is LiFeO2 thermodynamically stable? I want to build the Li-Fe-O phase diagram from Materials Project data and get the energy above hull, and the decomposition products if it's not stable.",
+      "expected_output": "Invokes alterlab-pymatgen for phase-diagram / thermodynamic stability. Pulls entries with MPRester().get_entries_in_chemsys('Li-Fe-O'), builds PhaseDiagram, computes get_e_above_hull for the LiFeO2 entry, and if above hull calls get_decomposition to list decomposition products. Notes MP_API_KEY is needed.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "hull" },
+        { "type": "behavior", "value": "Constructs a PhaseDiagram from Materials Project entries and reports energy above hull (and decomposition if metastable)." }
+      ]
+    },
+    {
+      "id": "band-structure-vasprun",
+      "prompt": "I just finished a VASP band-structure calculation. From the vasprun.xml, tell me the band gap, whether it's direct, and whether the material is a metal, and save the band plot.",
+      "expected_output": "Invokes alterlab-pymatgen for electronic-structure analysis. Reads Vasprun('vasprun.xml'), gets the band structure via get_band_structure(), reports bs.get_band_gap()['energy'] and ['direct'] and bs.is_metal(), and saves the plot with BSPlotter(bs).save_plot.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "band gap" },
+        { "type": "behavior", "value": "Parses a VASP vasprun.xml with pymatgen and extracts the band gap, directness and metallicity (not a generic text parse)." }
+      ]
+    },
+    {
+      "id": "slab-generation-surface",
+      "prompt": "I need (1,1,1) slabs of my bulk crystal with at least 10 angstrom of slab and 10 angstrom of vacuum, centered, so I can run surface calculations. Generate them.",
+      "expected_output": "Invokes alterlab-pymatgen for surface / slab generation. Uses SlabGenerator(struct, miller_index=(1,1,1), min_slab_size=10.0, min_vacuum_size=10.0, center_slab=True), calls get_slabs(), and writes each slab to a CIF file. May proceed to MPRelaxSet for the slab calculation inputs.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "SlabGenerator" }
+      ]
+    },
+    {
+      "id": "mp-query-search",
+      "prompt": "Query Materials Project for stable Li-Fe-O materials with a band gap between 1 and 3 eV and an energy above hull under 0.05. Then pull the structure for mp-149.",
+      "expected_output": "Invokes alterlab-pymatgen for Materials Project database access. Uses MPRester().materials.summary.search(chemsys='Li-Fe-O', energy_above_hull=(0,0.05), band_gap=(1.0,3.0)) inside a context manager, and get_structure_by_material_id('mp-149'), noting MP_API_KEY setup.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "MPRester" }
+      ]
+    },
+    {
+      "id": "near-miss-pennylane",
+      "prompt": "I want to compute the ground-state energy of the H2 molecule with a variational quantum eigensolver (VQE) on a quantum circuit and watch the energy converge as I optimize the parameters.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pennylane. Although this is molecular ground-state energy, the requested method is a quantum-circuit VQE optimized by gradient descent on a quantum device, which is the quantum-ML / variational-algorithm domain of PennyLane (or qiskit), not classical materials analysis or DFT post-processing in pymatgen.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pennylane" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "skill": "alterlab-mixed-methods",
+  "evals": [
+    {
+      "id": "choose-design-and-notation",
+      "prompt": "I want to first survey 400 nurses on burnout, then interview a subset to understand why the high-burnout outliers differ from the model's predictions. Which mixed methods design is this and how do I write it in notation?",
+      "expected_output": "Identifies this as an explanatory sequential design (QUAN to qual), explains the connecting/explaining logic where quantitative results drive purposeful sampling for the qualitative follow-up (e.g., selecting outlier and typical cases from regression residuals), and gives the Creswell & Plano Clark notation QUAN → qual with uppercase for the dominant strand.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "explanatory sequential"},
+        {"type": "output_contains", "value": "QUAN"},
+        {"type": "behavior", "value": "Names the design as explanatory sequential and explains that quantitative outlier/typical cases inform qualitative participant selection (connecting strategy)."}
+      ]
+    },
+    {
+      "id": "build-joint-display",
+      "prompt": "My convergent study collected a teacher self-efficacy survey and parallel interviews. How do I integrate them so reviewers don't say I just stapled two studies together? Can you show me how to lay out a joint display?",
+      "expected_output": "Explains that integration via merging is the hallmark of convergent design, recommends a joint display with quantitative finding, qualitative theme, and an integration assessment column (convergence/complementarity/divergence), and shows how to derive meta-inferences. Should reference side-by-side comparison and warn about reporting discrepant findings rather than suppressing them.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "joint display"},
+        {"type": "behavior", "value": "Produces or describes a joint display structure with an integration/convergence-divergence assessment and explains merging for a convergent design."}
+      ]
+    },
+    {
+      "id": "instrument-development-exploratory",
+      "prompt": "I'm doing qualitative interviews first to discover themes about academic identity, then I'll turn those into survey items and validate them with factor analysis on 300 people. What design is this and what's the connecting bridge between phases?",
+      "expected_output": "Identifies this as an exploratory sequential design (qual → QUAN) used for instrument development, describes the connecting bridge of themes to item pool to expert review to cognitive interviews to pilot items, and notes the quantitative phase covers EFA/CFA and reliability. Should mention building as the connecting strategy.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "exploratory sequential"},
+        {"type": "output_contains", "value": "factor analysis"},
+        {"type": "behavior", "value": "Names exploratory sequential design and describes the instrument-development bridge from qualitative themes to validated survey items via item pool, expert review, and EFA/CFA."}
+      ]
+    },
+    {
+      "id": "methods-section-integration",
+      "prompt": "Help me write the data analysis part of my mixed methods methods section. A reviewer said my integration procedures are vague. What should I make explicit?",
+      "expected_output": "Guides writing the integration portion of the methods section: state when integration occurs, which integration strategy is used (merging, connecting, or embedding), and which specific techniques (joint displays, data transformation such as quantitizing/qualitizing). Should stress naming the design, justifying the rationale for mixing, and using precise integration vocabulary rather than 'combined' or 'synthesized'.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "joint display"},
+        {"type": "behavior", "value": "Tells the user to specify integration timing, the strategy (merging/connecting/embedding), and concrete techniques (joint displays, quantitizing/qualitizing), and warns against vague integration language such as 'combined' or 'synthesized'."}
+      ]
+    },
+    {
+      "id": "near-miss-qualitative-methods",
+      "prompt": "I have 22 interview transcripts and I need to do thematic analysis — how do I develop a codebook, reach saturation, and report inter-coder reliability for the qualitative coding?",
+      "expected_output": "This is purely qualitative analysis with no quantitative strand or integration, so the mixed methods skill should NOT be the primary handler. Defers to the qualitative methods skill (alterlab-qualitative-methods) for codebook development, thematic analysis, saturation, and inter-coder reliability. Mixed methods only applies once a second quantitative strand and intentional integration are involved.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-qualitative-methods"},
+        {"type": "behavior", "value": "Recognizes there is no integration of two strands here and defers single-strand qualitative coding to the qualitative-methods skill."}
+      ]
+    }
+  ]
+}

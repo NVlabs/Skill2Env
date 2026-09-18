@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-eda",
+  "evals": [
+    {
+      "id": "fastq-sequence-eda",
+      "prompt": "I just got reads.fastq back from the sequencer. Can you explore this file and tell me what's in it and whether the quality looks OK before I run my pipeline?",
+      "expected_output": "Invokes alterlab-eda: detects the .fastq extension as bioinformatics/genomics, loads the bioinformatics_genomics_formats reference, and runs sequence-appropriate EDA (read count, length distribution, GC content, per-base quality scores) using Biopython SeqIO, then writes a markdown report (reads_eda_report.md) with format description, QC findings, and downstream recommendations.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Detects the file as FASTQ, assesses quality scores and GC content, and produces a markdown EDA report with downstream-analysis recommendations." }
+      ]
+    },
+    {
+      "id": "csv-tabular-eda",
+      "prompt": "Explore experiment_results.csv for me — I want to understand its structure, missing values, and summary stats before I decide what analysis to run.",
+      "expected_output": "Invokes alterlab-eda: classifies .csv as a general scientific format, loads it with pandas, and reports dimensions, dtypes, missing-value patterns, summary statistics, correlations, duplicates, and outliers, then emits a markdown report (experiment_results_eda_report.md) with quality metrics and analysis recommendations.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "missing" }
+      ]
+    },
+    {
+      "id": "nd2-microscopy-eda",
+      "prompt": "Analyze cells.nd2 from the confocal — I need to know the dimensions, channels, and pixel calibration before I set up the image-analysis workflow.",
+      "expected_output": "Invokes alterlab-eda: recognizes .nd2 as a Nikon microscopy format, loads it with nd2reader, extracts multi-dimensional structure (XYZCT, channels, timepoints), pixel size/spatial calibration, and intensity statistics, then writes a markdown report with image-analysis recommendations.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Reports image dimensions/channels and spatial calibration for the ND2 file and recommends suitable downstream image analysis." }
+      ]
+    },
+    {
+      "id": "unknown-format-quality-check",
+      "prompt": "Here's a mzML file from the mass spec. Give me a structural overview and a data-quality assessment so I know what I'm working with.",
+      "expected_output": "Invokes alterlab-eda: detects .mzML as a spectroscopy/proteomics format, loads the appropriate reference (pymzml/pyteomics libraries), summarizes spectra structure and metadata, assesses completeness and quality, and produces a markdown EDA report with preprocessing and downstream-analysis suggestions.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Identifies the file as mzML mass-spectrometry data and uses pymzml or pyteomics (not pandas) to summarize spectra/metadata, then reports a data-quality assessment." }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-timesfm",
+      "prompt": "I've already explored my weekly_demand.csv and understand its trend and seasonality. Now forecast the next 52 weeks of demand with prediction intervals — no training, just a foundation model.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-timesfm. The user has finished exploration and wants zero-shot univariate forecasting with prediction intervals, not a structural/quality EDA report of the file.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-timesfm" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-zarr",
+      "prompt": "I have a 100000x100000 float32 array I need to store as chunked, compressed Zarr on S3 with good chunk alignment for row-wise access. Help me set up the store and codecs.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-zarr. The user wants to create and configure a chunked/compressed cloud array store, not run exploratory analysis or a quality report on an existing data file.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-zarr" }
+      ]
+    }
+  ]
+}

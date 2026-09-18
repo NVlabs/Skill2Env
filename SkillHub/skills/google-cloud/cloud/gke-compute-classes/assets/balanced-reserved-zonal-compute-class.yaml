@@ -1,0 +1,73 @@
+# EXAMPLE TEMPLATE - DO NOT DEPLOY
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: balanced-reserved
+spec:
+  # Balanced multi-zone scale-up across separate ZONAL reservations, WITHOUT priorityScore
+  # (priorityScore needs GKE 1.35.2-gke.1842000+; this pattern works on older versions).
+  #
+  # TWO LAYERS OF "BALANCE" (ask the user which they mean):
+  #   - INFRASTRUCTURE (nodes): locationPolicy: BALANCED makes the autoscaler spread
+  #     node scale-up roughly evenly across zones (best-effort; it STILL scales up if a
+  #     zone is short on capacity). ANY instead packs a single zone for utilization.
+  #   - WORKLOAD (pods): BALANCED does NOT guarantee even POD distribution. For that,
+  #     set pod topologySpreadConstraints on the WORKLOAD (see commented block below).
+  #
+  # SCHEMA NOTE: location.zones CANNOT be combined with affinity: Specific (error:
+  #   "location config with specific reservations enabled"). So zones come ONLY from
+  #   reservations.specific[].zones; the location block keeps locationPolicy only.
+  # Use ONE priority per machine size naming all zonal reservations (NOT one priority
+  #   per zone — per-zone priorities are sequential and drain zone-a before zone-b).
+  nodePoolAutoCreation:
+    enabled: true
+  priorities:
+  # --- Priority 1: preferred shape, balanced across 3 zonal reservations ---
+  - machineType: n4-standard-32   # IMPORTANT: Align machineFamily/type with your existing CUDs/Reservations
+    spot: false
+    location:
+      locationPolicy: BALANCED      # node-level even spread; NO zones here (they come from the reservations)
+    reservations:
+      affinity: Specific            # NEVER AnyBestEffort — it falls back to On-Demand at the GCE layer and skips lower priorities
+      specific:
+      - name: <RESERVATION-ZONE-A>
+        zones: ['us-central1-a']
+      - name: <RESERVATION-ZONE-B>
+        zones: ['us-central1-b']
+      - name: <RESERVATION-ZONE-C>
+        zones: ['us-central1-c']
+
+  # --- Priority 2: fallback shape, also balanced across the same 3 zones ---
+  - machineType: n4-standard-16   # IMPORTANT: Align machineFamily/type with your existing CUDs/Reservations
+    spot: false
+    location:
+      locationPolicy: BALANCED
+    reservations:
+      affinity: Specific
+      specific:
+      - name: <RESERVATION-16-ZONE-A>
+        zones: ['us-central1-a']
+      - name: <RESERVATION-16-ZONE-B>
+        zones: ['us-central1-b']
+      - name: <RESERVATION-16-ZONE-C>
+        zones: ['us-central1-c']
+
+  whenUnsatisfiable: DoNotScaleUp
+
+# ---------------------------------------------------------------------------
+# WORKLOAD LAYER — apply to the Pod/Deployment, NOT the ComputeClass.
+# BALANCED above spreads NODES; this spreads PODS evenly across those zones.
+# Without whenUnsatisfiable: DoNotSchedule the scheduler may still pack one zone.
+#   spec:
+#     template:
+#       spec:
+#         nodeSelector:
+#           cloud.google.com/compute-class: balanced-reserved
+#         topologySpreadConstraints:
+#         - maxSkew: 1
+#           topologyKey: topology.kubernetes.io/zone
+#           whenUnsatisfiable: DoNotSchedule
+#           labelSelector:
+#             matchLabels:
+#               app: <YOUR-APP-LABEL>
+# ---------------------------------------------------------------------------

@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-pdf-explore",
+  "evals": [
+    {
+      "id": "cross-section-question",
+      "prompt": "Here's a single research paper as a PDF. Does the analysis described in the methods actually match what they claim in the discussion? Check across the whole document.",
+      "expected_output": "Invokes alterlab-pdf-explore: parses the PDF once into a section index, then compares the methods and discussion sections, citing the page/section for each point so the answer is verifiable.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "section" },
+        { "type": "behavior", "value": "Answers a question that spans multiple sections of one PDF, with page/section citations." }
+      ]
+    },
+    {
+      "id": "extract-every-instance",
+      "prompt": "In this one paper's PDF, find every reported p-value and the sample size next to each one — I don't want to miss any.",
+      "expected_output": "Invokes alterlab-pdf-explore for extract-every-instance: scans the full parsed text and returns a located list (page + context) of every p-value and its associated sample size, not just the first hit.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "every" }
+      ]
+    },
+    {
+      "id": "read-values-off-figure",
+      "prompt": "Read the approximate values for each bar in Figure 3 of this PDF for me.",
+      "expected_output": "Invokes alterlab-pdf-explore to locate the figure region and estimate the series values from the chart, explicitly noting the read-off values are approximate and should be confirmed against underlying data.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Reads approximate values from a figure and flags them as approximate." }
+      ]
+    },
+    {
+      "id": "near-miss-pdf-extract",
+      "prompt": "I have 40 papers and want a spreadsheet with one row per paper and columns for sample size, method, and main finding.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-pdf-extract, which builds a per-paper comparison table across many documents (one row per paper). pdf-explore is for deep Q&A within a single document.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pdf-extract" }
+      ]
+    },
+    {
+      "id": "near-miss-markitdown",
+      "prompt": "Just convert this PDF into clean Markdown so I can paste it somewhere.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-markitdown, which converts documents to clean Markdown. pdf-explore interrogates a document; it is not a format converter.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-markitdown" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-missing-data",
+  "evals": [
+    {
+      "id": "choose-imputation",
+      "prompt": "About 15% of my survey respondents skipped the income question and some other items. How should I handle the missing data before modeling?",
+      "expected_output": "Invokes alterlab-missing-data: first requires an explicit MCAR/MAR/MNAR mechanism statement, then prescribes multiple imputation by chained equations (MICE) with Rubin's-rules pooling — not mean imputation or listwise deletion.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "MAR" },
+        { "type": "behavior", "value": "Demands a missingness mechanism and prescribes multiple imputation with Rubin's-rules pooling over single imputation." }
+      ]
+    },
+    {
+      "id": "mean-imputation-warning",
+      "prompt": "Can I just fill the missing values with the column mean and run my regression?",
+      "expected_output": "Invokes alterlab-missing-data: warns that mean/single imputation treats imputed values as observed and understates standard errors, and routes to multiple imputation with pooling instead.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Rejects mean/single imputation as biasing standard errors and prescribes multiple imputation." }
+      ]
+    },
+    {
+      "id": "pooling-across-imputations",
+      "prompt": "I created 20 imputed datasets and ran my model on each. How do I combine the results?",
+      "expected_output": "Invokes alterlab-missing-data: applies Rubin's rules to pool the estimates (mean) and standard errors (within + between variance), e.g. mice::pool or statsmodels MICE, and reports the fraction of missing information.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Rubin" }
+      ]
+    },
+    {
+      "id": "near-miss-statistical-analysis",
+      "prompt": "My dataset is complete with no missing values — just run the regression and give me the coefficients.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-statistical-analysis. With complete data there is no missingness to handle.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statistical-analysis" }
+      ]
+    },
+    {
+      "id": "near-miss-sem-psychometrics",
+      "prompt": "I'm fitting a structural equation model and want to use FIML to handle missing data inside the SEM.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-sem-psychometrics. FIML inside a latent-variable model is fit by the psychometrics skill.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-sem-psychometrics" }
+      ]
+    }
+  ]
+}

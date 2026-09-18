@@ -1,0 +1,73 @@
+{
+  "skill": "alterlab-flowio",
+  "evals": [
+    {
+      "id": "parse-fcs-metadata",
+      "prompt": "I have a bunch of raw .fcs files from our flow cytometer. I want to read one, see the FCS version, the number of events, and the channel names before doing anything else.",
+      "expected_output": "Invokes alterlab-flowio. Uses FlowData('sample.fcs') and reports flow.version, flow.event_count, and flow.pnn_labels (and optionally pns_labels). May suggest only_text=True when only metadata is needed.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "FlowData" },
+        { "type": "behavior", "value": "Reads version, event_count, and channel labels from the FCS file." }
+      ]
+    },
+    {
+      "id": "events-to-numpy-csv",
+      "prompt": "I need to pull the event matrix out of an FCS file as a NumPy array and then export it to a CSV with the channel names as column headers.",
+      "expected_output": "Invokes alterlab-flowio. Reads the file with FlowData, calls flow.as_array() to get the (events, channels) NumPy array, builds a pandas DataFrame with columns=flow.pnn_labels, and writes it to CSV. May mention preprocess=True/False control.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "as_array" },
+        { "type": "behavior", "value": "Extracts event data as a NumPy array and converts it to CSV/DataFrame using pnn_labels." }
+      ]
+    },
+    {
+      "id": "metadata-only-batch-summary",
+      "prompt": "I have a directory of hundreds of FCS files and just want a summary table of acquisition date, event count, and channel count per file without loading all the event data into memory.",
+      "expected_output": "Invokes alterlab-flowio. Iterates the directory, opens each file with FlowData(path, only_text=True) to skip the DATA segment, and collects flow.version, flow.event_count, flow.channel_count and flow.text.get('$DATE') into a summary DataFrame, wrapped in try/except.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "only_text" },
+        { "type": "behavior", "value": "Uses only_text=True for memory-efficient metadata-only batch reading." }
+      ]
+    },
+    {
+      "id": "offset-discrepancy-error",
+      "prompt": "FlowIO throws a DataOffsetDiscrepancyError when I try to open one of my .fcs files. How do I get it to read anyway?",
+      "expected_output": "Invokes alterlab-flowio. Recommends re-opening with FlowData(path, ignore_offset_discrepancy=True) (or use_header_offsets=True / ignore_offset_error=True), framing these as the relaxed-parsing options for problematic offset mismatches between HEADER and TEXT segments.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ignore_offset_discrepancy" },
+        { "type": "behavior", "value": "Resolves offset errors with ignore_offset_discrepancy / use_header_offsets parameters." }
+      ]
+    },
+    {
+      "id": "create-fcs-from-array",
+      "prompt": "I have a NumPy array of synthetic cytometry events and channel names; I want to write it out as a proper FCS file with descriptive stain names and some custom metadata.",
+      "expected_output": "Invokes alterlab-flowio. Uses create_fcs(fh, events.flatten(), channel_names, opt_channel_names=..., metadata_dict=...) where fh is a writable binary file handle (open(path,'wb')) and the event array is flattened to 1-D, noting the FCS 3.1 single-precision float export.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "create_fcs" },
+        { "type": "behavior", "value": "Passes a binary file handle (not a path string) and a flattened 1-D event array to create_fcs, using opt_channel_names and metadata_dict." }
+      ]
+    },
+    {
+      "id": "near-miss-flowkit-gating",
+      "prompt": "I have a compensated FCS sample and want to apply a polygon gate from my FlowJo workspace / GatingML and get the gated subpopulation frequencies.",
+      "expected_output": "Does NOT invoke this skill; FlowIO only parses/writes FCS and does not do compensation or gating. Defers to FlowKit, which handles compensation, gating, and FlowJo/GatingML support (FlowIO is the recommended companion parser, not the gating tool).",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "FlowKit" }
+      ]
+    },
+    {
+      "id": "near-miss-lamindb",
+      "prompt": "I want to register all my flow cytometry datasets in a queryable, versioned data store and track which analysis run produced each one.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-lamindb. The user wants FAIR data management, versioning, and lineage tracking of cytometry datasets, not low-level FCS file parsing.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-lamindb" }
+      ]
+    }
+  ]
+}

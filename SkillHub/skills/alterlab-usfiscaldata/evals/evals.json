@@ -1,0 +1,76 @@
+{
+  "skill": "alterlab-usfiscaldata",
+  "evals": [
+    {
+      "id": "debt-to-the-penny",
+      "prompt": "I need the exact current U.S. total public debt outstanding, down to the penny, from the Treasury. How do I query that?",
+      "expected_output": "Triggers the Treasury Fiscal Data skill. Hits https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny with sort=-record_date and page[size]=1, reading tot_pub_debt_out_amt. Notes no API key is required and that values come back as strings needing float() conversion.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "debt_to_penny"},
+        {"type": "behavior", "value": "Queries the debt_to_penny endpoint sorted descending by record_date, reads tot_pub_debt_out_amt, and notes values are strings; no key required."}
+      ]
+    },
+    {
+      "id": "exchange-rates",
+      "prompt": "For a foreign-operations accounting exercise I need the Treasury Reporting Rates of Exchange for Canada and Mexico since the start of 2024. How do I filter the Fiscal Data API for that?",
+      "expected_output": "Triggers the Treasury Fiscal Data skill. Uses the /v1/accounting/od/rates_of_exchange endpoint with a filter like country_currency_desc:in:(Canada-Dollar,Mexico-Peso),record_date:gte:2024-01-01 and selects fields country_currency_desc, exchange_rate, record_date.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "rates_of_exchange"},
+        {"type": "output_contains", "value": "filter"},
+        {"type": "behavior", "value": "Uses the rates_of_exchange endpoint with an in: country filter and a record_date:gte: filter for 2024 onward."}
+      ]
+    },
+    {
+      "id": "avg-interest-rates",
+      "prompt": "I want the average interest rates on U.S. Treasury securities by month to study the government's cost of borrowing. Which Fiscal Data endpoint?",
+      "expected_output": "Triggers the Treasury Fiscal Data skill. Uses the /v2/accounting/od/avg_interest_rates endpoint (monthly), optionally with fields/sort/filter on record_date. Notes the open, key-free API.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "avg_interest_rates"},
+        {"type": "behavior", "value": "Identifies the avg_interest_rates endpoint for the monthly cost-of-borrowing series."}
+      ]
+    },
+    {
+      "id": "daily-treasury-statement",
+      "prompt": "For a fiscal-liquidity note I need the Daily Treasury Statement operating cash balance over time. How do I pull it and page through all the records?",
+      "expected_output": "Triggers the Treasury Fiscal Data skill. Uses /v1/accounting/dts/operating_cash_balance with sort=-record_date and a large page[size] (up to 10000) to minimize requests, paging via page[number]. Notes the response data/meta/links structure.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "operating_cash_balance"},
+        {"type": "behavior", "value": "Uses the DTS operating_cash_balance endpoint and handles pagination via page[size]/page[number]."}
+      ]
+    },
+    {
+      "id": "auctions-query",
+      "prompt": "I'm analyzing primary-market demand. Get me historical U.S. Treasury securities auction results from the Fiscal Data API.",
+      "expected_output": "Triggers the Treasury Fiscal Data skill. Uses the /v1/accounting/od/auctions_query endpoint for historical auction data, with field selection and date filtering as needed.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "auctions_query"},
+        {"type": "behavior", "value": "Points to the auctions_query endpoint for historical Treasury auction results."}
+      ]
+    },
+    {
+      "id": "near-miss-fred",
+      "prompt": "I need the 10-year Treasury constant-maturity yield (DGS10) and the federal funds rate as long historical time series from the Federal Reserve's FRED database, with percent-change transformations applied.",
+      "expected_output": "Should NOT trigger the Treasury Fiscal Data skill. DGS10 and FEDFUNDS are FRED series and the user wants FRED's server-side transformations, not Treasury Fiscal Data datasets. Defer to the alterlab-fred skill.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-fred"},
+        {"type": "behavior", "value": "Recognizes DGS10/FEDFUNDS as FRED series with FRED transformations and routes to the FRED skill, not Treasury Fiscal Data."}
+      ]
+    },
+    {
+      "id": "near-miss-hedgefund-monitor",
+      "prompt": "I want aggregate hedge-fund leverage and gross notional exposure from SEC Form PF as reported through the OFR Hedge Fund Monitor.",
+      "expected_output": "Should NOT trigger the Treasury Fiscal Data skill. Form PF hedge-fund aggregates are served by the OFR Hedge Fund Monitor API, not the Treasury Fiscal Data API. Defer to the alterlab-hedgefund-monitor skill.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-hedgefund-monitor"},
+        {"type": "behavior", "value": "Distinguishes OFR Form PF hedge-fund aggregates from Treasury fiscal datasets and defers to the hedgefund-monitor skill."}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "skill": "alterlab-thesis-supervisor",
+  "evals": [
+    {
+      "id": "ts-methodology-chapter",
+      "prompt": "My doctoral student is drafting Chapter 3 of her dissertation. Can you help structure the methodology chapter so it covers research design, sampling, instrumentation, and trustworthiness in enough detail to be replicable?",
+      "expected_output": "Invokes alterlab-thesis-supervisor: walks through the Chapter 3 methodology template (design and rationale, population/sample, instrumentation, data collection, analysis per RQ, trustworthiness/validity, ethics, limitations) with replication-level detail.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "behavior",
+          "value": "Structures Chapter 3 section by section (research design and rationale, population/sample with sampling justification, instrumentation, data collection procedures, data analysis specified per research question, a trustworthiness or validity/reliability section, ethics, and limitations), at a level of detail another researcher could replicate."
+        }
+      ]
+    },
+    {
+      "id": "ts-viva-defense-prep",
+      "prompt": "I defend my dissertation in five weeks. Help me prepare for the viva — what questions should I anticipate and how should I structure my preparation?",
+      "expected_output": "Invokes alterlab-thesis-supervisor: provides the multi-week viva voce preparation protocol, anticipates common defense questions by category (opening, theoretical, methodology, findings, broader, closing), and recommends a mock defense.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "behavior",
+          "value": "Lays out a week-by-week viva preparation plan, anticipates likely questions grouped by category (such as opening, theoretical, methodology, findings, and broader/implications), and explicitly recommends a mock viva/defense as practice."
+        }
+      ]
+    },
+    {
+      "id": "ts-thesis-timeline",
+      "prompt": "Can you build a realistic timeline and milestone tracker for my master's thesis, from topic approval through the final defense and submission to the graduate school?",
+      "expected_output": "Invokes alterlab-thesis-supervisor: produces a master's thesis timeline with phased milestones and the thesis milestone tracker table (target/actual dates, status), including buffer time for delays.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "behavior",
+          "value": "Produces a phased master's-thesis schedule from topic approval through final defense and graduate-school submission, rendered as a milestone tracker with target/actual date and status columns, and explicitly builds in buffer/contingency time rather than a back-to-back plan."
+        },
+        {
+          "type": "output_contains",
+          "value": "Milestone"
+        }
+      ]
+    },
+    {
+      "id": "ts-supervision-feedback",
+      "prompt": "One of my advisees keeps missing deadlines and the latest first draft is very rough. How should I give feedback at this stage and handle the conversation about lack of progress?",
+      "expected_output": "Invokes alterlab-thesis-supervisor: applies stage-appropriate feedback strategy (first draft = argument/structure, not line-editing), uses the difficult-supervision-conversation approach for stalled progress, and references the supervisory meeting structure.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "behavior",
+          "value": "Matches feedback to draft maturity — for a rough first draft it targets argument, structure, and gaps rather than line-editing/copy-editing — and handles the missed-deadlines conversation with an inquiring, non-accusatory approach that surfaces obstacles instead of just demanding output."
+        }
+      ]
+    },
+    {
+      "id": "ts-proposal-structure",
+      "prompt": "I'm writing my dissertation proposal and I'm stuck on the problem statement and research questions in Chapter 1. Can you help me frame them so my committee approves the proposal?",
+      "expected_output": "Invokes alterlab-thesis-supervisor: guides the Chapter 1 introduction sections, applies the problem-statement formula and purpose/RQ alignment, and references proposal defense examiner expectations.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "behavior",
+          "value": "Frames the problem statement around a gap supported by evidence (despite what is known / what remains unclear / why it matters), then derives research questions that align one-to-one with the purpose statement, rather than offering generic 'write clearly' advice."
+        }
+      ]
+    },
+    {
+      "id": "ts-not-journal-article",
+      "prompt": "Help me turn my completed dissertation into a journal article — draft the IMRaD manuscript and format the references in IEEE for submission.",
+      "expected_output": "defers to alterlab-paper-writer / does not invoke this skill",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "ts-not-literature-search",
+      "prompt": "I need a systematic literature search strategy with PRISMA screening to find all studies on AI in virtual production for my thesis lit review.",
+      "expected_output": "defers to alterlab-deep-research / does not invoke this skill",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "ts-not-course-design",
+      "prompt": "I'm running a thesis-writing seminar for incoming grad students — help me design the course with learning outcomes, a rubric for their seminar deliverables, and a weekly lesson plan.",
+      "expected_output": "defers to alterlab-teaching-design / does not invoke this skill (course/curriculum design, not supervising an individual thesis)",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        }
+      ]
+    }
+  ]
+}

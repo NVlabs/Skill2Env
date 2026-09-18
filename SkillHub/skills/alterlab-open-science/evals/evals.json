@@ -1,0 +1,44 @@
+{
+  "skill": "alterlab-open-science",
+  "evals": [
+    {
+      "id": "preregistration-osf",
+      "prompt": "I'm about to start a confirmatory experiment and want to preregister my hypotheses and analysis plan before collecting data. Where and how should I preregister it?",
+      "expected_output": "Invokes alterlab-open-science: walks through preregistration options (OSF Registries, AsPredicted, PROSPERO for systematic reviews, ClinicalTrials.gov for trials), explains what to lock in before data collection (hypotheses, analysis plan, exclusion rules), and helps draft the preregistration.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "preregist" },
+        { "type": "behavior", "value": "Recommends an appropriate preregistration registry and explains locking the analysis plan before data collection." }
+      ]
+    },
+    {
+      "id": "data-management-plan",
+      "prompt": "My NSF grant requires a data management plan and I need to share my data following FAIR principles. Help me write the DMP and pick a repository.",
+      "expected_output": "Invokes alterlab-open-science: drafts a funder-compliant data management plan, explains FAIR (Findable, Accessible, Interoperable, Reusable), and recommends a persistent repository (Zenodo, Dryad, Figshare, or a domain repository) with appropriate metadata and licensing.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "FAIR" },
+        { "type": "behavior", "value": "Produces a DMP aligned to the funder mandate and recommends a FAIR-aligned repository." }
+      ]
+    },
+    {
+      "id": "open-access-route",
+      "prompt": "What are my open access options for this manuscript? I want to understand the difference between Green, Gold, and Diamond routes and the costs involved.",
+      "expected_output": "Invokes alterlab-open-science: explains the Green (self-archiving), Gold (APC-funded), and Diamond (no-fee) open access routes, their costs and trade-offs, Creative Commons licensing choices, and how funder mandates interact with each.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "open access" },
+        { "type": "behavior", "value": "Compares Green/Gold/Diamond OA routes with costs and licensing and ties them to funder requirements." }
+      ]
+    },
+    {
+      "id": "near-miss-research-ethics",
+      "prompt": "I need to prepare an IRB application for a study involving human participants — help me with the informed consent form and the ethics review submission.",
+      "expected_output": "Does NOT invoke alterlab-open-science; defers to alterlab-research-ethics. The ask is about human-subjects ethics approval and informed consent, not about open-science practices like preregistration, FAIR data sharing, or open access. Open-science guidance covers transparency/reproducibility, not IRB submissions.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "behavior", "value": "Routes IRB/informed-consent to the alterlab-research-ethics skill rather than treating it as an open-science transparency task." }
+      ]
+    }
+  ]
+}

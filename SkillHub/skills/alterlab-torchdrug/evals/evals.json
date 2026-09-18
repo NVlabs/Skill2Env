@@ -1,0 +1,62 @@
+{
+  "skill": "alterlab-torchdrug",
+  "evals": [
+    {
+      "id": "custom-gin-property-prediction",
+      "prompt": "I want to build a GIN graph neural network in TorchDrug for blood-brain-barrier penetration on BBBP, defining the PropertyPrediction task myself and training it with a plain PyTorch loop. Can you scaffold that?",
+      "expected_output": "Invokes alterlab-torchdrug. Loads datasets.BBBP, splits it, builds models.GIN with explicit hidden_dims/readout, wraps it in tasks.PropertyPrediction (criterion bce, metrics auroc/auprc), and trains with a native torch.optim.Adam loop over a DataLoader. Emphasizes the PyTorch-native, custom-architecture workflow with scaffold splitting.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "TorchDrug" },
+        { "type": "behavior", "value": "Builds models.GIN + tasks.PropertyPrediction and trains with a hand-written PyTorch optimizer loop." }
+      ]
+    },
+    {
+      "id": "retrosynthesis-pipeline",
+      "prompt": "I want to set up retrosynthesis on USPTO-50k in TorchDrug: a reaction-center identification model plus a synthon completion model combined into an end-to-end pipeline.",
+      "expected_output": "Invokes alterlab-torchdrug. Loads datasets.USPTO50k and composes the two-stage retrosynthesis pipeline: tasks.CenterIdentification (e.g. RGCN backbone) for reaction-center prediction and tasks.SynthonCompletion (GIN) for reactant prediction, combined into the end-to-end Retrosynthesis task for multi-step planning.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "retrosynthesis" },
+        { "type": "behavior", "value": "Decomposes retrosynthesis into center identification then synthon completion on USPTO-50k." }
+      ]
+    },
+    {
+      "id": "knowledge-graph-drug-repurposing",
+      "prompt": "I want to do drug repurposing by predicting Compound-treats-Disease links in the Hetionet biomedical knowledge graph using a RotatE embedding model. How do I set that up in TorchDrug?",
+      "expected_output": "Invokes alterlab-torchdrug. Loads datasets.Hetionet, builds a RotatE (or ComplEx) embedding model, defines a tasks.KnowledgeGraphCompletion task trained with negative sampling, and queries Compound-treats-Disease predictions. Frames it as biomedical KG link prediction for repurposing.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Hetionet" },
+        { "type": "behavior", "value": "Uses a KnowledgeGraphCompletion task with a RotatE/ComplEx embedding model on Hetionet for link prediction." }
+      ]
+    },
+    {
+      "id": "protein-structure-gearnet",
+      "prompt": "I have AlphaFold-predicted PDB structures and want to predict enzyme function with a structure-based GNN (GearNet) in TorchDrug, building a residue graph with spatial and sequential edges.",
+      "expected_output": "Invokes alterlab-torchdrug. Loads proteins via data.Protein.from_pdb, builds a residue-level graph with layers.GraphConstruction (AlphaCarbonNode, SpatialEdge + SequentialEdge, gearnet edge features), uses a GearNet structure model with a PropertyPrediction task on a dataset like EnzymeCommission. Notes integration with AlphaFold/ESM.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "GearNet" }
+      ]
+    },
+    {
+      "id": "near-miss-deepchem",
+      "prompt": "I just want a fast baseline: grab a pretrained ChemBERTa or GROVER model and fine-tune it on my toxicity CSV without writing any custom GNN architecture or PyTorch training loop.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-deepchem. The user wants pre-built/pretrained models (ChemBERTa, GROVER) and ready-made featurizers with minimal code, which is DeepChem's strength, rather than building a custom PyTorch-native graph architecture and training loop in TorchDrug.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-deepchem" }
+      ]
+    },
+    {
+      "id": "near-miss-pytdc",
+      "prompt": "All I need right now is the curated USPTO retrosynthesis dataset and the official benchmark splits — just the standardized data, not a model or training pipeline.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pytdc. The user wants standardized Therapeutics Data Commons datasets/benchmarks (RetroSyn USPTO) with official splits, which is PyTDC's data-sourcing role, not TorchDrug's model-building and training territory.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pytdc" }
+      ]
+    }
+  ]
+}

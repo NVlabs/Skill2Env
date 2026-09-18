@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-proteinmpnn",
+  "evals": [
+    {
+      "id": "inverse-fold-backbone",
+      "prompt": "I have a protein backbone PDB with no meaningful sequence. Design several amino-acid sequences that should fold into this exact structure.",
+      "expected_output": "Invokes alterlab-proteinmpnn: parses the backbone PDB and runs protein_mpnn_run.py to inverse-fold it into multiple candidate sequences at a low sampling temperature, ranking by the model score. Notes designs should then be validated by refolding (alterlab-alphafold).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "inverse" },
+        { "type": "behavior", "value": "Designs sequences for a given fixed backbone rather than generating a new structure." }
+      ]
+    },
+    {
+      "id": "fixed-positions",
+      "prompt": "Redesign my enzyme's surface but keep the three catalytic residues exactly as they are. Give me new sequences.",
+      "expected_output": "Invokes alterlab-proteinmpnn with a fixed-positions specification: pins the catalytic residues and redesigns the rest, producing scored sequences.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "fixed" }
+      ]
+    },
+    {
+      "id": "symmetric-oligomer",
+      "prompt": "I designed a C3-symmetric homotrimer backbone. Design one sequence applied symmetrically across all three chains.",
+      "expected_output": "Invokes alterlab-proteinmpnn with tied positions so the homo-oligomer receives a single symmetric sequence across chains, consistent with the symmetric backbone.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Ties positions across chains to enforce symmetry in the designed sequence." }
+      ]
+    },
+    {
+      "id": "near-miss-ligandmpnn",
+      "prompt": "I need to design the residues lining a binding pocket that has a small-molecule ligand and a zinc ion sitting in it.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-ligandmpnn, which conditions the design on ligand/metal context. Plain ProteinMPNN does not see the ligand or metal, so pocket design around them belongs to alterlab-ligandmpnn.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-ligandmpnn" }
+      ]
+    },
+    {
+      "id": "near-miss-rfdiffusion",
+      "prompt": "I don't have a backbone yet — I want to generate a brand-new protein fold from scratch.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-rfdiffusion, which generates de-novo backbones. ProteinMPNN designs sequences for an existing backbone; it does not create the structure.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-rfdiffusion" }
+      ]
+    }
+  ]
+}

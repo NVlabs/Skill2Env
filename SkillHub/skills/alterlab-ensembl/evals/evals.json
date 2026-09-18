@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-ensembl",
+  "evals": [
+    {
+      "id": "gene-symbol-lookup",
+      "prompt": "Look up the human gene BRCA2 in Ensembl and give me its Ensembl gene ID, chromosomal coordinates, and transcripts.",
+      "expected_output": "Invokes alterlab-ensembl to call the Ensembl REST API symbol lookup (e.g. /lookup/symbol/homo_sapiens/BRCA2 or client.symbol_lookup) returning the ENSG ID, location, and transcript information, optionally expanded.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ENSG00000139618" }
+      ]
+    },
+    {
+      "id": "vep-variant-consequence",
+      "prompt": "Predict the functional consequence of the variant ENST00000380152.7:c.803C>T in human using the Variant Effect Predictor.",
+      "expected_output": "Invokes alterlab-ensembl to run VEP via the REST API (vep_hgvs / the VEP endpoint) for human, returning the predicted molecular consequence(s) of the HGVS variant.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "VEP" }
+      ]
+    },
+    {
+      "id": "ortholog-cross-species",
+      "prompt": "Find the mouse ortholog of human BRCA2 (ENSG00000139618) so I can compare the gene across species.",
+      "expected_output": "Invokes alterlab-ensembl for comparative genomics using the homology endpoint (homology_ensemblgene with target_species mouse), returning the mouse ortholog of the human gene.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses the Ensembl homology/comparative-genomics endpoint to return the mouse ortholog of the human gene." }
+      ]
+    },
+    {
+      "id": "assembly-coordinate-mapping",
+      "prompt": "I have a position on GRCh37 at chromosome 7:140453136. Map it to GRCh38 coordinates for me.",
+      "expected_output": "Invokes alterlab-ensembl to use the assembly-mapping capability (AssemblyMapper / the assembly map endpoint) to convert the coordinate from GRCh37 to GRCh38, noting the grch37.rest.ensembl.org server for legacy queries.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Performs a GRCh37-to-GRCh38 assembly coordinate conversion using Ensembl's assembly mapping." }
+      ]
+    },
+    {
+      "id": "near-miss-uniprot",
+      "prompt": "Give me the functional annotation, domains, and post-translational modifications for the BRCA2 protein from UniProt.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-uniprot. The user wants curated protein-level annotation (function, domains, PTMs) from UniProt, not genomic gene/sequence/coordinate data from Ensembl.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-uniprot" }
+      ]
+    },
+    {
+      "id": "near-miss-clinvar",
+      "prompt": "Is the BRCA2 variant rs80359550 classified as pathogenic or benign for hereditary breast cancer? I need its ClinVar clinical significance and review status.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-clinvar. Ensembl/VEP predicts molecular consequences but does not assign ACMG/AMP clinical pathogenicity classifications; the clinical-significance call belongs to ClinVar.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-clinvar" }
+      ]
+    }
+  ]
+}

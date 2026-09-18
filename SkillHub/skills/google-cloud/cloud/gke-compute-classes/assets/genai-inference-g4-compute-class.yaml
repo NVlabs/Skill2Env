@@ -1,0 +1,58 @@
+# EXAMPLE TEMPLATE - DO NOT DEPLOY
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: genai-inference-g4
+spec:
+  # G4 (NVIDIA RTX PRO 6000 Blackwell) inference serving. Reservation-first, On-Demand floor, DWS FlexStart queue fallback, Spot last resort. Optimized for serving latency.
+  nodePoolAutoCreation:
+    enabled: true
+  # NOTE: no priorityDefaults.location — it would conflict with the Specific
+  # reservation on priority 1. location is set per-priority on the non-
+  # reservation entries below; the reservation priority's zone scope comes
+  # from reservations.specific[].zones.
+  priorities:
+  # 1. Specific reservation — paid, no queue, no preemption
+  - gpu:
+      count: 1
+      type: nvidia-rtx-pro-6000
+      driverVersion: default
+    machineType: g4-standard-48
+    spot: false
+    reservations:
+      affinity: Specific
+      specific:
+      - name: g4-inference-reservation
+        zones: ['us-central1-a']        # zonal scope lives here, not in priorityDefaults.location
+
+  # 2. On-Demand floor — preferred latency-sensitive serving fallback
+  - gpu:
+      count: 1
+      type: nvidia-rtx-pro-6000
+      driverVersion: default
+    machineType: g4-standard-48
+    spot: false
+    location:
+      zones: ['us-central1-a', 'us-central1-b', 'us-central1-c']
+
+  # 3. DWS FlexStart — accept ~3min queue if On-Demand is exhausted
+  - flexStart:
+      enabled: true
+    capacityCheckWaitTimeSeconds: 1800
+    gpu:
+      count: 1
+      type: nvidia-rtx-pro-6000
+      driverVersion: default
+    machineType: g4-standard-48
+    location:
+      zones: ['us-central1-a', 'us-central1-b', 'us-central1-c']
+
+  # 4. Spot — absolute last resort (accept preemption, replicas mask it)
+  - gpu:
+      count: 1
+      type: nvidia-rtx-pro-6000
+      driverVersion: default
+    machineType: g4-standard-48
+    spot: true
+    location:
+      zones: ['us-central1-a', 'us-central1-b', 'us-central1-c']

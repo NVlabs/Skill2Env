@@ -1,0 +1,177 @@
+{
+  "skill_name": "ontology-mapper",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Map the term 'space group' to the CMSO ontology. I want to know which class and properties correspond to this concept.",
+      "expected_output": "Agent runs concept_mapper.py to find CMSO classes and properties matching 'space group', returning matches with confidence scores.",
+      "assertions": [
+        "Invokes scripts/concept_mapper.py with --ontology cmso --term 'space group' --json",
+        "Output includes results.matches with a confidence score; because the synonym table is consulted before exact-label matching, 'space group' is reported as a 0.9 synonym_class match (not 1.0), and the matched class/IRI are still correct",
+        "Returns the matching CMSO class (Space Group) and related properties",
+        "Reports any unmatched terms or alternative suggestions"
+      ],
+      "script_checks": [
+        {
+          "description": "concept_mapper maps 'space group' to CMSO Space Group as a 0.9 synonym_class match",
+          "cmd": ["scripts/concept_mapper.py", "--ontology", "cmso", "--term", "space group", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.matches.0.term", "op": "eq", "value": "space group"},
+            {"path": "results.matches.0.matched", "op": "eq", "value": "Space Group"},
+            {"path": "results.matches.0.match_type", "op": "eq", "value": "synonym_class"},
+            {"path": "results.matches.0.confidence", "op": "approx", "value": 0.9, "rel_tol": 1e-9},
+            {"path": "results.matches.0.iri", "op": "eq", "value": "http://purls.helmholtz-metadaten.de/cmso/SpaceGroup"},
+            {"path": "results.unmatched", "op": "eq", "value": []}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I have an FCC copper crystal with lattice parameter a=3.615 angstroms and space group 225. Map these crystallographic parameters to CMSO ontology terms.",
+      "expected_output": "Agent runs crystal_mapper.py to translate FCC, space group 225, and lattice constant into CMSO-compliant annotations with Bravais lattice symbol.",
+      "assertions": [
+        "Invokes scripts/crystal_mapper.py with --ontology cmso --bravais FCC --space-group 225 --a 3.615 --json",
+        "Output includes results.ontology_classes and results.ontology_properties",
+        "Maps FCC to the correct Bravais lattice symbol (cF) in CMSO terminology",
+        "Includes space group mapping to number 225 (Fm-3m)"
+      ],
+      "script_checks": [
+        {
+          "description": "crystal_mapper maps FCC/225/a=3.615 to CMSO classes and cF Bravais lattice",
+          "cmd": ["scripts/crystal_mapper.py", "--ontology", "cmso", "--bravais", "FCC", "--space-group", "225", "--a", "3.615", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.bravais_lattice", "op": "eq", "value": "cF"},
+            {"path": "results.effective_system", "op": "eq", "value": "cubic"},
+            {"path": "results.ontology_classes", "op": "contains", "value": "Space Group"},
+            {"path": "results.ontology_classes", "op": "contains", "value": "Unit Cell"},
+            {"path": "results.ontology_properties.0.property", "op": "eq", "value": "has Bravais lattice"},
+            {"path": "results.ontology_properties.0.value", "op": "eq", "value": "cF"},
+            {"path": "results.ontology_properties.1.property", "op": "eq", "value": "has space group number"},
+            {"path": "results.ontology_properties.1.value", "op": "eq", "value": 225},
+            {"path": "results.ontology_properties.2.property", "op": "eq", "value": "has length x"},
+            {"path": "results.ontology_properties.2.value", "op": "approx", "value": 3.615, "rel_tol": 1e-9},
+            {"path": "results.validation_warnings", "op": "eq", "value": []}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Annotate this sample for CMSO: {\"material\": \"iron\", \"structure\": \"BCC\", \"lattice_a\": 2.87, \"space_group\": 229, \"simulation_type\": \"MD\"}",
+      "expected_output": "Agent runs sample_annotator.py with the full sample description, producing CMSO annotations for material, structure, lattice, and identifying unmapped fields.",
+      "assertions": [
+        "Invokes scripts/sample_annotator.py with --ontology cmso --sample '{\"material\":\"iron\",\"structure\":\"BCC\",\"lattice_a\":2.87,\"space_group\":229,\"simulation_type\":\"MD\"}' --json",
+        "Output includes results.annotations with class-property mappings for iron BCC",
+        "Maps iron to Fe element and BCC to cI Bravais lattice",
+        "Reports unmapped_fields for any keys not recognized (e.g., simulation_type may map or appear as unmapped)"
+      ],
+      "script_checks": [
+        {
+          "description": "sample_annotator annotates BCC iron for CMSO: Fe element, cI lattice, simulation_type unmapped",
+          "cmd": ["scripts/sample_annotator.py", "--ontology", "cmso", "--sample", "{\"material\":\"iron\",\"structure\":\"BCC\",\"lattice_a\":2.87,\"space_group\":229,\"simulation_type\":\"MD\"}", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.sample_type", "op": "eq", "value": "Atomic Scale Sample"},
+            {"path": "results.material_type", "op": "eq", "value": "Crystalline Material"},
+            {"path": "results.annotations.2.property", "op": "eq", "value": "has Bravais lattice"},
+            {"path": "results.annotations.2.value", "op": "eq", "value": "cI"},
+            {"path": "results.annotations.3.value", "op": "eq", "value": 229},
+            {"path": "results.annotations.5.class", "op": "eq", "value": "Chemical Element"},
+            {"path": "results.annotations.5.value", "op": "eq", "value": "Fe"},
+            {"path": "results.unmapped_fields", "op": "contains", "value": "simulation_type"},
+            {"path": "results.validation_warnings", "op": "eq", "value": []}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Map these terms all at once: FCC, copper, lattice constant, unit cell, grain boundary",
+      "expected_output": "Agent runs concept_mapper.py with multiple terms to batch-map all five concepts to CMSO, identifying any that cannot be matched.",
+      "assertions": [
+        "Invokes scripts/concept_mapper.py with --ontology cmso --terms 'FCC,copper,lattice constant,unit cell,grain boundary' --json",
+        "Output includes results.matches for successfully mapped terms",
+        "Reports results.unmatched for any terms not found in CMSO (e.g., 'copper' has no CMSO class; 'grain boundary' maps to the Crystal Defect class)",
+        "Provides results.suggestions for unmatched terms (a runnable class_browser.py command including --ontology) to guide the user"
+      ],
+      "script_checks": [
+        {
+          "description": "concept_mapper batch: FCC/lattice constant/unit cell/grain boundary match, copper unmatched with class_browser suggestion",
+          "cmd": ["scripts/concept_mapper.py", "--ontology", "cmso", "--terms", "FCC,copper,lattice constant,unit cell,grain boundary", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.matches.0.term", "op": "eq", "value": "FCC"},
+            {"path": "results.matches.0.matched", "op": "eq", "value": "Crystalline Material"},
+            {"path": "results.matches.1.term", "op": "eq", "value": "lattice constant"},
+            {"path": "results.matches.1.matched", "op": "eq", "value": "Lattice Parameter"},
+            {"path": "results.matches.2.matched", "op": "eq", "value": "Unit Cell"},
+            {"path": "results.matches.3.term", "op": "eq", "value": "grain boundary"},
+            {"path": "results.matches.3.matched", "op": "eq", "value": "Crystal Defect"},
+            {"path": "results.unmatched", "op": "contains", "value": "copper"},
+            {"path": "results.suggestions.0", "op": "contains", "value": "--ontology cmso"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Map a hexagonal crystal: Bravais lattice HCP, a=3.21, c=5.21, space group 194. No ontology specified, just give me generic labels.",
+      "expected_output": "Agent runs crystal_mapper.py without specifying an ontology to produce generic crystallographic labels, including validation of hexagonal lattice constraints.",
+      "assertions": [
+        "Invokes scripts/crystal_mapper.py with --bravais HCP --space-group 194 --a 3.21 --c 5.21 --json (no --ontology flag)",
+        "Output includes generic crystal system identification (hexagonal)",
+        "Maps HCP to the appropriate Bravais lattice symbol (hP)",
+        "Validates that a != c for hexagonal system (no validation warning expected since 3.21 != 5.21)"
+      ],
+      "script_checks": [
+        {
+          "description": "crystal_mapper (no ontology) maps HCP/194/a=3.21/c=5.21 to generic hexagonal labels, hP lattice, no warnings",
+          "cmd": ["scripts/crystal_mapper.py", "--bravais", "HCP", "--space-group", "194", "--a", "3.21", "--c", "5.21", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "inputs.ontology", "op": "eq", "value": null},
+            {"path": "results.bravais_lattice", "op": "eq", "value": "hP"},
+            {"path": "results.effective_system", "op": "eq", "value": "hexagonal"},
+            {"path": "results.ontology_properties.0.property", "op": "eq", "value": "bravais_lattice"},
+            {"path": "results.ontology_properties.0.value", "op": "eq", "value": "hP"},
+            {"path": "results.ontology_properties.1.property", "op": "eq", "value": "space_group_number"},
+            {"path": "results.ontology_properties.1.value", "op": "eq", "value": 194},
+            {"path": "results.ontology_properties.3.property", "op": "eq", "value": "length_z"},
+            {"path": "results.ontology_properties.3.value", "op": "approx", "value": 5.21, "rel_tol": 1e-9},
+            {"path": "results.validation_warnings", "op": "eq", "value": []}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Annotate this crystalline sample for the ASMO ontology: {\"material\": \"copper\", \"structure\": \"FCC\", \"lattice_a\": 3.615, \"space_group\": 225}",
+      "expected_output": "Agent runs sample_annotator.py with --ontology asmo and surfaces that ASMO does not define crystal/sample vocabulary: the emitted crystal terms are flagged in results.validation_warnings rather than presented as valid ASMO annotations.",
+      "assertions": [
+        "Invokes scripts/sample_annotator.py with --ontology asmo --sample '{\"material\":\"copper\",\"structure\":\"FCC\",\"lattice_a\":3.615,\"space_group\":225}' --json",
+        "Output includes a non-empty results.validation_warnings list noting that classes/properties such as 'Crystal Structure', 'Unit Cell', 'Space Group' (or their properties) are not defined in the loaded ontology",
+        "Crystal/sample annotations for ASMO carry confidence 0.0 and a validation_warning field (they do not resolve to ASMO IRIs)",
+        "Agent advises using --ontology cmso for crystalline sample annotation, reserving ASMO for the concept-mapping path"
+      ],
+      "script_checks": [
+        {
+          "description": "sample_annotator --ontology asmo flags crystal/sample terms as undefined (confidence 0.0, validation_warnings populated)",
+          "cmd": ["scripts/sample_annotator.py", "--ontology", "asmo", "--sample", "{\"material\":\"copper\",\"structure\":\"FCC\",\"lattice_a\":3.615,\"space_group\":225}", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.annotations.0.confidence", "op": "approx", "value": 0.0, "abs_tol": 1e-9},
+            {"path": "results.annotations.0.validation_warning", "op": "contains", "value": "not defined in the loaded ontology"},
+            {"path": "results.annotations.2.class", "op": "eq", "value": "Crystal Structure"},
+            {"path": "results.annotations.2.confidence", "op": "approx", "value": 0.0, "abs_tol": 1e-9},
+            {"path": "results.annotations.4.class", "op": "eq", "value": "Unit Cell"},
+            {"path": "results.annotations.4.confidence", "op": "approx", "value": 0.0, "abs_tol": 1e-9},
+            {"path": "results.validation_warnings.0", "op": "contains", "value": "not defined in the loaded ontology"}
+          ]
+        }
+      ]
+    }
+  ]
+}

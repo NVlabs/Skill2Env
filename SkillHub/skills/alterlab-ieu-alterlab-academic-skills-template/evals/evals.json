@@ -1,0 +1,38 @@
+{
+  "skill": "alterlab-skill-name",
+  "evals": [
+    {
+      "id": "trigger-1",
+      "prompt": "<a realistic researcher ask, phrased the way a faculty member or grad student would actually type it, that SHOULD invoke this skill>",
+      "expected_output": "<prose rubric: what a correct response must do or contain — the behavior the LLM judge grades against>",
+      "assertions": [
+        { "type": "should_trigger", "value": true }
+      ]
+    },
+    {
+      "id": "trigger-2",
+      "prompt": "<a second, distinct realistic ask covering another mode/intent of the skill>",
+      "expected_output": "<expected behavior>",
+      "assertions": [
+        { "type": "should_trigger", "value": true }
+      ]
+    },
+    {
+      "id": "trigger-3",
+      "prompt": "<a third distinct realistic ask>",
+      "expected_output": "<expected behavior>",
+      "assertions": [
+        { "type": "should_trigger", "value": true }
+      ]
+    },
+    {
+      "id": "near-miss-other-skill",
+      "prompt": "<a near-miss ask that is plausibly this skill but is correctly an adjacent sibling's job>",
+      "expected_output": "Should NOT trigger this skill. Defers to alterlab-other-skill, which handles <why>.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-other-skill" }
+      ]
+    }
+  ]
+}

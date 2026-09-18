@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-ssci-reflexivity-gate",
+  "evals": [
+    {
+      "id": "trustworthiness-review",
+      "prompt": "Review the rigor of my qualitative interview study before I write it up — how do I show it's trustworthy?",
+      "expected_output": "Invokes alterlab-ssci-reflexivity-gate: requires a positionality statement and a named, evidenced warrant for each of the four Lincoln & Guba criteria (credibility, transferability, dependability, confirmability), rather than positivist validity language.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "transferability" },
+        { "type": "behavior", "value": "Applies the four trustworthiness criteria with evidenced warrants and requires a positionality statement." }
+      ]
+    },
+    {
+      "id": "positionality-missing",
+      "prompt": "My ethnography's methods section doesn't mention my role or background — is that a problem?",
+      "expected_output": "Invokes alterlab-ssci-reflexivity-gate: BLOCKs (fail-closed) on the missing positionality statement, explaining that in interpretive work the researcher is the instrument and standpoint must be stated and its effect on interpretation examined.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "positionality" }
+      ]
+    },
+    {
+      "id": "grounded-theory-writeup-gate",
+      "prompt": "I'm about to write up my grounded-theory findings and want to claim they apply broadly. Am I ready?",
+      "expected_output": "Invokes alterlab-ssci-reflexivity-gate: refuses an over-generalized interpretivist claim without a transferability (thick-description) warrant, scoping the claim to the studied case, and checks the audit trail (dependability) before write-up.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Blocks over-generalization without a thick-description transferability warrant and scopes the claim to the case." }
+      ]
+    },
+    {
+      "id": "near-miss-measurement-gate",
+      "prompt": "Is my psychometric scale reliable and valid? I have Cronbach's alpha and want to check the factor structure.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-ssci-measurement-gate. Quantitative scale reliability/validity (omega, CFA) is the measurement gate's domain, not qualitative trustworthiness.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-ssci-measurement-gate" }
+      ]
+    },
+    {
+      "id": "near-miss-qualitative-analysis",
+      "prompt": "Two coders finished coding my interviews with the codebook — compute the intercoder reliability coefficient for me.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-qualitative-analysis. Computing an ICR coefficient is coding execution, not the trustworthiness gate.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-qualitative-analysis" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "skill": "alterlab-pyhealth",
+  "evals": [
+    {
+      "id": "mortality-prediction-mimic4",
+      "prompt": "I want to predict ICU mortality on MIMIC-IV. Load the dataset, set up the mortality task, split by patient, and train an interpretable RETAIN model monitoring AUPRC since the outcome is rare.",
+      "expected_output": "Invokes alterlab-pyhealth. Loads MIMIC4Dataset (with tables=[...]), sets the MortalityPredictionMIMIC4() task class, uses split_by_patient to prevent leakage, builds get_dataloader loaders, initializes RETAIN with feature_keys + label_key='mortality' in binary mode, trains with Trainer(metrics=[...]) monitoring pr_auc (AUPRC for imbalance), and evaluates. Recommends RETAIN for interpretability.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "split_by_patient" },
+        { "type": "behavior", "value": "Uses MIMIC4Dataset, a mortality task class instance, split_by_patient, RETAIN, and the Trainer monitoring AUPRC (pr_auc)." }
+      ]
+    },
+    {
+      "id": "safedrug-recommendation",
+      "prompt": "I'm building a medication recommendation model that avoids drug-drug interactions on MIMIC-IV. Which model should I use and how do I handle the multi-label medication codes?",
+      "expected_output": "Invokes alterlab-pyhealth. Recommends the SafeDrug model (or GAMENet) with DDI constraints for the drug recommendation task, frames it as multi-label, processes medication codes (NDC/RxNorm/ATC) potentially via InnerMap/CrossMap, and evaluates with multi-label metrics like Jaccard and example-F1.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "SafeDrug" },
+        { "type": "behavior", "value": "Recommends SafeDrug (or GAMENet) for DDI-aware drug recommendation and uses multi-label metrics (Jaccard / example-F1)." }
+      ]
+    },
+    {
+      "id": "medical-code-crossmap",
+      "prompt": "I have diagnoses coded in ICD-9 in one dataset and ICD-10 in another. I want to translate them to a common system and group them into clinically meaningful categories like CCS.",
+      "expected_output": "Invokes alterlab-pyhealth medical-coding capability. Uses CrossMap to translate between ICD-9, ICD-10, and CCS, and InnerMap for within-system hierarchy lookups, grouping codes into clinical categories. References references/medical_coding.md.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "CrossMap" },
+        { "type": "behavior", "value": "Uses CrossMap (cross-system) and/or InnerMap to translate ICD-9/ICD-10/CCS codes." }
+      ]
+    },
+    {
+      "id": "fairness-calibration-deployment",
+      "prompt": "My readmission model on eICU performs well overall but I need to check it for bias across demographic groups, calibrate the probabilities, and quantify prediction uncertainty before any clinical deployment.",
+      "expected_output": "Invokes alterlab-pyhealth training/evaluation capability. Computes fairness metrics across demographics, applies calibration (Platt or temperature scaling), and quantifies uncertainty (conformal prediction or MC dropout), framing all of this as pre-deployment clinical validation. References references/training_evaluation.md.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "calibrat" },
+        { "type": "behavior", "value": "Addresses fairness metrics, calibration (Platt/temperature scaling), and uncertainty quantification for clinical deployment." }
+      ]
+    },
+    {
+      "id": "near-miss-neurokit2",
+      "prompt": "I have a single raw ECG trace at 1000 Hz and I just want to clean it, detect the R-peaks, and compute SDNN and RMSSD heart rate variability metrics from it.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-neurokit2. The task is raw physiological signal processing and HRV feature extraction from one ECG trace (nk.ecg_process, nk.hrv), not training a clinical prediction model on a healthcare dataset. PyHealth consumes datasets and trains models; it does not do low-level biosignal cleaning and HRV computation.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-neurokit2" }
+      ]
+    },
+    {
+      "id": "near-miss-clinical-decision",
+      "prompt": "Analyze a cohort of 60 HER2-positive metastatic breast cancer patients stratified by hormone receptor status, with hazard ratios, Kaplan-Meier survival curves, and GRADE-graded treatment recommendations as a publication-ready PDF.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-clinical-decision. The task is a biomarker-stratified clinical decision support document (cohort survival analysis, hazard ratios, GRADE grading, LaTeX/PDF), not a machine-learning prediction pipeline on an EHR dataset. PyHealth builds and trains predictive models; it does not generate GRADE-graded cohort analysis documents.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-clinical-decision" }
+      ]
+    }
+  ]
+}

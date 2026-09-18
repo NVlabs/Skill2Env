@@ -1,0 +1,106 @@
+{
+  "skill_name": "md-analysis-planner",
+  "evals": [
+    {
+      "id": "oxide_glass_local_structure",
+      "prompt": "Plan analysis for an oxide glass LAMMPS dump: RDF, coordination, and bond angles.",
+      "expected_outputs": ["RDF", "coordination", "bond-angle"],
+      "assertions": [
+        "requires positions and species",
+        "mentions neighbor cutoff",
+        "includes equilibration checks",
+        "reports all three goals (rdf, coordination, bond-angle) with status=ready from md_analysis_planner.py",
+        "reports required_data exactly as cell, cutoff rule, neighbor list, positions, species from md_analysis_planner.py",
+        "reports pbc_handling.minimum_action='confirm wrapping convention' and an empty warnings list from md_analysis_planner.py"
+      ],
+      "script_checks": [
+        {
+          "description": "Local-structure plan: all three goals ready, no warnings, sorted required_data",
+          "cmd": ["scripts/md_analysis_planner.py", "--system", "oxide glass", "--goals", "rdf,coordination,bond-angle", "--trajectory-format", "dump", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.analysis_plan.0.goal", "op": "eq", "value": "rdf"},
+            {"path": "results.analysis_plan.0.method", "op": "eq", "value": "radial distribution function"},
+            {"path": "results.analysis_plan.0.status", "op": "eq", "value": "ready"},
+            {"path": "results.analysis_plan.1.goal", "op": "eq", "value": "coordination"},
+            {"path": "results.analysis_plan.1.method", "op": "eq", "value": "coordination number"},
+            {"path": "results.analysis_plan.1.status", "op": "eq", "value": "ready"},
+            {"path": "results.analysis_plan.2.goal", "op": "eq", "value": "bond-angle"},
+            {"path": "results.analysis_plan.2.method", "op": "eq", "value": "bond-angle distribution"},
+            {"path": "results.analysis_plan.2.status", "op": "eq", "value": "ready"},
+            {"path": "results.required_data", "op": "eq", "value": ["cell", "cutoff rule", "neighbor list", "positions", "species"]},
+            {"path": "results.required_data", "op": "contains", "value": "cutoff rule"},
+            {"path": "results.pbc_handling.unwrap_needed", "op": "eq", "value": false},
+            {"path": "results.pbc_handling.minimum_action", "op": "eq", "value": "confirm wrapping convention"},
+            {"path": "results.pbc_handling.format_note", "op": "eq", "value": "Check image flags or cell metadata for dump"},
+            {"path": "results.warnings", "op": "eq", "value": []},
+            {"path": "results.equilibration_checks.0", "op": "eq", "value": "discard startup transient before property fits"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "diffusion_requires_unwrap",
+      "prompt": "Plan diffusion analysis for ions crossing periodic boundaries.",
+      "expected_outputs": ["MSD", "unwrap", "time axis"],
+      "assertions": [
+        "requires unwrapped positions",
+        "requires timestep",
+        "warns about fitting regime",
+        "reports the diffusion goal with status='needs time axis' (no timestep given) from md_analysis_planner.py",
+        "reports required_data exactly as cell, image flags, time axis, unwrapped positions from md_analysis_planner.py",
+        "emits the Yeh-Hummer 1/L finite-size correction warning and the diffusive-regime (log-log slope ~1) warning from md_analysis_planner.py"
+      ],
+      "script_checks": [
+        {
+          "description": "Diffusion with unwrap and no timestep: needs time axis status, unwrap data, regime+finite-size warnings",
+          "cmd": ["scripts/md_analysis_planner.py", "--system", "ionic conductor", "--goals", "diffusion", "--trajectory-format", "dump", "--unwrap-needed", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.analysis_plan.0.goal", "op": "eq", "value": "diffusion"},
+            {"path": "results.analysis_plan.0.method", "op": "eq", "value": "MSD and diffusion coefficient"},
+            {"path": "results.analysis_plan.0.status", "op": "eq", "value": "needs time axis"},
+            {"path": "results.required_data", "op": "eq", "value": ["cell", "image flags", "time axis", "unwrapped positions"]},
+            {"path": "results.required_data", "op": "contains", "value": "image flags"},
+            {"path": "results.pbc_handling.unwrap_needed", "op": "eq", "value": true},
+            {"path": "results.pbc_handling.minimum_action", "op": "eq", "value": "unwrap before displacement-based analysis"},
+            {"path": "results.warnings.0", "op": "eq", "value": "Diffusion analysis requires unwrapped trajectories before fitting MSD."},
+            {"path": "results.warnings.1", "op": "contains", "value": "log-log slope ~1"},
+            {"path": "results.warnings.2", "op": "contains", "value": "Yeh-Hummer 1/L"},
+            {"path": "results.warnings.2", "op": "contains", "value": "xi~=2.837"},
+            {"path": "results.warnings.3", "op": "eq", "value": "diffusion needs timestep or saved-frame spacing."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vacf_missing_velocities",
+      "prompt": "Can I compute VDOS if my trajectory only stores positions?",
+      "expected_outputs": ["velocities", "blocked", "warning"],
+      "assertions": [
+        "does not claim ready status",
+        "explains velocity requirement",
+        "suggests prerequisite",
+        "reports the vdos goal with status='blocked' (not demoted to 'needs time axis' even though timestep is also missing) from md_analysis_planner.py",
+        "reports required_data exactly as time axis, velocities from md_analysis_planner.py",
+        "emits both the velocities-required warning and the timestep warning from md_analysis_planner.py"
+      ],
+      "script_checks": [
+        {
+          "description": "VDOS without velocities and without timestep: status stays blocked (no demotion), both warnings emitted",
+          "cmd": ["scripts/md_analysis_planner.py", "--system", "liquid water", "--goals", "vdos", "--trajectory-format", "xyz", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.analysis_plan.0.goal", "op": "eq", "value": "vdos"},
+            {"path": "results.analysis_plan.0.method", "op": "eq", "value": "vibrational density of states"},
+            {"path": "results.analysis_plan.0.status", "op": "eq", "value": "blocked"},
+            {"path": "results.required_data", "op": "eq", "value": ["time axis", "velocities"]},
+            {"path": "results.warnings.0", "op": "eq", "value": "vdos needs velocities or a defensible finite-difference velocity estimate."},
+            {"path": "results.warnings.1", "op": "eq", "value": "vdos needs timestep or saved-frame spacing."},
+            {"path": "results.pbc_handling.format_note", "op": "eq", "value": "Check image flags or cell metadata for xyz"}
+          ]
+        }
+      ]
+    }
+  ]
+}

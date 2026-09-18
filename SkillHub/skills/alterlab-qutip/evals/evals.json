@@ -1,0 +1,65 @@
+{
+  "skill": "alterlab-qutip",
+  "evals": [
+    {
+      "id": "damped-oscillator-mesolve",
+      "prompt": "I want to simulate a damped harmonic oscillator starting in a coherent state and watch the photon number decay over time. Can you set up the Lindblad master equation in QuTiP and plot the mean photon number?",
+      "expected_output": "Activates the QuTiP skill and builds H = omega * num(N), a collapse operator sqrt(kappa) * destroy(N), an initial coherent(N, alpha) state, then evolves with mesolve(H, psi0, tlist, c_ops, e_ops=[num(N)]) and plots the mean photon number versus time. Uses the open-system master-equation solver, not unitary-only evolution.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "mesolve"},
+        {"type": "behavior", "value": "Uses QuTiP's mesolve with a destroy() collapse operator to model dissipative photon-number decay of a coherent state."}
+      ]
+    },
+    {
+      "id": "jaynes-cummings-cavity-qed",
+      "prompt": "I'm studying cavity QED. Can you build a Jaynes-Cummings model with a cavity coupled to a two-level atom in QuTiP, include cavity and atomic decay, and track both excitation numbers over time?",
+      "expected_output": "Activates the QuTiP skill and constructs the Jaynes-Cummings Hamiltonian using tensor(destroy(N), qeye(2)) for the cavity and tensor(qeye(N), sigmam()) for the atom under the RWA, adds collapse operators for cavity (sqrt(kappa)*a) and atomic (sqrt(gamma)*sm) decay, and uses mesolve with e_ops for both excitation numbers. Covers the quantum-optics / cavity-QED open-system regime.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "tensor"},
+        {"type": "behavior", "value": "Builds the Jaynes-Cummings cavity-QED model with tensor-product operators and dissipation, evolved via mesolve."}
+      ]
+    },
+    {
+      "id": "monte-carlo-trajectories",
+      "prompt": "I want individual quantum trajectories with quantum jumps for a decaying system, averaging over 500 trajectories, rather than the smooth density-matrix evolution. How do I do this in QuTiP?",
+      "expected_output": "Activates the QuTiP skill and uses mcsolve(H, psi0, tlist, c_ops, ntraj=500, e_ops=[...]) to generate Monte Carlo wavefunction trajectories with quantum jumps. Explains that mcsolve gives individual trajectories / photon-counting behavior versus the ensemble-averaged mesolve, and that it parallelizes over CPUs.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "mcsolve"},
+        {"type": "behavior", "value": "Uses mcsolve with ntraj for Monte Carlo quantum-jump trajectories, contrasted with mesolve's averaged dynamics."}
+      ]
+    },
+    {
+      "id": "entanglement-decay-concurrence",
+      "prompt": "Starting from a Bell state, I want to watch entanglement decay under local dephasing on each qubit, computing the concurrence at each time step. Can you do this in QuTiP?",
+      "expected_output": "Activates the QuTiP skill and prepares a bell_state, builds local dephasing collapse operators sqrt(gamma)*tensor(sigmaz(), qeye(2)) and the symmetric partner, evolves with mesolve, and computes concurrence() on each state's density matrix over time to track entanglement decay.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "concurrence"},
+        {"type": "behavior", "value": "Evolves a Bell state under local dephasing with mesolve and tracks entanglement via concurrence over time."}
+      ]
+    },
+    {
+      "id": "near-miss-qiskit",
+      "prompt": "I want to compile a Grover search circuit, transpile it to a target gate set, and run it with shots on IBM quantum hardware. Which solver should I use?",
+      "expected_output": "Should NOT activate the QuTiP skill. This is gate-based / circuit quantum computing with transpilation and hardware execution, which is explicitly out of QuTiP's open-systems scope; it belongs to the qiskit skill (IBM hardware) rather than QuTiP's master-equation solvers.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "qiskit"},
+        {"type": "behavior", "value": "Recognizes gate-based circuit compilation and hardware execution as outside QuTiP's open-systems scope and defers to the qiskit skill."}
+      ]
+    },
+    {
+      "id": "near-miss-pennylane",
+      "prompt": "I'm building a variational quantum eigensolver and need to differentiate my parameterized ansatz with autograd and a gradient-based optimizer for the quantum machine learning training loop.",
+      "expected_output": "Should NOT activate the QuTiP skill. Autodiff of a parameterized circuit ansatz for variational quantum ML is PennyLane's domain, not QuTiP's open-system dynamics, so this defers to the pennylane skill rather than QuTiP solvers.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "pennylane"},
+        {"type": "behavior", "value": "Recognizes autodiff-based variational quantum ML as PennyLane's domain and defers to the pennylane skill instead of QuTiP."}
+      ]
+    }
+  ]
+}

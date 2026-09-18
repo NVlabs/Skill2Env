@@ -1,0 +1,9 @@
+Source files: lib/fuzzy.js
+
+/*
+ * Fuzzy
+ * https://github.com/myork/fuzzy
+ *
+ * Copyright (c) 2012 Matt York
+ * Licensed under the MIT license.
+ */

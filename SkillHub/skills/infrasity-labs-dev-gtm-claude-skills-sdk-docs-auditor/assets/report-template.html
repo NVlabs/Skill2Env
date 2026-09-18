@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDK Docs Audit — __AUDIT_URL__</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06060a;
+  --surface: #0e0e16;
+  --surface2: #14141f;
+  --border: #232336;
+  --border2: #2e2e4a;
+  --text: #e2e2f0;
+  --text2: #8888aa;
+  --text3: #4a4a6a;
+  --pass: #34d399;    --pass-bg: #052015;  --pass-border: #064824;
+  --warn: #fbbf24;    --warn-bg: #201500;  --warn-border: #4a3300;
+  --fail: #f87171;    --fail-bg: #200808;  --fail-border: #4a1212;
+  --accent: #a78bfa;  --accent2: #c4b5fd;  --accent-bg: #12093a;
+  --tag-bg: #141424;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;line-height:1.6}
+
+/* Header */
+.header{border-bottom:1px solid var(--border);padding:48px 64px 40px;position:relative;overflow:hidden;background:linear-gradient(135deg,#0a061a 0%,var(--bg) 60%)}
+.header::after{content:'';position:absolute;top:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(167,139,250,0.08) 0%,transparent 60%);pointer-events:none}
+.eyebrow{font-family:'Space Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:'';display:block;width:20px;height:1px;background:var(--accent)}
+h1{font-size:36px;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px}
+.header-url{font-family:'Space Mono',monospace;font-size:12px;color:var(--text3);background:var(--surface2);border:1px solid var(--border);display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:4px;margin-bottom:36px}
+.header-url::before{content:'→';color:var(--accent);font-size:10px}
+.stats-row{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;width:fit-content}
+.stat-cell{padding:16px 28px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:4px;background:var(--surface)}
+.stat-cell:last-child{border-right:none}
+.sv{font-family:'Space Mono',monospace;font-size:26px;font-weight:700;line-height:1}
+.sv-total{color:var(--text)}.sv-strong{color:var(--pass)}.sv-good{color:var(--pass);opacity:.8}.sv-ok{color:var(--warn)}.sv-weak{color:var(--fail)}.sv-score{color:var(--accent2)}
+.slabel{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em}
+
+/* Legend */
+.legend-bar{padding:12px 64px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.ll{font-family:'Space Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.18em}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:3px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.06em}
+.badge.pass{background:var(--pass-bg);color:var(--pass);border:1px solid var(--pass-border)}
+.badge.warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-border)}
+.badge.fail{background:var(--fail-bg);color:var(--fail);border:1px solid var(--fail-border)}
+.badge.strong{background:var(--pass-bg);color:var(--pass);border:1px solid var(--pass-border)}
+.badge.good{background:var(--pass-bg);color:var(--pass);border:1px solid var(--pass-border);opacity:.85}
+.badge.ok{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-border)}
+.badge.weak{background:var(--fail-bg);color:var(--fail);border:1px solid var(--fail-border)}
+.badge.poor{background:var(--fail-bg);color:var(--fail);border:1px solid var(--fail-border)}
+.li{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+
+/* Layout */
+.main{display:grid;grid-template-columns:256px 1fr;min-height:calc(100vh - 200px)}
+.sidebar{border-right:1px solid var(--border);padding:20px 0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--surface)}
+.sidebar::-webkit-scrollbar{width:3px}.sidebar::-webkit-scrollbar-thumb{background:var(--border2)}
+.sbh{font-family:'Space Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.18em;padding:8px 20px 4px}
+.sbl{display:flex;align-items:center;justify-content:space-between;padding:7px 20px;font-size:12px;color:var(--text2);cursor:pointer;border-left:2px solid transparent;transition:all 0.12s}
+.sbl:hover{background:var(--surface2);color:var(--text);border-left-color:var(--border2)}
+.sbp{display:flex;gap:3px}
+.spp{font-family:'Space Mono',monospace;font-size:9px;padding:1px 5px;border-radius:2px}
+.spp-p{background:var(--pass-bg);color:var(--pass)}
+.spp-w{background:var(--warn-bg);color:var(--warn)}
+.spp-f{background:var(--fail-bg);color:var(--fail)}
+.content{padding:40px 56px;max-width:1080px}
+
+/* Scorecard */
+.st{font-family:'Space Mono',monospace;font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:0.2em;margin-bottom:14px}
+.sc-table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:48px}
+.sc-table thead tr{background:var(--surface2);border-bottom:1px solid var(--border2)}
+.sc-table th{padding:10px 14px;text-align:left;font-family:'Space Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.12em;font-weight:400}
+.sc-table th:not(:first-child){text-align:center}
+.sc-table td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px}
+.sc-table td:not(:first-child){text-align:center;font-family:'Space Mono',monospace;font-size:12px;font-weight:700}
+.sc-table tbody tr:last-child td{border-bottom:none;background:var(--surface2);font-weight:600}
+.sc-table tbody tr:hover:not(:last-child){background:rgba(255,255,255,0.015)}
+.np{color:var(--pass)}.nw{color:var(--warn)}.nf{color:var(--fail)}.nt{color:var(--text)}.na{color:var(--accent2)}
+.clink{color:var(--text);cursor:pointer}.clink:hover{color:var(--accent2)}
+
+/* Pattern / accent box */
+.pbox{background:var(--accent-bg);border:1px solid #2e1f6e;border-radius:6px;padding:16px 20px;margin-bottom:20px;font-size:13px;color:var(--text2);line-height:1.7}
+.pbox strong{color:var(--accent2)}
+code{font-family:'Space Mono',monospace;font-size:10px;background:var(--tag-bg);padding:1px 5px;border-radius:3px;color:var(--accent2)}
+hr.divider{border:none;border-top:1px solid var(--border);margin:40px 0}
+
+/* Top issues */
+.ibox{border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:48px}
+.irow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--border);align-items:flex-start}
+.irow:last-child{border-bottom:none}
+.in{font-family:'Space Mono',monospace;font-size:10px;color:var(--text3);flex-shrink:0;padding-top:2px;width:20px}
+.it{font-size:13px;color:var(--text2);line-height:1.6}
+.it strong{color:var(--text)}
+
+/* Section */
+.as{margin-bottom:56px;scroll-margin-top:20px}
+.sh{display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:16px;flex-wrap:wrap}
+.sn{font-size:20px;font-weight:700;letter-spacing:-0.01em}
+.sc{font-size:11px;color:var(--text3);background:var(--surface2);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+
+/* Section cards (gaps & strengths) */
+.ec{border:1px solid var(--border);border-radius:6px;margin-bottom:10px;overflow:hidden}
+.ec.cf{border-left:3px solid var(--fail)}
+.ec.cw:not(.cf){border-left:3px solid var(--warn)}
+.ec.cp{border-left:3px solid var(--pass)}
+.eh{display:flex;align-items:center;gap:10px;padding:12px 18px;background:var(--surface);cursor:pointer;user-select:none;transition:background 0.1s}
+.eh:hover{background:var(--surface2)}
+.ep{font-family:'Space Mono',monospace;font-size:11px;color:var(--text3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.en{font-size:13px;font-weight:500;flex-shrink:0;color:var(--text)}
+.eds{display:flex;gap:3px;flex-shrink:0}
+.dot{width:7px;height:7px;border-radius:50%}
+.dot.pass{background:var(--pass)}.dot.warn{background:var(--warn)}.dot.fail{background:var(--fail)}
+.chv{color:var(--text3);font-size:9px;transition:transform 0.18s;flex-shrink:0}
+.ec.open .chv{transform:rotate(180deg)}
+.eb{display:none;border-top:1px solid var(--border)}
+.ec.open .eb{display:block}
+.ct{width:100%;border-collapse:collapse}
+.ct tr{border-bottom:1px solid var(--border)}
+.ct tr:last-child{border-bottom:none}
+.ct td{padding:11px 18px;vertical-align:top}
+.cl{width:120px;font-family:'Space Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;padding-top:13px;white-space:nowrap}
+.cs{width:72px;padding-top:10px}
+.cn{color:var(--text2);font-size:13px;line-height:1.6}
+.cx{font-size:11px;color:var(--text3);margin-top:3px;font-style:italic}
+.cx strong{color:var(--warn);font-style:normal}
+.rp{background:rgba(52,211,153,0.02)}
+.rw{background:rgba(251,191,36,0.02)}
+.rf{background:rgba(248,113,113,0.03)}
+
+/* Score bar */
+.score-bar-wrap{display:flex;align-items:center;gap:10px;min-width:130px}
+.score-bar-bg{flex:1;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:2px}
+
+/* Priority type tag */
+.ptag{font-family:'Space Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;padding:1px 6px;border-radius:2px;flex-shrink:0}
+.ptag-error{background:var(--fail-bg);color:var(--fail);border:1px solid var(--fail-border)}
+.ptag-missing{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-border)}
+.ptag-xref{background:var(--accent-bg);color:var(--accent2);border:1px solid #2e1f6e}
+.ptag-improvement{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+
+/* Responsive */
+@media(max-width:900px){.main{grid-template-columns:1fr}.sidebar{display:none}.header,.legend-bar,.content{padding-left:20px;padding-right:20px}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="eyebrow">SDK Documentation Audit</div>
+  <h1>SDK Docs Quality Report</h1>
+  <div class="header-url">__AUDIT_URL__</div>
+  <div class="stats-row" id="stats-row">
+    <!-- injected by JS -->
+  </div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend-bar">
+  <span class="ll">Ratings</span>
+  <div class="li"><span class="badge strong">Strong</span> All must-haves, most should-haves</div>
+  <div class="li"><span class="badge good">Good</span> All must-haves, some gaps</div>
+  <div class="li"><span class="badge ok">Adequate</span> Most must-haves, notable gaps</div>
+  <div class="li"><span class="badge weak">Weak</span> Multiple must-haves missing</div>
+  <div class="li"><span class="badge fail">Poor</span> Largely absent</div>
+  <span class="ll" style="margin-left:16px">Gap tags</span>
+  <div class="li"><span class="ptag ptag-error">Error</span> Factual mistake</div>
+  <div class="li"><span class="ptag ptag-missing">Missing</span> Not covered anywhere</div>
+  <div class="li"><span class="ptag ptag-xref">X-Ref</span> Covered elsewhere, needs link</div>
+  <div class="li"><span class="ptag ptag-improvement">Improve</span> Should-have gap</div>
+</div>
+
+<div class="main">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sbh">Overview</div>
+    <div class="sbl" onclick="scrollTo('scorecard')">Summary Scorecard</div>
+    <div class="sbl" onclick="scrollTo('top-issues')">Top Priorities</div>
+    <div class="sbh" style="margin-top:8px">Sections</div>
+    <div id="sidebar-sections"><!-- injected by JS --></div>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- SCORECARD -->
+    <div id="scorecard" style="margin-bottom:48px">
+      <div class="st">Summary Scorecard</div>
+      <table class="sc-table">
+        <thead>
+          <tr>
+            <th>Section</th>
+            <th>Rating</th>
+            <th>Score</th>
+            <th>Strengths</th>
+            <th>Gaps</th>
+          </tr>
+        </thead>
+        <tbody id="scorecard-body"><!-- injected by JS --></tbody>
+      </table>
+    </div>
+
+    <!-- TOP PRIORITIES -->
+    <div id="top-issues" style="margin-bottom:48px">
+      <div class="st">Top Priority Recommendations</div>
+      <div class="ibox" id="priorities-box"><!-- injected by JS --></div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- SECTIONS -->
+    <div id="sections-container"><!-- injected by JS --></div>
+
+    <!-- FOOTER -->
+    <div style="font-size:11px;color:var(--text3);padding-bottom:40px;border-top:1px solid var(--border);padding-top:16px">
+      Audited <code>__AUDIT_URL__</code> on <code>__AUDIT_DATE__</code> &nbsp;·&nbsp; <code>__PAGES_FETCHED__ pages fetched</code> &nbsp;·&nbsp; Overall score: <code>__OVERALL_SCORE__/100</code>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SECTION_DATA = __SECTION_DATA_JSON__;
+const PRIORITIES   = __PRIORITIES_JSON__;
+const OVERALL_SCORE = __OVERALL_SCORE__;
+
+function scrollTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'})}
+function toggle(h){h.closest('.ec').classList.toggle('open')}
+
+function ratingBadge(r){
+  const m={Strong:'strong',Good:'good',Adequate:'ok',Weak:'weak',Poor:'poor'};
+  const labels={Strong:'Strong',Good:'Good',Adequate:'Adequate',Weak:'Weak',Poor:'Poor'};
+  const cls=m[r]||'ok';
+  return `<span class="badge ${cls}">${labels[r]||r}</span>`;
+}
+
+function scoreColor(s){
+  if(s>=85)return'var(--pass)';
+  if(s>=70)return'var(--pass)';
+  if(s>=50)return'var(--warn)';
+  if(s>=30)return'var(--fail)';
+  return'var(--fail)';
+}
+
+function sectionSlug(name){return name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')}
+
+function priorityTag(type){
+  const map={
+    error:'<span class="ptag ptag-error">Error</span>',
+    missing:'<span class="ptag ptag-missing">Missing</span>',
+    xref:'<span class="ptag ptag-xref">X-Ref</span>',
+    improvement:'<span class="ptag ptag-improvement">Improve</span>'
+  };
+  return map[type]||'';
+}
+
+function srcTagsHtml(gap){
+  if(gap.nowhere) return `<span style="font-family:'Space Mono',monospace;font-size:9px;background:var(--fail-bg);color:var(--fail);border:1px solid var(--fail-border);padding:1px 6px;border-radius:2px">not covered anywhere</span>`;
+  if(!gap.covered_in||!gap.covered_in.length) return '';
+  return gap.covered_in.map(p=>`<span style="font-family:'Space Mono',monospace;font-size:9px;background:var(--accent-bg);color:var(--accent2);border:1px solid #2e1f6e;padding:1px 6px;border-radius:2px">${esc(p)}</span>`).join(' ');
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+const sections = SECTION_DATA.sections||[];
+
+// Stats row
+const totalGaps = sections.reduce((a,s)=>a+(s.gaps||[]).length,0);
+const strong = sections.filter(s=>s.score>=85).length;
+const good   = sections.filter(s=>s.score>=70&&s.score<85).length;
+const ok     = sections.filter(s=>s.score>=50&&s.score<70).length;
+const weak   = sections.filter(s=>s.score<50).length;
+document.getElementById('stats-row').innerHTML = `
+  <div class="stat-cell"><span class="sv sv-score">${OVERALL_SCORE}/100</span><span class="slabel">Overall Score</span></div>
+  <div class="stat-cell"><span class="sv sv-total">${sections.length}</span><span class="slabel">Sections Audited</span></div>
+  <div class="stat-cell"><span class="sv sv-strong">${strong+good}</span><span class="slabel">Strong / Good</span></div>
+  <div class="stat-cell"><span class="sv sv-ok">${ok}</span><span class="slabel">Adequate</span></div>
+  <div class="stat-cell"><span class="sv sv-weak">${weak}</span><span class="slabel">Weak / Poor</span></div>
+  <div class="stat-cell"><span class="sv sv-total">${totalGaps}</span><span class="slabel">Total Gaps</span></div>
+  <div class="stat-cell"><span class="sv" style="color:var(--text2);font-size:16px">__AUDIT_DATE__</span><span class="slabel">Audit Date</span></div>
+`;
+
+// Sidebar
+const sidebarSections = document.getElementById('sidebar-sections');
+sections.forEach(sec=>{
+  const slug = sectionSlug(sec.name);
+  const gapCount = (sec.gaps||[]).length;
+  const strengthCount = (sec.strengths||[]).length;
+  const div = document.createElement('div');
+  div.className='sbl';
+  div.onclick=()=>scrollTo(slug);
+  div.innerHTML=`${esc(sec.name)}<span class="sbp">
+    <span class="spp spp-p">${strengthCount}S</span>
+    <span class="spp spp-f">${gapCount}G</span>
+  </span>`;
+  sidebarSections.appendChild(div);
+});
+
+// Scorecard
+const tbody = document.getElementById('scorecard-body');
+sections.forEach(sec=>{
+  const slug = sectionSlug(sec.name);
+  const color = scoreColor(sec.score);
+  const tr = document.createElement('tr');
+  tr.innerHTML=`
+    <td><a class="clink" onclick="scrollTo('${slug}')">${esc(sec.name)}</a></td>
+    <td style="text-align:left!important">${ratingBadge(sec.rating)}</td>
+    <td style="text-align:left!important">
+      <div class="score-bar-wrap">
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width:${sec.score}%;background:${color}"></div></div>
+        <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:${color};min-width:28px">${sec.score}</span>
+      </div>
+    </td>
+    <td class="np">${(sec.strengths||[]).length}</td>
+    <td class="nf">${(sec.gaps||[]).length}</td>
+  `;
+  tbody.appendChild(tr);
+});
+// totals row
+const totalRow = document.createElement('tr');
+totalRow.innerHTML=`
+  <td>Total / Average</td>
+  <td style="text-align:left!important">—</td>
+  <td style="text-align:left!important"><span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--accent2)">${OVERALL_SCORE}/100</span></td>
+  <td class="np">${sections.reduce((a,s)=>a+(s.strengths||[]).length,0)}</td>
+  <td class="nf">${totalGaps}</td>
+`;
+tbody.appendChild(totalRow);
+
+// Priorities
+const priBox = document.getElementById('priorities-box');
+(PRIORITIES.priorities||[]).forEach(p=>{
+  const row = document.createElement('div');
+  row.className='irow';
+  row.innerHTML=`
+    <span class="in">0${p.rank}</span>
+    <span style="flex-shrink:0;padding-top:3px">${priorityTag(p.type)}</span>
+    <span class="it">${esc(p.text)}</span>
+  `;
+  priBox.appendChild(row);
+});
+
+// Sections
+const container = document.getElementById('sections-container');
+sections.forEach((sec,idx)=>{
+  const slug = sectionSlug(sec.name);
+  const gapCount = (sec.gaps||[]).length;
+  const strengthCount = (sec.strengths||[]).length;
+
+  // Build gap rows
+  const gapRows = (sec.gaps||[]).map(g=>{
+    const isError = g.nowhere;
+    const rowCls = isError ? 'rf' : 'rw';
+    const badgeCls = isError ? 'fail' : 'warn';
+    const badgeText = isError ? '✕ Gap' : '⚠ Gap';
+    const srcTags = srcTagsHtml(g);
+    return `<tr class="${rowCls}">
+      <td class="cl">${isError?'Missing':'Needs work'}</td>
+      <td class="cs"><span class="badge ${badgeCls}">${badgeText}</span></td>
+      <td>
+        <div class="cn">${esc(g.text)}</div>
+        ${srcTags ? `<div class="cx" style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap;align-items:center"><strong style="font-style:normal;color:var(--text3)">Coverage:</strong> ${srcTags}</div>` : ''}
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Build strength rows
+  const strengthRows = (sec.strengths||[]).map(s=>`<tr class="rp">
+    <td class="cl">Present</td>
+    <td class="cs"><span class="badge pass">✓ Pass</span></td>
+    <td><div class="cn">${esc(s)}</div></td>
+  </tr>`).join('');
+
+  // Card open state for first section
+  const isOpen = idx === 0 ? ' open' : '';
+  const cardBorderClass = sec.score >= 70 ? 'cp' : sec.score >= 50 ? 'cw' : 'cf';
+
+  const section = document.createElement('div');
+  section.className='as';
+  section.id=slug;
+  section.innerHTML=`
+    <div class="sh">
+      <div class="sn">${esc(sec.num)}. ${esc(sec.name)}</div>
+      <span class="sc">Score: ${sec.score}/100</span>
+      ${ratingBadge(sec.rating)}
+      <span class="badge pass">${strengthCount} strength${strengthCount!==1?'s':''}</span>
+      <span class="badge ${sec.score>=70?'pass':sec.score>=50?'warn':'fail'}">${gapCount} gap${gapCount!==1?'s':''}</span>
+    </div>
+
+    <!-- Strengths card -->
+    ${strengthCount>0?`
+    <div class="ec cp${isOpen}" id="sec-str-${idx}">
+      <div class="eh" onclick="toggle(this)">
+        <span class="en">✓ Strengths</span>
+        <span class="ep">${strengthCount} item${strengthCount!==1?'s':''} present and correct</span>
+        <span class="chv">▼</span>
+      </div>
+      <div class="eb">
+        <table class="ct">${strengthRows}</table>
+      </div>
+    </div>`:''}
+
+    <!-- Gaps card -->
+    ${gapCount>0?`
+    <div class="ec ${cardBorderClass}${isOpen}" id="sec-gap-${idx}">
+      <div class="eh" onclick="toggle(this)">
+        <span class="en">${sec.score>=70?'⚠':'✕'} Gaps &amp; Issues</span>
+        <span class="ep">${gapCount} item${gapCount!==1?'s':''} missing or needing work</span>
+        <div class="eds">
+          ${(sec.gaps||[]).map(g=>`<span class="dot ${g.nowhere?'fail':'warn'}"></span>`).join('')}
+        </div>
+        <span class="chv">▼</span>
+      </div>
+      <div class="eb">
+        <table class="ct">${gapRows}</table>
+      </div>
+    </div>`:''}
+    ${idx < sections.length-1?'<hr class="divider">':''}
+  `;
+  container.appendChild(section);
+
+  // Auto-open first card in each section
+  setTimeout(()=>{
+    const strCard = document.getElementById(`sec-str-${idx}`);
+    const gapCard = document.getElementById(`sec-gap-${idx}`);
+    if(idx===0){
+      if(strCard) strCard.classList.add('open');
+      if(gapCard) gapCard.classList.add('open');
+    }
+  },0);
+});
+</script>
+</body>
+</html>

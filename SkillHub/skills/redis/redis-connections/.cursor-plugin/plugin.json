@@ -1,0 +1,13 @@
+{
+  "name": "redis-connections",
+  "version": "1.0.0",
+  "description": "Redis client and connection guidance — pooling, multiplexing, pipelining, client-side caching, timeouts, slow commands.",
+  "author": {
+    "name": "Redis",
+    "email": "support@redis.com"
+  },
+  "homepage": "https://redis.io",
+  "repository": "https://github.com/redis/agent-skills",
+  "license": "MIT",
+  "keywords": ["redis", "performance", "connections", "pooling", "pipelining", "client-side-cache"]
+}

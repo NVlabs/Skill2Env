@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-scgpt",
+  "evals": [
+    {
+      "id": "zero-shot-annotation",
+      "prompt": "I have an unlabeled scRNA-seq dataset in h5ad. Use a pretrained single-cell foundation model to annotate the cell types without training my own classifier.",
+      "expected_output": "Invokes alterlab-scgpt: loads a pretrained scGPT checkpoint, embeds the AnnData cells, and transfers cell-type labels zero-shot. Notes GPU need and heavy fine-tuning dispatch via alterlab-remote-compute.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "zero-shot" },
+        { "type": "behavior", "value": "Uses a pretrained foundation model for annotation rather than training a classifier from scratch." }
+      ]
+    },
+    {
+      "id": "cell-embeddings",
+      "prompt": "Generate scGPT embeddings for my cells so I can cluster them in the learned representation.",
+      "expected_output": "Invokes alterlab-scgpt to produce cell embeddings from a pretrained checkpoint, then feeds them into a neighbors/UMAP workflow (alterlab-scanpy) for clustering.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "embedding" }
+      ]
+    },
+    {
+      "id": "batch-integration",
+      "prompt": "Integrate several scRNA-seq batches using a transformer foundation-model representation to remove batch effects.",
+      "expected_output": "Invokes alterlab-scgpt to integrate batches via the model representation, comparable in role to scVI integration but from the pretrained-transformer paradigm.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Integrates batches using the scGPT representation." }
+      ]
+    },
+    {
+      "id": "near-miss-scvi-tools",
+      "prompt": "I want a probabilistic latent-variable model (scVI/scANVI) to integrate my data and do differential expression with uncertainty.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-scvi-tools, which provides the probabilistic VAE models (scVI/scANVI). scGPT is the pretrained-transformer route, not the probabilistic-latent-model route.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scvi-tools" }
+      ]
+    },
+    {
+      "id": "near-miss-scanpy",
+      "prompt": "Run the standard single-cell workflow: QC filtering, normalization, PCA, Leiden clustering, and a UMAP with marker genes.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-scanpy, the standard analysis pipeline. scGPT is a foundation model for annotation/embeddings, not the conventional QC→cluster→UMAP toolchain.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scanpy" }
+      ]
+    }
+  ]
+}

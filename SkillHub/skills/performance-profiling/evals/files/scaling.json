@@ -1,0 +1,22 @@
+{
+  "inputs": {
+    "data_file": "scaling_results.json",
+    "scaling_type": "strong"
+  },
+  "results": {
+    "type": "strong",
+    "baseline": {
+      "processors": 1,
+      "time": 1000.0
+    },
+    "results": [
+      {"processors": 1, "time": 1000.0, "speedup": 1.0, "efficiency": 1.0},
+      {"processors": 2, "time": 520.0, "speedup": 1.9230769230769231, "efficiency": 0.9615384615384616},
+      {"processors": 4, "time": 290.0, "speedup": 3.4482758620689653, "efficiency": 0.8620689655172413},
+      {"processors": 8, "time": 185.0, "speedup": 5.405405405405405, "efficiency": 0.6756756756756757},
+      {"processors": 16, "time": 140.0, "speedup": 7.142857142857143, "efficiency": 0.44642857142857145}
+    ],
+    "efficiency_threshold_processors": 8,
+    "average_efficiency": 0.7891423348319899
+  }
+}

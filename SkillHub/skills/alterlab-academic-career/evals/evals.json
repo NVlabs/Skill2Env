@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-academic-career",
+  "evals": [
+    {
+      "id": "research-statement-r1",
+      "prompt": "I'm applying for a tenure-track assistant professor position at an R1 university. Can you help me draft a 2-page research statement that lays out my research program, my current projects, and where my work is heading over the next five years?",
+      "expected_output": "Invokes alterlab-academic-career to draft a research statement: opens with the overarching research question and significance, organizes the body into 2-4 coherent research threads (each with motivating question, approach, key findings, contribution), covers current/ongoing work and funding status, dedicates a strong Future Directions section, and tailors emphasis to an R1 (publication record, funding trajectory, fundability) while writing for an educated non-specialist search committee.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Produces a Future Directions section and tailors the emphasis to R1 expectations (research impact and fundability) rather than teaching volume." }
+      ]
+    },
+    {
+      "id": "teaching-philosophy",
+      "prompt": "I need to write a teaching philosophy statement for a faculty application at a liberal arts college. I've taught intro statistics and a research methods seminar. Help me put it together.",
+      "expected_output": "Invokes alterlab-academic-career to draft a teaching philosophy: opens with a clear core teaching belief, develops 2-3 principles each grounded in a specific example with evidence of effectiveness, addresses inclusive teaching and assessment, and closes with growth/future goals. Leans the framing toward a teaching-focused SLAC (course development, student mentoring, evidence of student outcomes).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Grounds each teaching principle in a concrete classroom example with evidence rather than vague claims like 'I am passionate about teaching'." }
+      ]
+    },
+    {
+      "id": "tenure-dossier-narrative",
+      "prompt": "I'm going up for tenure next year. Can you help me structure my candidate's personal statement and figure out what should go in the rest of the dossier?",
+      "expected_output": "Invokes alterlab-academic-career to scaffold the tenure dossier: structures the candidate's narrative (research trajectory, teaching effectiveness, service, integration, future vision) in a confident evidence-based tone, and enumerates the other dossier components (updated CV, external review letters with guidance on choosing reviewers, teaching portfolio, publications portfolio, chair/committee letters).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "external review" }
+      ]
+    },
+    {
+      "id": "impact-metrics-orcid",
+      "prompt": "A search committee asked me to contextualize my impact. My h-index is 9 and I have a few papers in journals with low impact factors. How do I frame this honestly, and should I set up an ORCID profile?",
+      "expected_output": "Invokes alterlab-academic-career to explain impact metrics and web presence: contextualizes the h-index within subfield and career stage, notes its limitations and the DORA-aligned framing (discuss the contribution, not the journal), warns against cross-field/career comparisons, and walks through setting up an ORCID iD plus Google Scholar and a personal academic site for durable visibility.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "DORA" }
+      ]
+    },
+    {
+      "id": "near-miss-research-grants",
+      "prompt": "I'm writing the Specific Aims page and Research Strategy for an NIH R01 to fund my lab's next three years. Help me make the case for significance, innovation, and approach.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-research-grants. The user wants to write the substantive content of a funding proposal (Specific Aims, significance/innovation/approach), which is grant strategy and authoring, not a personal career document like a CV, research statement, or tenure narrative.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-research-grants" }
+      ]
+    },
+    {
+      "id": "near-miss-venue-templates",
+      "prompt": "I need the official LaTeX class and page-limit requirements to format my biosketch and proposal for an NSF submission. Where do I get the template?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-venue-templates. The user wants venue-specific LaTeX templates and formatting/page-limit requirements for an NSF submission, which is a formatting/template task, not the narrative career-document drafting this skill covers.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-venue-templates" }
+      ]
+    }
+  ]
+}

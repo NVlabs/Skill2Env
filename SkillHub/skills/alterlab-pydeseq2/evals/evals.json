@@ -1,0 +1,63 @@
+{
+  "skill": "alterlab-pydeseq2",
+  "evals": [
+    {
+      "id": "two-group-deseq2",
+      "prompt": "I have a bulk RNA-seq raw counts CSV (genes as rows) and a metadata table with a condition column (treated vs control). I want the list of differentially expressed genes with FDR-adjusted p-values.",
+      "expected_output": "Invokes alterlab-pydeseq2. Loads and transposes counts to samples × genes, filters low-count genes (>= 10 total), builds DeseqDataSet(design='~condition') and runs dds.deseq2(), then DeseqStats(contrast=['condition','treated','control']).summary(), and filters results_df by padj < 0.05 (Benjamini-Hochberg).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "DeseqDataSet" },
+        { "type": "behavior", "value": "Builds DeseqDataSet, runs deseq2(), tests with a contrast, and filters by padj." }
+      ]
+    },
+    {
+      "id": "batch-corrected-design",
+      "prompt": "My RNA-seq samples were processed in two batches that are confounded with my treatment in a tricky way. I want to test the treatment effect while controlling for batch in the model.",
+      "expected_output": "Invokes alterlab-pydeseq2. Uses a multi-factor design '~batch + condition' (adjustment variable before the variable of interest), runs the pipeline, tests the condition contrast, and may check pd.crosstab(condition, batch) for full-rank / confounding issues.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "~batch + condition" },
+        { "type": "behavior", "value": "Specifies a multi-factor design with batch before condition and tests the condition contrast." }
+      ]
+    },
+    {
+      "id": "volcano-lfc-shrink",
+      "prompt": "I already ran DESeq2 stats. Now I want a volcano plot and I want the fold-change estimates de-noised so the plot and gene ranking look clean.",
+      "expected_output": "Invokes alterlab-pydeseq2. Calls ds.lfc_shrink() (apeGLM) for visualization/ranking, notes that shrinkage changes log2FoldChange but NOT p-values, and builds a volcano plot of log2FoldChange vs -log10(padj) highlighting padj < 0.05.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "lfc_shrink" },
+        { "type": "behavior", "value": "Applies LFC shrinkage for the plot/ranking while keeping p-values from unshrunken estimates." }
+      ]
+    },
+    {
+      "id": "multiple-treatment-contrasts",
+      "prompt": "My experiment has three treatment groups plus a control. I want to test each treatment against the control separately and count significant genes for each.",
+      "expected_output": "Invokes alterlab-pydeseq2. Fits one DeseqDataSet(design='~condition') with dds.deseq2(), then loops over treatments running DeseqStats(contrast=['condition', treatment, 'control']).summary() per group and counts results_df[padj < 0.05].",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "contrast" },
+        { "type": "behavior", "value": "Reuses one fitted dds and runs per-treatment contrasts against control." }
+      ]
+    },
+    {
+      "id": "near-miss-arboreto",
+      "prompt": "From my expression matrix I want to infer the regulatory network of which transcription factors drive which target genes.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-arboreto. The user wants gene regulatory network inference (GRNBoost2/GENIE3), not differential expression testing between conditions.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-arboreto" }
+      ]
+    },
+    {
+      "id": "near-miss-scanpy",
+      "prompt": "I have a single-cell AnnData and want to find marker genes for each Leiden cluster using a rank_genes_groups test.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scanpy. The user wants per-cluster marker detection on single-cell data (rank_genes_groups), not bulk RNA-seq differential expression with the DESeq2 negative-binomial model.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scanpy" }
+      ]
+    }
+  ]
+}

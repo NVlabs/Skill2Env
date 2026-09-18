@@ -1,0 +1,3 @@
+ebooklib==0.18.0
+markdown2==2.4.12
+Pygments==2.17.2

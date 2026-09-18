@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-zarr",
+  "evals": [
+    {
+      "id": "create-chunked-compressed-array",
+      "prompt": "I have a 10000x10000 float32 array that won't fit comfortably in memory. I want to store it as a chunked, compressed array on disk with roughly 1 MB chunks. How do I set it up?",
+      "expected_output": "Invokes alterlab-zarr: uses zarr.create_array (or zarr.zeros) with a LocalStore path, chunks sized to ~1 MB (e.g. 512x512 for float32), an appropriate Blosc/Zstandard codec, and shows NumPy-style slice writes/reads, explaining the ~1 MB chunk-size guideline.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "chunk" }
+      ]
+    },
+    {
+      "id": "cloud-s3-store-consolidated",
+      "prompt": "I need to write a large scientific array to an S3 bucket so collaborators can read slices of it remotely without downloading the whole thing. What's the right way to chunk it and minimize cloud latency?",
+      "expected_output": "Invokes alterlab-zarr: configures an fsspec-backed S3 store (e.g. FsspecStore.from_url for an s3:// URL), picks cloud-appropriate chunk sizes (5-100 MB), writes the array, and calls zarr.consolidate_metadata so readers can zarr.open_consolidated to cut metadata round-trips, optionally recommending sharding to reduce object count.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses an S3 store with cloud-sized chunks and consolidates metadata (open_consolidated) to reduce cloud latency." }
+      ]
+    },
+    {
+      "id": "chunk-alignment-access-pattern",
+      "prompt": "My (200, 200, 200) Zarr array reads are painfully slow when I slice along the first axis. I think my chunking is wrong — how should I shape the chunks?",
+      "expected_output": "Invokes alterlab-zarr: explains that chunk shape must align with the access pattern, recommends chunks that span the frequently-accessed dimension (e.g. (1, 200, 200) is slow for first-axis reads while (200, 200, 1) is far faster), and shows how to re-chunk and verify with z.info.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Diagnoses chunk-shape misalignment with the access pattern and recommends a chunk shape that spans the slow dimension." }
+      ]
+    },
+    {
+      "id": "hdf5-to-zarr-conversion",
+      "prompt": "I have a big dataset in an HDF5 file and want to convert it to Zarr so I can do parallel out-of-core processing later. How do I migrate it?",
+      "expected_output": "Invokes alterlab-zarr: reads the HDF5 dataset with h5py and writes it to a Zarr store via zarr.array (or group.create_array) with appropriate chunks, and mentions that the resulting store can be loaded lazily with Dask (da.from_zarr) for parallel computation.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "zarr" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-dask",
+      "prompt": "I already have my data stored as a Zarr array. Now I want to compute a parallel, out-of-core matrix multiply and a column-wise mean across the whole thing using a distributed scheduler.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-dask. The storage format is settled (Zarr); the ask is about lazy parallel/out-of-core computation and scheduling, which is Dask's domain, not array creation/chunking/compression with Zarr.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-dask" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-eda",
+      "prompt": "Here's a .zarr store someone handed me. I don't know what's inside — explore its structure, the variables, value ranges, and any quality issues and give me a summary report.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-eda. The user wants an exploratory analysis and quality report of an unknown data file, not help creating, chunking, compressing, or moving a Zarr array to cloud storage.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-eda" }
+      ]
+    }
+  ]
+}

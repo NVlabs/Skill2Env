@@ -1,0 +1,62 @@
+{
+  "skill": "alterlab-opentargets",
+  "evals": [
+    {
+      "id": "target-discovery-for-disease",
+      "prompt": "I'm looking for therapeutic targets for Alzheimer's disease. Use Open Targets to give me the top genes ranked by association score, prioritizing genetic evidence.",
+      "expected_output": "Invokes alterlab-opentargets. Resolves Alzheimer disease to its current ontology ID (MONDO_0004975) via the search/GraphQL API, retrieves associated targets with their association scores, and ranks them, emphasizing genetic_association evidence per the target-prioritization strategy. Notes scores are relative rankings, not absolute confidence.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "association score" },
+        { "type": "behavior", "value": "Resolves the disease to an EFO ID and ranks associated targets, foregrounding human genetic evidence." }
+      ]
+    },
+    {
+      "id": "target-tractability-safety",
+      "prompt": "Before I commit to BRCA1 as a drug target, assess its druggability and safety in Open Targets — tractability across modalities, safety liabilities, and genetic constraint.",
+      "expected_output": "Invokes alterlab-opentargets. Resolves BRCA1 to its Ensembl ID (ENSG00000012048) and retrieves target info covering tractability (small molecule, antibody, PROTAC), safetyLiabilities, and geneticConstraint (pLI/LOEUF), interpreting these for target assessment.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "tractability" },
+        { "type": "behavior", "value": "Reports tractability across modalities, safety liabilities, and genetic constraint for the target's Ensembl ID." }
+      ]
+    },
+    {
+      "id": "target-disease-evidence",
+      "prompt": "Show me the genetic association evidence behind the BRAF (ENSG00000157764) link to its associated disease in Open Targets — datasource, score, and supporting literature.",
+      "expected_output": "Invokes alterlab-opentargets. Queries target-disease evidence narrowed to genetic association (via genetic_association datasource_ids such as gwas_catalog/clinvar, or by filtering returned rows on datatypeId), returning per-evidence datasourceId (e.g. gwas_catalog, clinvar), datatypeId, score (0-1), studyId, and associated literature.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "genetic_association" },
+        { "type": "behavior", "value": "Retrieves and breaks down target-disease evidence by data source and type, not just the aggregate score." }
+      ]
+    },
+    {
+      "id": "known-drugs-repurposing",
+      "prompt": "What drugs are already known for Alzheimer's disease in Open Targets? Give me each drug, its target, mechanism of action, and clinical trial phase for drug-repurposing ideas.",
+      "expected_output": "Invokes alterlab-opentargets. Uses get_known_drugs_for_disease for the EFO ID and returns the drug-target-indication rows: drug name and type, targeted genes, mechanismOfAction, and clinical phase/status, framed for repurposing.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Lists known drugs for the disease with their targets, mechanisms of action, and clinical trial phases." }
+      ]
+    },
+    {
+      "id": "near-miss-clinicaltrials",
+      "prompt": "List the actively recruiting Phase 3 clinical trials for donepezil in Alzheimer's disease, with their NCT numbers, sites, and enrollment.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-clinicaltrials. The user wants the registry-level trial records (NCT IDs, recruitment status, sites, enrollment) from ClinicalTrials.gov, not Open Targets target-disease association or evidence data.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-clinicaltrials" }
+      ]
+    },
+    {
+      "id": "near-miss-gwas",
+      "prompt": "Pull the individual GWAS Catalog summary statistics and lead SNPs with p-values and risk alleles for late-onset Alzheimer's disease.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-gwas. The user wants raw GWAS Catalog associations (lead SNPs, p-values, effect/risk alleles), not Open Targets' integrated and scored target-disease associations.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-gwas" }
+      ]
+    }
+  ]
+}

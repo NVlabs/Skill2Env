@@ -1,0 +1,61 @@
+{
+  "skill": "alterlab-results-transparency",
+  "evals": [
+    {
+      "id": "selective-reporting-subset",
+      "prompt": "I ran six different models on my intervention data and two of them came out significant. I'm just going to write up those two in the Results — the others didn't really show anything. Help me phrase the finding cleanly.",
+      "expected_output": "Invokes alterlab-results-transparency. Applies the Iron Law (NO RESULTS CLAIM WITHOUT REPORTING EVERY ANALYSIS RUN) and refuses to help write up only the two significant models. Runs the Gate Function: LIST flags that 6 models were run but only 2 are being reported (selective reporting), and the escalation gate flags 6 tests on one hypothesis as multiple comparisons requiring Bonferroni/FDR correction or an exploratory label. Routes the statistics themselves to alterlab-statistical-analysis and the frozen-plan check to alterlab-preregistration-discipline. Does not produce a clean sentence for a cherry-picked subset.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "every analysis" },
+        { "type": "behavior", "value": "Refuses to write up only the significant subset; names the omitted analyses as selective reporting and flags the multiple-comparisons problem, rather than helping cherry-pick." }
+      ]
+    },
+    {
+      "id": "bare-p-value-no-effect-size",
+      "prompt": "Here's my results sentence: 'Mindfulness training significantly reduced exam anxiety (p < .05).' Is that good to drop into the paper?",
+      "expected_output": "Invokes alterlab-results-transparency. Runs the Gate Function and BLOCKS the sentence: step 4 fails because a bare p-value carries no effect size and no 95% confidence interval, and 'p < .05' is not an exact p with df. States the sufficiency requirement (test name, statistic, df, exact p, effect size + 95% CI), and defers the actual computation of the effect size and CI to alterlab-statistical-analysis. Optionally demonstrates scripts/reporting_gate.py blocking the claim.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "effect size" },
+        { "type": "behavior", "value": "Blocks the bare-p-value sentence and requires an effect size with a 95% CI plus exact p and df, instead of approving it as written." }
+      ]
+    },
+    {
+      "id": "post-hoc-outlier-drop",
+      "prompt": "My t-test came out at p = .07. If I drop the three participants with the highest anxiety scores it goes to p = .03. Can you help me write the Results paragraph with the outliers removed?",
+      "expected_output": "Invokes alterlab-results-transparency. Triggers the Excuse-vs-Reality table and Red-Flags-STOP list: dropping outliers because they flip significance is exploiting a researcher degree of freedom. Requires that the exclusion rule was pre-specified or that both analyses (with and without the cases) be reported as a sensitivity analysis, and that any deviation from the frozen plan be labelled exploratory. Routes the frozen-plan question to alterlab-preregistration-discipline and any re-running of the test to alterlab-statistical-analysis. Does not produce a paragraph that silently drops the cases.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Refuses to silently drop outliers to cross p < .05; requires a pre-specified rule or a reported sensitivity analysis, and labels the change exploratory." }
+      ]
+    },
+    {
+      "id": "abstract-results-sentence-check",
+      "prompt": "Before I finalize the abstract, can you sanity-check this results claim for transparency? 'Our intervention improved retention.' I have the analyses ready in a separate file.",
+      "expected_output": "Invokes alterlab-results-transparency. Runs the Gate Function over the claim: IDENTIFY the sentence, LIST every analysis actually run (asking for the full set, not just the supporting one), CHECK assumptions were reported, CHECK an effect size + 95% CI accompany the claim, and CHECK pre-registration deviations are disclosed. Surfaces what is missing for the abstract sentence to be defensible rather than rewriting the statistics, which it routes to alterlab-statistical-analysis.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Walks the claim through the numbered Gate Function and lists what must be present (all analyses, assumptions, effect size + CI, deviations) before the abstract sentence is defensible." }
+      ]
+    },
+    {
+      "id": "near-miss-statistical-analysis",
+      "prompt": "I have two groups of exam scores and I'm not sure whether to use an independent t-test or a Mann-Whitney U. Can you check the normality assumption for me and run the right test with an effect size?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-statistical-analysis. The user wants test selection, an assumption check (normality), and the actual computation of the test and effect size — the statistical substance. alterlab-results-transparency only gates whether a finding is reported completely and honestly once the numbers exist; it does not choose or run tests or compute effect sizes.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statistical-analysis" }
+      ]
+    },
+    {
+      "id": "near-miss-preregistration-discipline",
+      "prompt": "I'm about to start a new study and I haven't collected any data yet. How do I freeze my hypotheses, primary outcome, exclusion rules, and stopping rule before I look at the data?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-preregistration-discipline. The user is authoring a frozen analysis plan BEFORE data collection — that is the pre-registration discipline. alterlab-results-transparency operates at the opposite end of the pipeline (write-up time), enforcing that the eventual claims report every analysis and disclose deviations from that frozen plan; it does not help create the plan.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-preregistration-discipline" }
+      ]
+    }
+  ]
+}

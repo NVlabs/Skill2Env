@@ -1,0 +1,54 @@
+{
+  "skill": "alterlab-biopython",
+  "evals": [
+    {
+      "id": "parse-genbank-batch",
+      "prompt": "I have a folder of ~400 GenBank (.gb) files from a sequencing run. I want a Python script that walks the folder, reads each record with SeqIO, and writes one combined multi-FASTA with the accession as the header and the nucleotide sequence. Memory matters since some files are large.",
+      "expected_output": "Triggers the Biopython skill. Should write a Python script using Bio.SeqIO.parse / SeqIO.read to read GenBank records and SeqIO.write (or SeqIO.convert) to emit FASTA, iterating records one at a time rather than loading everything into memory, and using record.id / record.seq. Should reference the 'genbank' and 'fasta' format strings and proper handle/context-manager handling.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "SeqIO"},
+        {"type": "behavior", "value": "Uses an iterator over records (SeqIO.parse) for memory efficiency rather than reading the whole set into a list."}
+      ]
+    },
+    {
+      "id": "entrez-efetch-pubmed",
+      "prompt": "Write me a script that searches PubMed for papers on 'CRISPR base editing' from the last two years, gets the top 50 PMIDs, then fetches the title and abstract for each. I need to be a good NCBI citizen about rate limits.",
+      "expected_output": "Triggers the Biopython skill. Should use Bio.Entrez with Entrez.esearch (db='pubmed') then Entrez.efetch/esummary, set Entrez.email (and mention the optional Entrez.api_key for 10 req/s), and respect NCBI rate limits with batching/delays. Should parse results with Entrez.read.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "Entrez"},
+        {"type": "behavior", "value": "Sets Entrez.email and addresses NCBI rate limiting (api_key and/or delays/batching)."}
+      ]
+    },
+    {
+      "id": "pdb-ca-distance",
+      "prompt": "I downloaded 1CRN.pdb. Can you give me Python to parse the structure and compute the distance between the alpha carbons of residue 10 and residue 20 in chain A?",
+      "expected_output": "Triggers the Biopython skill. Should use Bio.PDB.PDBParser (ideally with QUIET=True) to parse the structure, navigate the SMCRA hierarchy (structure[0]['A'][10]['CA']), and compute the CA-CA distance via atom subtraction. Should print the distance in angstroms.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "PDBParser"},
+        {"type": "behavior", "value": "Navigates the Structure/Model/Chain/Residue/Atom hierarchy and subtracts two CA atoms to get a distance."}
+      ]
+    },
+    {
+      "id": "nj-tree-from-alignment",
+      "prompt": "I have a multiple sequence alignment in FASTA. Build a neighbor-joining tree from it in Python and draw it as ASCII so I can sanity-check the topology in my terminal.",
+      "expected_output": "Triggers the Biopython skill. Should read the alignment with Bio.AlignIO.read, compute a distance matrix with DistanceCalculator, build the tree with DistanceTreeConstructor().nj(), and render it with Bio.Phylo.draw_ascii.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "DistanceTreeConstructor"},
+        {"type": "behavior", "value": "Uses AlignIO to read the alignment and Bio.Phylo to construct and ASCII-draw a neighbor-joining tree."}
+      ]
+    },
+    {
+      "id": "near-miss-gget",
+      "prompt": "Quick one-off: I just need the UniProt ID and a one-line description for the human gene ENSG00000034713 — what's the fastest way to look that up from the terminal?",
+      "expected_output": "Should NOT trigger the Biopython skill. This is a quick interactive single-gene database lookup, which is gget territory (gget info). The response should defer to the gget skill (e.g. `gget info ENSG00000034713`) rather than scripting a Bio.Entrez/UniProt request, since the skill description explicitly routes quick one-off lookups to gget.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "gget"}
+      ]
+    }
+  ]
+}

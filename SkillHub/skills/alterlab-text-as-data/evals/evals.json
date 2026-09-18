@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-text-as-data",
+  "evals": [
+    {
+      "id": "topic-modeling-discovery",
+      "prompt": "I have 20,000 news articles and want to discover the main themes with topic modeling.",
+      "expected_output": "Invokes alterlab-text-as-data: recommends BERTopic (or LDA) for discovery, chooses K by coherence and interpretability, and validates topic stability across seeds rather than trusting a single run.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "BERTopic" },
+        { "type": "behavior", "value": "Selects a topic model for discovery and validates topic reliability across runs, not one stochastic solution." }
+      ]
+    },
+    {
+      "id": "dictionary-measurement",
+      "prompt": "I want to measure how much populist rhetoric each speech contains using a validated word list.",
+      "expected_output": "Invokes alterlab-text-as-data: uses a dictionary/lexicon method for measurement, normalizes by length, and validates the score against human coding — treating the lexicon as an instrument.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses a dictionary/lexicon measurement approach and requires validation against human coding." }
+      ]
+    },
+    {
+      "id": "embedding-similarity",
+      "prompt": "Embed my documents so I can cluster them and find which ones are most similar.",
+      "expected_output": "Invokes alterlab-text-as-data: uses sentence-transformers embeddings (e.g. all-MiniLM-L6-v2) and cosine similarity / clustering, noting the embedding model should suit the domain and language.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "embed" }
+      ]
+    },
+    {
+      "id": "near-miss-transformers",
+      "prompt": "I want to fine-tune a BERT model on my labeled dataset to build a custom classifier.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-transformers. Fine-tuning/training a transformer model is that skill's domain, not corpus measurement.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-transformers" }
+      ]
+    },
+    {
+      "id": "near-miss-digital-humanities",
+      "prompt": "I want to do a close reading and manual annotation of a small set of literary texts for a humanities project.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-digital-humanities. Interpretive close-reading/annotation is not quantitative text-as-data measurement.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-digital-humanities" }
+      ]
+    }
+  ]
+}

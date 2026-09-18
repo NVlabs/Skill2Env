@@ -1,0 +1,62 @@
+{
+  "skill": "alterlab-phylogenetics",
+  "evals": [
+    {
+      "id": "full-ml-tree-from-fasta",
+      "prompt": "I have a FASTA of about 150 unaligned protein sequences from a gene family. Align them, trim the bad columns, infer a maximum-likelihood tree with automatic model selection and 1000 bootstraps, then root it and give me a figure.",
+      "expected_output": "Invokes alterlab-phylogenetics: runs MAFFT (linsi/einsi for ~150 seqs) to align, TrimAl to trim, IQ-TREE 2 with -m TEST for model selection and -B 1000 ultrafast bootstraps, then midpoint-roots and visualizes with ETE3. Full align -> trim -> ML tree -> visualize pipeline.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "IQ-TREE" },
+        { "type": "behavior", "value": "Sequences MAFFT alignment, optional TrimAl, then IQ-TREE 2 with model selection (-m TEST) and -B 1000 bootstraps." }
+      ]
+    },
+    {
+      "id": "fasttree-large-dataset",
+      "prompt": "I've got an alignment of around 8000 nucleotide sequences and IQ-TREE is taking forever. What's the fast way to get an approximate ML tree out of this?",
+      "expected_output": "Invokes alterlab-phylogenetics: recommends FastTree for the large dataset (FastTree -nt -gtr for nucleotides), noting it is 10-100x faster than IQ-TREE for thousands of sequences, as the appropriate fast approximate-ML choice.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "FastTree" },
+        { "type": "behavior", "value": "Recommends FastTree (with -nt -gtr) for the large alignment as the fast approximate-ML alternative to IQ-TREE." }
+      ]
+    },
+    {
+      "id": "mafft-method-selection",
+      "prompt": "I'm aligning around 60 closely related sequences and accuracy matters more than speed. Which MAFFT mode should I use and how do I run it?",
+      "expected_output": "Invokes alterlab-phylogenetics: recommends an accurate MAFFT mode for the small set (linsi via --localpair --maxiterate 1000, or einsi via --genafpair) since accuracy is preferred for <200 sequences, and shows the run command.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "MAFFT" },
+        { "type": "behavior", "value": "Selects an accurate MAFFT mode (linsi/einsi) for the small sequence set per the method-selection guidance." }
+      ]
+    },
+    {
+      "id": "viral-molecular-clock-recombination",
+      "prompt": "I'm doing phylodynamics on a set of dated SARS-CoV-2 genomes and want to estimate divergence dates. Anything I should check before building the tree, and how do I add the temporal calibration?",
+      "expected_output": "Invokes alterlab-phylogenetics: warns to check for recombination first (RDP4/GARD) in viral sequences, then builds the tree and adds molecular-clock / temporal calibration via IQ-TREE 2 --date with dates.txt (and --date-CI). Phylodynamics/molecular-clock workflow.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Advises a recombination check (RDP4/GARD) before tree-building and uses IQ-TREE --date for temporal/molecular-clock calibration." }
+      ]
+    },
+    {
+      "id": "near-miss-etetoolkit",
+      "prompt": "I already have a finished Newick tree. I just want to prune it to a subset of taxa keeping branch lengths, detect duplication versus speciation events on the gene tree, and compute the Robinson-Foulds distance to a second tree.",
+      "expected_output": "Should NOT trigger alterlab-phylogenetics. Manipulating an existing tree (prune, duplication/speciation event detection via get_descendant_evol_events, robinson_foulds comparison) is alterlab-etetoolkit territory. phylogenetics is the upstream align-and-infer pipeline and defers pure tree manipulation/comparison to the ETE Toolkit skill.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "etetoolkit" }
+      ]
+    },
+    {
+      "id": "near-miss-biopython",
+      "prompt": "I just need to parse a multi-record FASTA file, reverse-complement each sequence, translate it to protein, and write the results back out to a new FASTA.",
+      "expected_output": "Should NOT trigger alterlab-phylogenetics. Basic sequence parsing, reverse-complement, translation, and FASTA I/O is general sequence handling for alterlab-biopython, with no alignment or tree inference involved. phylogenetics is specifically for reconstructing evolutionary trees.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "biopython" }
+      ]
+    }
+  ]
+}

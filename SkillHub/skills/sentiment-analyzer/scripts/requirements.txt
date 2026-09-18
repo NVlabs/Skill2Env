@@ -1,0 +1,6 @@
+vaderSentiment>=3.3.0
+pandas>=2.0.0
+click>=8.0.0
+# Optional for better accuracy:
+# transformers>=4.30.0
+# torch>=2.0.0

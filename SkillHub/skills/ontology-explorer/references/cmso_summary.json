@@ -1,0 +1,691 @@
+{
+  "metadata": {
+    "iri": "http://purls.helmholtz-metadaten.de/cmso/",
+    "title": null,
+    "version": "0.0.1",
+    "description": null,
+    "source_url": "https://raw.githubusercontent.com/OCDO/cmso/main/cmso.owl",
+    "generated_at": "2026-02-25T14:36:39.357403+00:00"
+  },
+  "classes": {
+    "Crystalline Material": {
+      "iri": "http://purls.helmholtz-metadaten.de/cdos/cdco/CrystallineMaterial",
+      "parent": "Material",
+      "children": [
+        "Bicrystal",
+        "Polycrystal"
+      ],
+      "description": null
+    },
+    "Crystallographic Defect": {
+      "iri": "http://purls.helmholtz-metadaten.de/cdos/cdco/CrystallographicDefect",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Material": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/Material",
+      "parent": null,
+      "children": [
+        "Amorphous Material",
+        "Crystalline Material"
+      ],
+      "description": "In the CMSO context, 'Material' refers to a theoretical entity and not necessarily a tangible object."
+    },
+    "Amorphous Material": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/AmorphousMaterial",
+      "parent": "Material",
+      "children": [],
+      "description": null
+    },
+    "Angle": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/Angle",
+      "parent": null,
+      "children": [
+        "Lattice Angle",
+        "Simulation Cell Angle"
+      ],
+      "description": null
+    },
+    "Atom": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/Atom",
+      "parent": "Chemical Species",
+      "children": [],
+      "description": null
+    },
+    "Atom Attribute": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/AtomAttribute",
+      "parent": null,
+      "children": [
+        "Atomic Force",
+        "Atomic Position",
+        "Atomic Velocity",
+        "Coordination Number",
+        "Occupancy"
+      ],
+      "description": null
+    },
+    "Atomic Force": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/AtomicForce",
+      "parent": "Atom Attribute",
+      "children": [],
+      "description": null
+    },
+    "Atomic Position": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/AtomicPosition",
+      "parent": "Atom Attribute",
+      "children": [],
+      "description": "Cartesian coordinates are preferred over direct (or fractional) coordinates."
+    },
+    "Atomic Scale Sample": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/AtomicScaleSample",
+      "parent": "Computational Sample",
+      "children": [],
+      "description": null
+    },
+    "Atomic Velocity": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/AtomicVelocity",
+      "parent": "Atom Attribute",
+      "children": [],
+      "description": null
+    },
+    "Basis": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/Basis",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Bicrystal": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/Bicrystal",
+      "parent": "Crystalline Material",
+      "children": [],
+      "description": null
+    },
+    "Chemical Composition": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/ChemicalComposition",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Chemical Element": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/ChemicalElement",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Chemical Species": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/ChemicalSpecies",
+      "parent": null,
+      "children": [
+        "Atom",
+        "Molecule"
+      ],
+      "description": "In this context, it refers to either an atom, ion or molecule."
+    },
+    "Computational Sample": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/ComputationalSample",
+      "parent": null,
+      "children": [
+        "Atomic Scale Sample",
+        "Macroscale Sample",
+        "Mesoscale Sample",
+        "Microscale Sample",
+        "Nanoscale Sample"
+      ],
+      "description": null
+    },
+    "Coordination Number": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/CoordinationNumber",
+      "parent": "Atom Attribute",
+      "children": [],
+      "description": "In the case of molecules, it refers to the number of atoms, molecules or ions bonded to a central atom of the molecule. Also known as ligancy."
+    },
+    "Crystal Defect": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/CrystalDefect",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Crystal Structure": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/CrystalStructure",
+      "parent": "Structure",
+      "children": [],
+      "description": "In this context, the crystal structure refers to the idealized state, while the defect information is represented elsewhere (see Crystal Defect)."
+    },
+    "Lattice Angle": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/LatticeAngle",
+      "parent": "Angle",
+      "children": [],
+      "description": null
+    },
+    "Lattice Parameter": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/LatticeParameter",
+      "parent": null,
+      "children": [],
+      "description": "The lattice angles can also be considered lattice parameters (see Lattice Angle)"
+    },
+    "Lattice Plane": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/LatticePlane",
+      "parent": "Plane",
+      "children": [],
+      "description": null
+    },
+    "Lattice Vector": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/LatticeVector",
+      "parent": "Vector",
+      "children": [],
+      "description": "Note that it differs from the simulation cell vector."
+    },
+    "Macroscale Sample": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/MacroscaleSample",
+      "parent": "Computational Sample",
+      "children": [],
+      "description": null
+    },
+    "Mesoscale Sample": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/MesoscaleSample",
+      "parent": "Computational Sample",
+      "children": [],
+      "description": null
+    },
+    "Microscale Sample": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/MicroscaleSample",
+      "parent": "Computational Sample",
+      "children": [],
+      "description": null
+    },
+    "Microstructure": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/Microstructure",
+      "parent": "Structure",
+      "children": [],
+      "description": null
+    },
+    "Molecule": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/Molecule",
+      "parent": "Chemical Species",
+      "children": [],
+      "description": null
+    },
+    "Nanoscale Sample": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/NanoscaleSample",
+      "parent": "Computational Sample",
+      "children": [],
+      "description": null
+    },
+    "Normal Vector": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/NormalVector",
+      "parent": "Vector",
+      "children": [],
+      "description": null
+    },
+    "Occupancy": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/Occupancy",
+      "parent": "Atom Attribute",
+      "children": [],
+      "description": "Note the difference from a total ratio or percentage of the occupancy of a site in the crystal structure (as defined in CIF)"
+    },
+    "Plane": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/Plane",
+      "parent": null,
+      "children": [
+        "Lattice Plane"
+      ],
+      "description": "The equation of a plane is \ud835\udc4e \ud835\udc65 + \ud835\udc4f \ud835\udc66 + \ud835\udc50 \ud835\udc67 + \ud835\udc51 = 0 , where \ud835\udc4e , \ud835\udc4f , and \ud835\udc50 are the components of the normal vector \u20d1 \ud835\udc5b = ( \ud835\udc4e , \ud835\udc4f , \ud835\udc50 ) , which is perpendicular to the plane or any vector parallel to the plane."
+    },
+    "Polycrystal": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/Polycrystal",
+      "parent": "Crystalline Material",
+      "children": [],
+      "description": null
+    },
+    "Simulation Cell": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/SimulationCell",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Simulation Cell Angle": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/SimulationCellAngle",
+      "parent": "Angle",
+      "children": [],
+      "description": null
+    },
+    "Simulation Cell Length": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/SimulationCellLength",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Simulation Cell Vector": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/SimulationCellVector",
+      "parent": "Vector",
+      "children": [],
+      "description": "Note that it differs from the lattice vector."
+    },
+    "Simulation Cell Volume": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/SimulationCellVolume",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Space Group": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/SpaceGroup",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Structure": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/Structure",
+      "parent": null,
+      "children": [
+        "Crystal Structure",
+        "Microstructure"
+      ],
+      "description": null
+    },
+    "Unit Cell": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/UnitCell",
+      "parent": null,
+      "children": [],
+      "description": null
+    },
+    "Vector": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/Vector",
+      "parent": null,
+      "children": [
+        "Lattice Vector",
+        "Normal Vector",
+        "Simulation Cell Vector"
+      ],
+      "description": null
+    },
+    "Unit": {
+      "iri": "http://qudt.org/schema/qudt/Unit",
+      "parent": null,
+      "children": [],
+      "description": null
+    }
+  },
+  "class_hierarchy": {
+    "Angle": {
+      "Lattice Angle": {},
+      "Simulation Cell Angle": {}
+    },
+    "Atom Attribute": {
+      "Atomic Force": {},
+      "Atomic Position": {},
+      "Atomic Velocity": {},
+      "Coordination Number": {},
+      "Occupancy": {}
+    },
+    "Basis": {},
+    "Chemical Composition": {},
+    "Chemical Element": {},
+    "Chemical Species": {
+      "Atom": {},
+      "Molecule": {}
+    },
+    "Computational Sample": {
+      "Atomic Scale Sample": {},
+      "Macroscale Sample": {},
+      "Mesoscale Sample": {},
+      "Microscale Sample": {},
+      "Nanoscale Sample": {}
+    },
+    "Crystal Defect": {},
+    "Crystallographic Defect": {},
+    "Lattice Parameter": {},
+    "Material": {
+      "Amorphous Material": {},
+      "Crystalline Material": {
+        "Bicrystal": {},
+        "Polycrystal": {}
+      }
+    },
+    "Plane": {
+      "Lattice Plane": {}
+    },
+    "Simulation Cell": {},
+    "Simulation Cell Length": {},
+    "Simulation Cell Volume": {},
+    "Space Group": {},
+    "Structure": {
+      "Crystal Structure": {},
+      "Microstructure": {}
+    },
+    "Unit": {},
+    "Unit Cell": {},
+    "Vector": {
+      "Lattice Vector": {},
+      "Normal Vector": {},
+      "Simulation Cell Vector": {}
+    }
+  },
+  "object_properties": {
+    "has crystallographic defect": {
+      "iri": "http://purls.helmholtz-metadaten.de/cdos/cdco/hasCrystallographicDefect",
+      "domain": "Crystalline Material",
+      "range": "Crystallographic Defect",
+      "description": null
+    },
+    "has angle": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasAngle",
+      "domain": null,
+      "range": "Angle",
+      "description": null
+    },
+    "has attribute": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasAttribute",
+      "domain": "Atomic Scale Sample",
+      "range": "Atom Attribute",
+      "description": null
+    },
+    "has basis": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasBasis",
+      "domain": "Unit Cell",
+      "range": "Basis",
+      "description": null
+    },
+    "has element": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasElement",
+      "domain": "Chemical Species",
+      "range": "Chemical Element",
+      "description": null
+    },
+    "has lattice parameter": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasLatticeParameter",
+      "domain": "Unit Cell",
+      "range": "Lattice Parameter",
+      "description": null
+    },
+    "has simulation cell length": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasLength",
+      "domain": "Simulation Cell",
+      "range": "Simulation Cell Length",
+      "description": null
+    },
+    "has material": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasMaterial",
+      "domain": "Computational Sample",
+      "range": "Material",
+      "description": null
+    },
+    "has normal vector": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasNormalVector",
+      "domain": "Plane",
+      "range": "Normal Vector",
+      "description": null
+    },
+    "has simulation cell": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasSimulationCell",
+      "domain": "Atomic Scale Sample",
+      "range": "Simulation Cell",
+      "description": null
+    },
+    "has simulation cell volume": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasSimulationCellVolume",
+      "domain": "Simulation Cell",
+      "range": "Simulation Cell Volume",
+      "description": null
+    },
+    "has space group": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasSpaceGroup",
+      "domain": "Crystal Structure",
+      "range": "Space Group",
+      "description": null
+    },
+    "has species": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasSpecies",
+      "domain": "Computational Sample",
+      "range": "Chemical Species",
+      "description": null
+    },
+    "has structure": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasStructure",
+      "domain": "Material",
+      "range": "Structure",
+      "description": null
+    },
+    "has unit": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasUnit",
+      "domain": "Thing",
+      "range": "Unit",
+      "description": null
+    },
+    "has unit cell": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasUnitCell",
+      "domain": "Crystal Structure",
+      "range": "Unit Cell",
+      "description": null
+    },
+    "has vector": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasVector",
+      "domain": null,
+      "range": "Vector",
+      "description": null
+    },
+    "is calculated property of": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/isCalculatedPropertyOf",
+      "domain": null,
+      "range": null,
+      "description": null
+    },
+    "is defect of": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/isDefectOf",
+      "domain": null,
+      "range": null,
+      "description": null
+    },
+    "is material of": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/isMaterialOf",
+      "domain": null,
+      "range": null,
+      "description": null
+    }
+  },
+  "data_properties": {
+    "has alternative name": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasAltName",
+      "domain": "Thing",
+      "range_type": "string",
+      "description": null
+    },
+    "has angle alpha": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasAngle_alpha",
+      "domain": "Angle",
+      "range_type": "float",
+      "description": null
+    },
+    "has angle beta": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasAngle_beta",
+      "domain": "Angle",
+      "range_type": "float",
+      "description": null
+    },
+    "has angle gamma": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasAngle_gamma",
+      "domain": "Angle",
+      "range_type": "float",
+      "description": null
+    },
+    "has atomic percent": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasAtomicPercent",
+      "domain": "Chemical Element",
+      "range_type": "float",
+      "description": "abbreviated at.%"
+    },
+    "has Bravais lattice": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasBravaisLattice",
+      "domain": "Unit Cell",
+      "range_type": "string",
+      "description": null
+    },
+    "has chemical symbol": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasChemicalSymbol",
+      "domain": "Chemical Element",
+      "range_type": "string",
+      "description": null
+    },
+    "has component x": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasComponent_x",
+      "domain": "Vector",
+      "range_type": "float",
+      "description": null
+    },
+    "has component y": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasComponent_y",
+      "domain": "Vector",
+      "range_type": "float",
+      "description": null
+    },
+    "has component z": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasComponent_z",
+      "domain": "Vector",
+      "range_type": "float",
+      "description": null
+    },
+    "has distance from origin": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasDistanceFromOrigin",
+      "domain": "Plane",
+      "range_type": "float",
+      "description": null
+    },
+    "has element ratio": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasElementRatio",
+      "domain": "Chemical Element",
+      "range_type": "float",
+      "description": "Indicated with a value from 0 to 1."
+    },
+    "has grain size": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasGrainSize",
+      "domain": "Simulation Cell",
+      "range_type": "float",
+      "description": null
+    },
+    "has identifier": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasIdentifier",
+      "domain": "Thing",
+      "range_type": "string",
+      "description": null
+    },
+    "has length x": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasLength_x",
+      "domain": "Simulation Cell Length",
+      "range_type": "float",
+      "description": null
+    },
+    "has length y": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasLength_y",
+      "domain": "Simulation Cell Length",
+      "range_type": "float",
+      "description": null
+    },
+    "has length z": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasLength_z",
+      "domain": "Simulation Cell Length",
+      "range_type": "float",
+      "description": null
+    },
+    "has name": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasName",
+      "domain": "Thing",
+      "range_type": "string",
+      "description": null
+    },
+    "has number of atoms": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasNumberOfAtoms",
+      "domain": "Atomic Scale Sample",
+      "range_type": "integer",
+      "description": null
+    },
+    "has number of grains": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasNumberOfGrains",
+      "domain": "Simulation Cell",
+      "range_type": "float",
+      "description": null
+    },
+    "has path": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasPath",
+      "domain": "Atom Attribute",
+      "range_type": "string",
+      "description": null
+    },
+    "has reference": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasReference",
+      "domain": "Thing",
+      "range_type": "anyURI",
+      "description": "The expected usage is to provide a Uniform Resource Identifier Reference (URI), which should point the referenced resource (e.g. a DOI for a publication)"
+    },
+    "has repetition x": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasRepetition_x",
+      "domain": "Simulation Cell",
+      "range_type": "integer",
+      "description": null
+    },
+    "has repetition y": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasRepetition_y",
+      "domain": "Simulation Cell",
+      "range_type": "integer",
+      "description": null
+    },
+    "has repetition z": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasRepetition_z",
+      "domain": "Simulation Cell",
+      "range_type": "integer",
+      "description": null
+    },
+    "has space group number": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasSpaceGroupNumber",
+      "domain": "Crystal Structure",
+      "range_type": "integer",
+      "description": null
+    },
+    "has space group symbol": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasSpaceGroupSymbol",
+      "domain": "Crystal Structure",
+      "range_type": "string",
+      "description": null
+    },
+    "has symbol": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasSymbol",
+      "domain": "Thing",
+      "range_type": "string",
+      "description": null
+    },
+    "has vacuum direction": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasVacuumDirection",
+      "domain": "Simulation Cell",
+      "range_type": "string",
+      "description": null
+    },
+    "has vacuum length": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasVacuumLength",
+      "domain": "Simulation Cell",
+      "range_type": "float",
+      "description": null
+    },
+    "has value": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasValue",
+      "domain": "Thing",
+      "range_type": "float",
+      "description": null
+    },
+    "has volume": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasVolume",
+      "domain": "Simulation Cell",
+      "range_type": "float",
+      "description": null
+    },
+    "has weight percent": {
+      "iri": "http://purls.helmholtz-metadaten.de/cmso/hasWeightPercent",
+      "domain": "Chemical Element",
+      "range_type": "float",
+      "description": "abbreviated wt.%"
+    }
+  },
+  "statistics": {
+    "num_classes": 44,
+    "num_object_properties": 20,
+    "num_data_properties": 33
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-scientific-thinking",
+  "evals": [
+    {
+      "id": "evidence-quality-grade",
+      "prompt": "I have a handful of trials of varying quality on a new intervention. How confident should I be in the overall evidence? Can you grade the certainty of the evidence for me?",
+      "expected_output": "Invokes alterlab-scientific-thinking and applies the GRADE framework to assess certainty of evidence: starts from design type (RCT = high, observational = low), then downgrades for risk of bias, inconsistency, indirectness, imprecision, and publication bias, and upgrades for large effects, dose-response, or confounders that would reduce the effect.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "GRADE" }
+      ]
+    },
+    {
+      "id": "bias-confounder-detection",
+      "prompt": "This observational study claims a supplement reduces mortality. Before I believe it, what biases and confounders should I be worried about?",
+      "expected_output": "Invokes alterlab-scientific-thinking and performs systematic bias detection: selection biases (sampling, volunteer, attrition, survivorship), measurement biases, analysis biases (p-hacking, selective reporting), and crucially confounding (variables affecting both exposure and outcome, unmeasured confounding, plausible alternative explanations), noting correlation is not causation.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Names specific biases and confounders and stresses that an observational association does not establish causation." }
+      ]
+    },
+    {
+      "id": "design-validity-critique",
+      "prompt": "Here is the methods section of a study making a strong causal claim from a small, unblinded trial. Can you critique the experimental design and whether the design can support that claim?",
+      "expected_output": "Invokes alterlab-scientific-thinking and critiques the methodology across the validity types (internal, external, construct, statistical conclusion), evaluates randomization, blinding, control conditions, and sample size/power, and assesses whether the design can actually support the causal claim being made, organizing concerns by severity.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Assesses internal/external/construct/statistical-conclusion validity and judges whether the design supports the causal claim." }
+      ]
+    },
+    {
+      "id": "statistical-claim-fallacy",
+      "prompt": "A paper ran 20 subgroup analyses with no correction and reports one significant result as the headline finding. What's wrong with this statistically, and what fallacy is it?",
+      "expected_output": "Invokes alterlab-scientific-thinking and flags the multiple-comparisons problem (no Bonferroni/FDR correction, subgroup fishing, likely false positive), the Texas sharpshooter fallacy of finding patterns in noise, and the conflation of exploratory with confirmatory findings, recommending correction and pre-registration.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Identifies the multiple-comparisons/subgroup-fishing problem and names the relevant statistical fallacy." }
+      ]
+    },
+    {
+      "id": "near-miss-peer-review",
+      "prompt": "Here is a colleague's full manuscript submitted to a journal. Please write me a formal structured peer review with section-by-section comments and an accept/minor/major/reject recommendation I can submit to the editor.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-peer-review. The user wants a formal, submittable referee report with section-by-section comments and an editorial verdict, not an internal critical-thinking evaluation of evidence quality. This skill's description routes formal peer review writing to alterlab-peer-review (and a multi-reviewer mock panel to alterlab-paper-reviewer).",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-peer-review" }
+      ]
+    },
+    {
+      "id": "near-miss-research-ethics",
+      "prompt": "I'm worried this study did not get proper informed consent and may have an undisclosed conflict of interest. Can you help me assess the research ethics and IRB compliance issues?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-research-ethics. The concern is about ethics, informed consent, IRB compliance, and conflict-of-interest disclosure, not about evaluating evidence quality, design validity, or statistical bias, so it belongs to the research-ethics skill.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-research-ethics" }
+      ]
+    }
+  ]
+}

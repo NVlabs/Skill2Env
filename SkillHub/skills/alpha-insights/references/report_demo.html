@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中国扫地机器人行业研究报告</title>
+  <style>
+    :root {
+      --color-primary: #1A365D;
+      --color-secondary: #2D5B8C;
+      --color-accent: #667EEA;
+      --color-highlight: #DD6B20;
+      --color-success: #10B981;
+      --color-danger: #EF4444;
+      --color-warning: #F59E0B;
+      --text-primary: #2D3748;
+      --text-secondary: #718096;
+      --bg-light: #F7FAFC;
+      --bg-card: #FFFFFF;
+      --border-color: #E2E8F0;
+      --page-bg: #C9CED1;
+      --chart-bg: #F1F5F9;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      font-size: 14px;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, "STKaiti", "华文楷体", sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--page-bg);
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto 20px;
+      background: var(--page-bg);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .cover-page {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0F2942 0%, #1A365D 40%, #2D5B8C 100%);
+      color: white;
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .cover-page::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image:
+        radial-gradient(ellipse at 30% 50%, rgba(102,126,234,0.15) 0%, transparent 60%),
+        radial-gradient(circle at 70% 80%, rgba(255,255,255,0.05) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    .cover-left {
+      flex: 0 0 35%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-number {
+      font-size: 280px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.08);
+      line-height: 1;
+      letter-spacing: -10px;
+      position: absolute;
+      left: -30px;
+    }
+
+    .cover-right {
+      flex: 1;
+      padding: 60px 80px 60px 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-size: 12px;
+      letter-spacing: 2px;
+      margin-bottom: 40px;
+      border: 1px solid rgba(255,255,255,0.15);
+      text-transform: uppercase;
+    }
+
+    .cover-title {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      margin-bottom: 20px;
+      line-height: 1.3;
+    }
+
+    .cover-subtitle {
+      font-size: 24px;
+      opacity: 0.9;
+      margin-bottom: 50px;
+      letter-spacing: 2px;
+      font-weight: 400;
+    }
+
+    .cover-divider {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #DD6B20 0%, #F6AD55 100%);
+      border-radius: 2px;
+      margin-bottom: 40px;
+    }
+
+    .cover-meta {
+      font-size: 18px;
+      opacity: 0.85;
+      letter-spacing: 2px;
+    }
+
+    .cover-date {
+      font-size: 18px;
+      opacity: 0.75;
+      letter-spacing: 2px;
+      margin-top: 15px;
+    }
+
+    .cover-footer {
+      position: absolute;
+      bottom: 40px;
+      left: 80px;
+      right: 80px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      opacity: 0.6;
+      letter-spacing: 1px;
+    }
+
+    .toc-page {
+      padding: 80px;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #FFFFFF 0%, var(--page-bg) 100%);
+    }
+
+    .toc-header {
+      margin-bottom: 50px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid var(--color-primary);
+    }
+
+    .toc-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: 8px;
+    }
+
+    .toc-item {
+      display: flex;
+      padding: 18px 0;
+      border-bottom: 1px dashed var(--border-color);
+      align-items: center;
+    }
+
+    .toc-number {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #1A365D 0%, #2D5B8C 100%);
+      color: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      margin-right: 25px;
+      box-shadow: 0 4px 12px rgba(26,54,93,0.3);
+    }
+
+    .toc-text {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .toc-page-num {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .toc-conclusion {
+      background: linear-gradient(135deg, #FFF5F5 0%, #FFF 100%);
+      border-left: 4px solid var(--color-highlight);
+      padding: 25px 30px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 40px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .toc-conclusion-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-highlight);
+      margin-bottom: 12px;
+    }
+
+    .chapter-section { background: var(--page-bg); }
+
+    .chapter-header {
+      background: linear-gradient(135deg, #1A365D 0%, #2D5B8C 100%);
+      color: white;
+      padding: 40px 50px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chapter-header::after {
+      content: '';
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 200px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 100%);
+    }
+
+    .chapter-num {
+      font-size: 60px;
+      font-weight: 700;
+      opacity: 0.3;
+      margin-right: 25px;
+    }
+
+    .chapter-name {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: 2px;
+    }
+
+    .chapter-body {
+      padding: 40px 50px;
+      background: linear-gradient(180deg, #FFFFFF 0%, var(--page-bg) 100%);
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin: 30px 0 15px;
+      padding-left: 15px;
+      border-left: 4px solid var(--color-accent);
+    }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 20px 0 12px;
+      color: var(--text-primary);
+    }
+
+    h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 16px 0 8px;
+      color: var(--text-primary);
+    }
+
+    p {
+      margin-bottom: 12px;
+      color: var(--text-secondary);
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin: 12px 0 12px 24px;
+    }
+
+    li {
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+    }
+
+    strong { color: var(--text-primary); }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #EFF6FF 0%, #FFF 100%);
+      border-left: 4px solid var(--color-accent);
+      padding: 20px 25px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .highlight-box.yellow {
+      background: linear-gradient(135deg, #FFFBEB 0%, #FFF 100%);
+      border-left-color: #F59E0B;
+    }
+
+    .highlight-box.red {
+      background: linear-gradient(135deg, #FEF2F2 0%, #FFF 100%);
+      border-left-color: var(--color-highlight);
+    }
+
+    .highlight-box.green {
+      background: linear-gradient(135deg, #F0FDF4 0%, #FFF 100%);
+      border-left-color: var(--color-success);
+    }
+
+    .highlight-text {
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 25px 0;
+    }
+
+    .stats-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .stats-grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+    .stat-card {
+      background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%);
+      border-radius: 12px;
+      padding: 24px 16px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 24px;
+    }
+
+    .stat-icon.red { background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%); }
+    .stat-icon.green { background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); }
+    .stat-icon.purple { background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%); }
+    .stat-icon.blue { background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%); }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-value.red { color: var(--color-highlight); }
+    .stat-value.green { color: var(--color-success); }
+    .stat-value.purple { color: var(--color-accent); }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .stat-trend {
+      font-size: 11px;
+      margin-top: 8px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    .stat-trend.up { background: #D1FAE5; color: #059669; }
+    .stat-trend.down { background: #FEE2E2; color: #DC2626; }
+
+    .chart-container {
+      background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border: 1px solid var(--border-color);
+    }
+
+    .chart-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #E2E8F0;
+    }
+
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      height: 180px;
+      padding: 20px 0;
+      gap: 12px;
+    }
+
+    .bar-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+    }
+
+    .bar {
+      width: 100%;
+      max-width: 60px;
+      border-radius: 6px 6px 0 0;
+      position: relative;
+      background: linear-gradient(180deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+    }
+
+    .bar.orange { background: linear-gradient(180deg, #F59E0B 0%, var(--color-highlight) 100%); }
+    .bar.green { background: linear-gradient(180deg, #34D399 0%, var(--color-success) 100%); }
+    .bar.purple { background: linear-gradient(180deg, #818CF8 0%, var(--color-accent) 100%); }
+
+    .bar-value {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .bar-label {
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    .donut-chart {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      padding: 20px;
+    }
+
+    .donut {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .donut::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px; height: 100px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .donut-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 1;
+    }
+
+    .donut-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .donut-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .donut-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    .legend-text {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .legend-value {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .progress-section { padding: 16px 0; }
+    .progress-item { margin-bottom: 16px; }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .progress-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .progress-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--chart-bg);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+
+    .progress-fill.red { background: linear-gradient(90deg, var(--color-highlight) 0%, #F59E0B 100%); }
+    .progress-fill.green { background: linear-gradient(90deg, var(--color-success) 0%, #34D399 100%); }
+    .progress-fill.blue { background: linear-gradient(90deg, var(--color-secondary) 0%, var(--color-accent) 100%); }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 13px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .data-table th {
+      background: linear-gradient(180deg, #1A365D 0%, #2D5B8C 100%);
+      color: white;
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .data-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      background: white;
+    }
+
+    .data-table tr:nth-child(even) td { background: var(--bg-light); }
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .strategy-card {
+      display: flex;
+      padding: 22px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .strategy-card.blue { background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); }
+    .strategy-card.green { background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); }
+    .strategy-card.yellow { background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); }
+    .strategy-card.red { background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%); }
+
+    .strategy-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      margin-right: 20px;
+      color: white;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .strategy-card.blue .strategy-num { background: linear-gradient(135deg, #2D5B8C 0%, #1A365D 100%); }
+    .strategy-card.green .strategy-num { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
+    .strategy-card.yellow .strategy-num { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+    .strategy-card.red .strategy-num { background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); }
+
+    .strategy-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .strategy-card.blue .strategy-title { color: var(--color-secondary); }
+    .strategy-card.green .strategy-title { color: #059669; }
+    .strategy-card.yellow .strategy-title { color: #D97706; }
+    .strategy-card.red .strategy-title { color: #DC2626; }
+
+    .strategy-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .insight-card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .insight-card h4 {
+      margin-top: 0;
+      color: var(--color-primary);
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    .insight-card p {
+      margin-bottom: 8px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .tag-p0 { background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%); color: var(--color-highlight); border: 1px solid #FECACA; }
+    .tag-p1 { background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); color: var(--color-secondary); border: 1px solid #BFDBFE; }
+    .tag-p2 { background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); color: #059669; border: 1px solid #A7F3D0; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .badge-high { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+    .badge-medium { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
+    .badge-low { background: #F0FDF4; color: #059669; border: 1px solid #A7F3D0; }
+    .badge-a { background: #D1FAE5; color: #059669; border: 1px solid #A7F3D0; }
+    .badge-b { background: #DBEAFE; color: #2563EB; border: 1px solid #BFDBFE; }
+    .badge-c { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
+
+    blockquote {
+      margin: 20px 0;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #EFF6FF 0%, #FFF 100%);
+      border-left: 4px solid var(--color-accent);
+      border-radius: 0 8px 8px 0;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    .page-number {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-secondary);
+      padding-top: 20px;
+      margin-top: 30px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .text-highlight {
+      color: var(--color-highlight);
+      font-weight: 600;
+    }
+
+    .footer-page {
+      background: linear-gradient(135deg, #0F2942 0%, #1A365D 40%, #2D5B8C 100%);
+      min-height: 50vh;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-page::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: radial-gradient(ellipse at 50% 30%, rgba(102,126,234,0.2) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .footer-content { position: relative; z-index: 1; }
+    .footer-icon { font-size: 48px; margin-bottom: 30px; opacity: 0.9; }
+
+    .footer-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 25px;
+      letter-spacing: 8px;
+    }
+
+    .footer-divider {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #DD6B20 0%, #F6AD55 100%);
+      border-radius: 2px;
+      margin: 0 auto 30px;
+    }
+
+    .footer-text {
+      font-size: 15px;
+      opacity: 0.85;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    .footer-date {
+      font-size: 13px;
+      opacity: 0.6;
+      margin-top: 25px;
+      letter-spacing: 1px;
+    }
+
+    .no-print {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+    }
+
+    .print-btn {
+      background: linear-gradient(135deg, #1A365D 0%, #2D5B8C 100%);
+      color: white;
+      border: none;
+      padding: 14px 35px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(26,54,93,0.4);
+      transition: all 0.3s;
+    }
+
+    .print-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(26,54,93,0.5);
+    }
+
+    @media (max-width: 768px) {
+      .cover-page { flex-direction: column; }
+      .cover-left { display: none; }
+      .cover-right { padding: 40px 24px; }
+      .cover-title { font-size: 32px; letter-spacing: 2px; }
+      .toc-page { padding: 40px 24px; }
+      .chapter-body { padding: 24px; }
+      .chapter-header { padding: 24px; }
+      .stats-grid, .stats-grid-3 { grid-template-columns: repeat(2, 1fr); }
+      .donut-chart { flex-direction: column; }
+    }
+
+    @media print {
+      @page { margin: 1.5cm; size: A4; }
+      body { background: white; }
+      .page { box-shadow: none; margin: 0; }
+      .no-print { display: none !important; }
+      .cover-page { min-height: auto; page-break-after: always; }
+      .toc-page { page-break-after: always; }
+      .chapter-section { page-break-before: always; }
+      .stat-card:hover { transform: none; box-shadow: none; }
+      h2, h3, h4 { page-break-after: avoid; }
+      .data-table, .chart-container, .highlight-box { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== 封面页 ===== -->
+  <div class="page cover-page">
+    <div class="cover-left">
+      <div class="cover-number">AI</div>
+    </div>
+    <div class="cover-right">
+      <div class="cover-badge">Alpha Insights - BizAdvisor</div>
+      <h1 class="cover-title">中国扫地机器人行业研究报告</h1>
+      <p class="cover-subtitle">市场格局、竞争态势与战略机会深度分析</p>
+      <div class="cover-divider"></div>
+      <p class="cover-meta">Alpha Insights-BizAdvisor</p>
+      <p class="cover-date">2026年03月</p>
+    </div>
+    <div class="cover-footer">
+      <span>机密 - 仅供内部使用</span>
+      <span>V1.0</span>
+    </div>
+  </div>
+
+  <!-- ===== 目录页 ===== -->
+  <div class="page toc-page">
+    <div class="toc-header">
+      <div class="toc-title">目 录</div>
+    </div>
+
+    <div class="toc-item">
+      <div class="toc-number">1</div>
+      <span class="toc-text">市场概况与规模</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-number">2</div>
+      <span class="toc-text">竞争格局分析</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-number">3</div>
+      <span class="toc-text">技术趋势与创新</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-number">4</div>
+      <span class="toc-text">关键洞察与建议</span>
+    </div>
+    <div class="toc-item">
+      <div class="toc-number">5</div>
+      <span class="toc-text">风险与应对</span>
+    </div>
+
+    <div class="toc-conclusion">
+      <div class="toc-conclusion-title">核心结论</div>
+      <div class="toc-conclusion-text">中国扫地机器人市场在2025年突破380亿元，预计2028年将达到620亿元。行业正从"能扫会拖"向"全屋智能管家"升级，具备自清洁基站、AI视觉避障和大模型交互能力的产品将主导下一轮增长。科沃斯与石头科技的双寡头格局正被追觅、云鲸等新势力冲击，竞争焦点已从硬件参数转向生态体验。</div>
+    </div>
+  </div>
+
+  <!-- ===== 第一章：市场概况与规模 ===== -->
+  <div class="page chapter-section">
+    <div class="chapter-header">
+      <div class="chapter-num">01</div>
+      <div class="chapter-name">市场概况与规模</div>
+    </div>
+    <div class="chapter-body">
+
+      <h2>行业核心数据一览</h2>
+      <p>中国扫地机器人市场在经历了2020-2022年的爆发式增长后，已进入结构性升级阶段。2025年全年市场规模达到383亿元，同比增长17.2%。渗透率仍处于较低水平，长期增长空间充裕。</p>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon red">📊</div>
+          <div class="stat-value red">383亿</div>
+          <div class="stat-label">2025年市场规模</div>
+          <div class="stat-trend up">+17.2% YoY</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">🏠</div>
+          <div class="stat-value green">8.6%</div>
+          <div class="stat-label">城镇家庭渗透率</div>
+          <div class="stat-trend up">+2.1pp</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">💰</div>
+          <div class="stat-value purple">3,280</div>
+          <div class="stat-label">线上均价（元）</div>
+          <div class="stat-trend up">+8.5%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">📦</div>
+          <div class="stat-value">1,168万</div>
+          <div class="stat-label">年出货量（台）</div>
+          <div class="stat-trend up">+12.8%</div>
+        </div>
+      </div>
+
+      <h2>市场规模增长趋势</h2>
+
+      <div class="chart-container">
+        <div class="chart-title">中国扫地机器人市场规模（2021-2028E，单位：亿元）</div>
+        <div class="bar-chart">
+          <div class="bar-item">
+            <div class="bar" style="height: 75px;">
+              <div class="bar-value">178</div>
+            </div>
+            <div class="bar-label">2021</div>
+          </div>
+          <div class="bar-item">
+            <div class="bar" style="height: 90px;">
+              <div class="bar-value">218</div>
+            </div>
+            <div class="bar-label">2022</div>
+          </div>
+          <div class="bar-item">
+            <div class="bar" style="height: 108px;">
+              <div class="bar-value">263</div>
+            </div>
+            <div class="bar-label">2023</div>
+          </div>
+          <div class="bar-item">
+            <div class="bar orange" style="height: 130px;">
+              <div class="bar-value">327</div>
+            </div>
+            <div class="bar-label">2024</div>
+          </div>
+          <div class="bar-item">
+            <div class="bar orange" style="height: 148px;">
+              <div class="bar-value">383</div>
+            </div>
+            <div class="bar-label">2025</div>
+          </div>
+          <div class="bar-item">
+            <div class="bar green" style="height: 155px;">
+              <div class="bar-value">448E</div>
+            </div>
+            <div class="bar-label">2026E</div>
+          </div>
+          <div class="bar-item">
+            <div class="bar green" style="height: 163px;">
+              <div class="bar-value">528E</div>
+            </div>
+            <div class="bar-label">2027E</div>
+          </div>
+          <div class="bar-item">
+            <div class="bar purple" style="height: 175px;">
+              <div class="bar-value">620E</div>
+            </div>
+            <div class="bar-label">2028E</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight-box yellow">
+        <div class="highlight-text"><strong>关键发现：</strong>自清洁基站产品的均价提升效应显著，2025年带基站产品占比已超过72%，拉动行业均价同比上涨8.5%。与日本30%+、韩国25%+的渗透率相比，中国市场仍有3-4倍增长空间。</div>
+      </div>
+
+      <blockquote>"中国扫地机器人行业最大的增长引擎不是降价放量，而是产品力升级驱动的单价提升和场景拓展。" —— 行业分析师观点</blockquote>
+
+      <div class="page-number">— 1 —</div>
+    </div>
+  </div>
+
+  <!-- ===== 第二章：竞争格局分析 ===== -->
+  <div class="page chapter-section">
+    <div class="chapter-header">
+      <div class="chapter-num">02</div>
+      <div class="chapter-name">竞争格局分析</div>
+    </div>
+    <div class="chapter-body">
+
+      <h2>市场份额分布</h2>
+      <p>2025年中国扫地机器人线上市场呈现"两超多强"格局。科沃斯（含ECOVACS和一系品牌YEEDI）以32%市占率稳居第一，石头科技以24%紧随其后。追觅与云鲸增速迅猛，正在改写竞争版图。</p>
+
+      <div class="chart-container">
+        <div class="chart-title">2025年线上市场份额分布</div>
+        <div class="donut-chart">
+          <div class="donut" style="background: conic-gradient(#1A365D 0deg 115deg, #2D5B8C 115deg 202deg, #DD6B20 202deg 259deg, #667EEA 259deg 306deg, #10B981 306deg 338deg, #94A3B8 338deg 360deg);">
+            <div class="donut-center">
+              <div class="donut-value">100%</div>
+              <div class="donut-label">线上份额</div>
+            </div>
+          </div>
+          <div class="donut-legend">
+            <div class="legend-item">
+              <div class="legend-color" style="background: #1A365D;"></div>
+              <span class="legend-text">科沃斯 <span class="legend-value">32%</span></span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color" style="background: #2D5B8C;"></div>
+              <span class="legend-text">石头科技 <span class="legend-value">24%</span></span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color" style="background: #DD6B20;"></div>
+              <span class="legend-text">追觅 <span class="legend-value">16%</span></span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color" style="background: #667EEA;"></div>
+              <span class="legend-text">云鲸 <span class="legend-value">13%</span></span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color" style="background: #10B981;"></div>
+              <span class="legend-text">小米 <span class="legend-value">9%</span></span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color" style="background: #94A3B8;"></div>
+              <span class="legend-text">其他 <span class="legend-value">6%</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2>TOP5品牌核心指标对比</h2>
+
+      <table class="data-table">
+        <tr>
+          <th>品牌</th>
+          <th>2025营收（亿元）</th>
+          <th>YoY增速</th>
+          <th>产品均价（元）</th>
+          <th>旗舰价格带</th>
+        </tr>
+        <tr>
+          <td><strong>科沃斯</strong></td>
+          <td>122.6</td>
+          <td><span class="badge badge-medium">+11%</span></td>
+          <td>3,180</td>
+          <td>4,000-5,500</td>
+        </tr>
+        <tr>
+          <td><strong>石头科技</strong></td>
+          <td>91.9</td>
+          <td><span class="badge badge-a">+22%</span></td>
+          <td>3,650</td>
+          <td>4,500-6,000</td>
+        </tr>
+        <tr>
+          <td><strong>追觅</strong></td>
+          <td>61.3</td>
+          <td><span class="badge badge-a">+38%</span></td>
+          <td>3,420</td>
+          <td>3,500-5,000</td>
+        </tr>
+        <tr>
+          <td><strong>云鲸</strong></td>
+          <td>49.8</td>
+          <td><span class="badge badge-a">+29%</span></td>
+          <td>3,890</td>
+          <td>4,000-5,500</td>
+        </tr>
+        <tr>
+          <td><strong>小米</strong></td>
+          <td>34.5</td>
+          <td><span class="badge badge-medium">+15%</span></td>
+          <td>2,380</td>
+          <td>2,500-3,500</td>
+        </tr>
+      </table>
+
+      <h2>竞争策略差异化分析</h2>
+
+      <div class="strategy-card blue">
+        <div class="strategy-num">1</div>
+        <div>
+          <div class="strategy-title">科沃斯：全品类生态战略</div>
+          <div class="strategy-desc">依托科沃斯+YEEDI双品牌覆盖高中低价格带，同时向商用清洁机器人和割草机器人延展。核心壁垒在于渠道密度和品牌认知度，但创新迭代速度面临新势力挑战。</div>
+        </div>
+      </div>
+      <div class="strategy-card green">
+        <div class="strategy-num">2</div>
+        <div>
+          <div class="strategy-title">石头科技：技术高端化路线</div>
+          <div class="strategy-desc">坚持高毛利高端定位，在算法和硬件一体化设计上保持领先。自研LDS激光导航和RR mason算法构成技术护城河，海外市场营收占比已超45%。</div>
+        </div>
+      </div>
+      <div class="strategy-card yellow">
+        <div class="strategy-num">3</div>
+        <div>
+          <div class="strategy-title">追觅：高速增长挑战者</div>
+          <div class="strategy-desc">凭借高速数字马达核心技术横跨扫地机与吸尘器两大品类，以"技术普惠"策略在3,000-4,000元价格带快速抢占份额。2025年增速38%为行业最快。</div>
+        </div>
+      </div>
+      <div class="strategy-card red">
+        <div class="strategy-num">4</div>
+        <div>
+          <div class="strategy-title">云鲸：拖地体验差异化</div>
+          <div class="strategy-desc">以自清洁拖布为核心卖点开创品类先河，在"拖地"场景上建立了极强用户心智。但产品线单一和渠道覆盖不足是其扩大份额的主要瓶颈。</div>
+        </div>
+      </div>
+
+      <div class="page-number">— 2 —</div>
+    </div>
+  </div>
+
+  <!-- ===== 第三章：技术趋势与创新 ===== -->
+  <div class="page chapter-section">
+    <div class="chapter-header">
+      <div class="chapter-num">03</div>
+      <div class="chapter-name">技术趋势与创新</div>
+    </div>
+    <div class="chapter-body">
+
+      <h2>核心技术渗透率</h2>
+      <p>2025年扫地机器人行业技术创新集中在三大方向：AI视觉避障、自清洁基站集成化、大模型语音交互。以下数据反映各项核心技术在3,000元以上产品中的渗透情况。</p>
+
+      <div class="progress-section">
+        <div class="progress-item">
+          <div class="progress-header">
+            <span class="progress-label">自清洁基站（含烘干/上下水）</span>
+            <span class="progress-value">92%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill blue" style="width: 92%;"></div>
+          </div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-header">
+            <span class="progress-label">AI视觉避障（3D ToF / 双目）</span>
+            <span class="progress-value">78%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill blue" style="width: 78%;"></div>
+          </div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-header">
+            <span class="progress-label">LDS激光导航</span>
+            <span class="progress-value">85%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill green" style="width: 85%;"></div>
+          </div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-header">
+            <span class="progress-label">大模型语音交互</span>
+            <span class="progress-value">35%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill red" style="width: 35%;"></div>
+          </div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-header">
+            <span class="progress-label">仿生机械臂（边角清洁）</span>
+            <span class="progress-value">28%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill red" style="width: 28%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <h2>关键技术突破</h2>
+
+      <div class="highlight-box green">
+        <div class="highlight-text"><strong>自清洁基站进化：</strong>2025年旗舰产品基站已具备自动集尘、热风烘干、银离子抑菌、自动上下水四大功能，部分品牌开始集成"自动添加清洁液"能力。基站体积较2023年缩小约30%。</div>
+      </div>
+
+      <div class="highlight-box">
+        <div class="highlight-text"><strong>AI视觉避障：</strong>头部品牌均已搭载3D结构光或ToF传感器，结合端侧AI芯片实现对50+类障碍物的实时识别。石头科技的双光源方案在暗光环境识别准确率达到98.3%，为行业最高水平。</div>
+      </div>
+
+      <div class="highlight-box red">
+        <div class="highlight-text"><strong>大模型交互的挑战：</strong>尽管多家品牌已接入大语言模型实现自然语音控制，但用户实际使用率不足15%。核心痛点在于语音交互场景有限——多数用户倾向于"设定后遗忘"的使用模式，大模型在扫地机场景的杀手级应用仍在探索中。</div>
+      </div>
+
+      <h3>下一代技术展望</h3>
+      <ul>
+        <li><strong>全屋智能联动：</strong>与智能家居中枢深度集成，实现"出门自动清扫、回家前完成拖地"</li>
+        <li><strong>多机协作：</strong>扫地机+擦窗机器人+空气净化器联动清洁方案</li>
+        <li><strong>自主维护：</strong>自动更换拖布、滚刷等耗材的全自动维护基站</li>
+        <li><strong>环境感知：</strong>基于多传感器融合的室内空气质量监测与清洁策略优化</li>
+      </ul>
+
+      <div class="page-number">— 3 —</div>
+    </div>
+  </div>
+
+  <!-- ===== 第四章：关键洞察与建议 ===== -->
+  <div class="page chapter-section">
+    <div class="chapter-header">
+      <div class="chapter-num">04</div>
+      <div class="chapter-name">关键洞察与建议</div>
+    </div>
+    <div class="chapter-body">
+
+      <h2>核心洞察</h2>
+
+      <div class="insight-card">
+        <span class="tag tag-p0">P0 关键</span>
+        <h4>洞察一：产品均价上行趋势将在2027年触顶</h4>
+        <p><strong>发现：</strong>自清洁基站带来的均价提升效应正在边际递减。2025年带基站产品均价增速已从2023年的+15%放缓至+8.5%，功能同质化加剧。</p>
+        <p><strong>含义：</strong>行业将在2027年前后面临均价增长放缓压力，届时增长逻辑需切换至渗透率提升和海外市场拓展。</p>
+        <p><strong>建议：</strong>提前布局中端价格带（2,000-3,000元）产品线，以及东南亚、拉美等新兴市场渠道建设。</p>
+        <p><strong>置信度：</strong><span class="badge badge-a">高 (85%)</span></p>
+      </div>
+
+      <div class="insight-card">
+        <span class="tag tag-p0">P0 关键</span>
+        <h4>洞察二：渠道结构正在发生深刻变革</h4>
+        <p><strong>发现：</strong>抖音电商在扫地机品类的GMV份额从2023年的8%飙升至2025年的23%，已超越京东（21%）成为第二大渠道，仅次于天猫（31%）。</p>
+        <p><strong>含义：</strong>内容电商改变了消费者决策链路，"短视频种草+直播转化"模式对传统搜索电商形成替代效应。品牌需重构营销资源分配。</p>
+        <p><strong>建议：</strong>将抖音渠道投入占比提升至总营销预算的30%以上，建立专业的内容创作团队，重点打造"使用场景可视化"内容。</p>
+        <p><strong>置信度：</strong><span class="badge badge-a">高 (90%)</span></p>
+      </div>
+
+      <div class="insight-card">
+        <span class="tag tag-p1">P1 重要</span>
+        <h4>洞察三：海外市场是未来3年最大增量</h4>
+        <p><strong>发现：</strong>中国扫地机器人品牌在海外市场（欧洲、北美、东南亚）的合计份额从2022年的18%提升至2025年的34%。石头科技海外营收占比已达45%，追觅达38%。</p>
+        <p><strong>含义：</strong>中国品牌在技术和供应链上的优势可以有效转化为海外竞争力，但需应对iRobot（亚马逊旗下）的专利防线和本地化挑战。</p>
+        <p><strong>建议：</strong>优先布局欧洲高端市场和东南亚性价比市场，建立本地售后服务网络，提前进行专利风险排查。</p>
+        <p><strong>置信度：</strong><span class="badge badge-b">中高 (75%)</span></p>
+      </div>
+
+      <div class="page-number">— 4 —</div>
+    </div>
+  </div>
+
+  <!-- ===== 第五章：风险与应对 ===== -->
+  <div class="page chapter-section">
+    <div class="chapter-header">
+      <div class="chapter-num">05</div>
+      <div class="chapter-name">风险与应对</div>
+    </div>
+    <div class="chapter-body">
+
+      <h2>行业主要风险矩阵</h2>
+      <p>基于对行业发展态势的综合评估，以下为未来18个月内需重点关注的风险因素及其应对建议。</p>
+
+      <table class="data-table">
+        <tr>
+          <th>风险类别</th>
+          <th>风险描述</th>
+          <th>严重程度</th>
+          <th>发生概率</th>
+          <th>应对策略</th>
+        </tr>
+        <tr>
+          <td><strong>价格战风险</strong></td>
+          <td>二三线品牌以低价策略冲击市场，引发行业性降价</td>
+          <td><span class="badge badge-high">高</span></td>
+          <td><span class="badge badge-high">高</span></td>
+          <td>通过技术差异化和品牌溢价保持毛利，避免跟随降价</td>
+        </tr>
+        <tr>
+          <td><strong>专利诉讼</strong></td>
+          <td>海外扩张中面临iRobot等企业的专利壁垒</td>
+          <td><span class="badge badge-high">高</span></td>
+          <td><span class="badge badge-medium">中</span></td>
+          <td>提前布局专利规避设计，建立海外专利池，寻求交叉授权</td>
+        </tr>
+        <tr>
+          <td><strong>原材料波动</strong></td>
+          <td>激光雷达、锂电池等核心零部件价格波动</td>
+          <td><span class="badge badge-medium">中</span></td>
+          <td><span class="badge badge-medium">中</span></td>
+          <td>多供应商策略，关键部件自研降本</td>
+        </tr>
+        <tr>
+          <td><strong>地缘政治</strong></td>
+          <td>部分海外市场对中国品牌实施贸易限制</td>
+          <td><span class="badge badge-medium">中</span></td>
+          <td><span class="badge badge-low">低</span></td>
+          <td>在东南亚设立生产基地，实现供应链多元化</td>
+        </tr>
+        <tr>
+          <td><strong>技术替代</strong></td>
+          <td>人形机器人等新形态产品对扫地机品类的潜在替代</td>
+          <td><span class="badge badge-low">低</span></td>
+          <td><span class="badge badge-low">低</span></td>
+          <td>关注技术演进，保持产品形态创新的灵活性</td>
+        </tr>
+      </table>
+
+      <h2>综合风险评估</h2>
+
+      <div class="highlight-box yellow">
+        <div class="highlight-text"><strong>总体风险水平：中等偏低。</strong>扫地机器人行业的核心风险集中在价格竞争和海外专利两个维度。行业需求端的增长确定性较高，技术迭代节奏可控。建议重点关注价格战风险的演化——若头部品牌主动发起价格战，可能导致行业毛利率压缩3-5个百分点。</div>
+      </div>
+
+      <blockquote>"真正的风险不是来自竞争对手的降价，而是来自消费者对产品创新的疲劳。当基站功能趋于同质化时，行业需要找到下一个让用户愿意付费的'Wow Moment'。"</blockquote>
+
+      <div class="page-number">— 5 —</div>
+    </div>
+  </div>
+
+  <!-- ===== 尾页 ===== -->
+  <div class="page footer-page">
+    <div class="footer-content">
+      <div class="footer-icon">📋</div>
+      <div class="footer-title">中国扫地机器人行业研究报告</div>
+      <div class="footer-divider"></div>
+      <div class="footer-text">本报告由 Alpha Insights-BizAdvisor 生成</div>
+      <div class="footer-text">机密 - 仅供内部使用 · 请勿外传</div>
+      <div class="footer-date">2026年03月</div>
+    </div>
+  </div>
+
+  <!-- 打印按钮 -->
+  <div class="no-print">
+    <button class="print-btn" onclick="window.print()">打印 / 导出 PDF</button>
+  </div>
+
+</body>
+</html>

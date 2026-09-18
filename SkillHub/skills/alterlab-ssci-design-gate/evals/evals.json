@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-ssci-design-gate",
+  "evals": [
+    {
+      "id": "observational-causal-overreach",
+      "prompt": "I have observational survey data on remote-work adoption and job satisfaction, and I want to claim that remote work improves satisfaction. What design is this and can I make that claim?",
+      "expected_output": "Invokes alterlab-ssci-design-gate: identifies the data as observational/selection-on-observables, refuses to license a causal claim without a defended identifying assumption, and asks the user to name one (conditional ignorability / an IV / a DiD with parallel trends) or downgrade the claim to associational. Pins design_type + identifying_assumption in the Design Passport.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "identifying assumption" },
+        { "type": "behavior", "value": "Routes to observational and requires a named, defensible identifying assumption before allowing any causal language." }
+      ]
+    },
+    {
+      "id": "policy-diff-in-diff",
+      "prompt": "A minimum-wage increase took effect in one state in 2019 and I have employment data for many states before and after. How should I design this to estimate the effect on employment?",
+      "expected_output": "Invokes alterlab-ssci-design-gate and routes to difference-in-differences, naming PARALLEL TRENDS as the identifying assumption and telling the user to inspect pre-trends before estimating.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "parallel trends" }
+      ]
+    },
+    {
+      "id": "experiment-vs-quasi",
+      "prompt": "Should my study of a new teaching method be an experiment or a quasi-experiment? I can't randomly assign students to methods.",
+      "expected_output": "Invokes alterlab-ssci-design-gate: because random assignment is impossible, routes away from a true experiment toward a quasi-experimental design (e.g. RDD if a cutoff exists, DiD if a rollout exists, or fixed effects), and pins the corresponding assumption; explains the credibility-for-information trade.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Distinguishes true experiment from quasi-experiment by whether the cause is randomly assigned, and names the QED assumption." }
+      ]
+    },
+    {
+      "id": "rdd-cutoff",
+      "prompt": "A scholarship is awarded to students scoring above a test cutoff. I want to know if it raises graduation rates. What design fits?",
+      "expected_output": "Invokes alterlab-ssci-design-gate and routes to regression discontinuity, naming CONTINUITY at the cutoff (no score manipulation) as the assumption and suggesting a density/sorting check.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "regression discontinuity" }
+      ]
+    },
+    {
+      "id": "near-miss-test-selection-guard",
+      "prompt": "My design is a two-group randomized experiment with a continuous outcome. Which statistical test should I run to compare the groups?",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-test-selection-guard. The design is already fixed; choosing the specific statistical test (t-test vs Mann-Whitney) is downstream test selection, not design routing.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-test-selection-guard" }
+      ]
+    },
+    {
+      "id": "near-miss-statistical-analysis",
+      "prompt": "I just want the mean and standard deviation of income in my sample, broken down by region — no design or causal question.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-statistical-analysis for descriptive statistics. There is no design decision or causal claim to route here.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statistical-analysis" }
+      ]
+    }
+  ]
+}

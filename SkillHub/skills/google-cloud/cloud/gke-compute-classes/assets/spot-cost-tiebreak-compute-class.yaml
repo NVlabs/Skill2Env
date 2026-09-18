@@ -1,0 +1,50 @@
+# EXAMPLE TEMPLATE - DO NOT DEPLOY
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: spot-cost-tiebreak-usc1
+spec:
+  # Spot-first cost tie-break for stateless, disruption-tolerant workloads in us-central1 — web serving, batch jobs, async processors. Three equal-score Spot families let ComputeClass pick lowest-cost-available rather than baking a family ordering into YAML that would rot as Spot pricing shifts. On-Demand floor guarantees execution. Tune activeMigration and consolidation per workload type — see comments. Requires GKE 1.35.2-gke.1842000+.
+  nodePoolAutoCreation:
+    enabled: true
+  # activeMigration is a serving-tier setting: drifts replicas back from the OD
+  # floor to Spot when capacity returns. Good for stateless serving (set a PDB
+  # on the workload to bound concurrent disruption).
+  # **Remove this block for long-running batch** — drift would force mid-job restarts.
+  activeMigration:
+    optimizeRulePriority: true
+  autoscalingPolicy:
+    consolidationDelayMinutes: 2
+    consolidationThreshold: 50
+  priorityDefaults:
+    location:
+      zones: ['us-central1-a', 'us-central1-b', 'us-central1-c', 'us-central1-f']
+      locationPolicy: ANY
+  # priorityScore: integer 1-1000, higher = preferred. Max 3 rules per score.
+  # If priorityScore is set on any rule, ALL priorities must have one.
+  # Same-score rules are evaluated together; tie-break is by lowest unit cost,
+  # so ComputeClass picks whichever of the three is cheapest *and* available right now.
+  priorities:
+  # Score 100 — top tier: three interchangeable Spot families. Vendor and
+  # generation spread (Intel Gen 1 / AMD Gen 2 / Intel Gen 4) for obtainability;
+  # ComputeClass's cost tie-break does the price selection, so the order here doesn't matter.
+  - machineFamily: e2  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 4
+    spot: true
+    priorityScore: 100
+  - machineFamily: n2d  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 4
+    spot: true
+    priorityScore: 100
+  - machineFamily: n4  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 4
+    spot: true
+    priorityScore: 100
+
+  # Score 10 — On-Demand floor — guarantees execution if all Spot is exhausted
+  - machineFamily: e2  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 4
+    spot: false
+    priorityScore: 10
+
+  whenUnsatisfiable: ScaleUpAnyway

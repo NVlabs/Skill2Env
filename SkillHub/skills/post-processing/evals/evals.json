@@ -1,0 +1,165 @@
+{
+  "skill_name": "post-processing",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Extract the concentration and phi fields from my simulation output at evals/files/field_output.json. First read the file to see which fields actually exist, then extract every field that is present and report shape, min, max, and mean for each.",
+      "expected_output": "Agent inspects evals/files/field_output.json, finds that only 'phi' and 'concentration' fields exist (there is NO temperature field, and the grid is 10x10 = 100 cells), then runs field_extractor.py to extract both fields with per-field statistics.",
+      "files": ["evals/files/field_output.json"],
+      "assertions": [
+        "Invokes scripts/field_extractor.py with --input evals/files/field_output.json --field 'phi,concentration' --json",
+        "Reports that the file contains exactly two fields, phi and concentration, and does NOT invent a temperature field",
+        "Reports phi count=100 (a 10x10 grid), phi min=0.0, phi max=1.0, and phi mean approximately 0.3288",
+        "Reports concentration min=0.1, concentration max=0.68, and concentration mean approximately 0.3886"
+      ],
+      "script_checks": [
+        {
+          "description": "field_extractor reports the real phi and concentration statistics on the pinned fixture",
+          "cmd": ["scripts/field_extractor.py", "--input", "evals/files/field_output.json", "--field", "phi,concentration", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "fields.phi.found", "op": "eq", "value": true},
+            {"path": "fields.phi.count", "op": "eq", "value": 100},
+            {"path": "fields.phi.min", "op": "approx", "value": 0.0, "abs_tol": 1e-9},
+            {"path": "fields.phi.max", "op": "approx", "value": 1.0, "rel_tol": 1e-6},
+            {"path": "fields.phi.mean", "op": "approx", "value": 0.3288, "rel_tol": 1e-4},
+            {"path": "fields.concentration.found", "op": "eq", "value": true},
+            {"path": "fields.concentration.count", "op": "eq", "value": 100},
+            {"path": "fields.concentration.min", "op": "approx", "value": 0.1, "rel_tol": 1e-6},
+            {"path": "fields.concentration.max", "op": "approx", "value": 0.68, "rel_tol": 1e-6},
+            {"path": "fields.concentration.mean", "op": "approx", "value": 0.3886, "rel_tol": 1e-4},
+            {"path": "timestep_info.timestep", "op": "eq", "value": 100}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Did my simulation reach steady state? The residual history is in evals/files/history.json. Use an absolute tolerance of 1e-6 and check the residual quantity. Report whether the 1e-6 threshold was actually reached.",
+      "expected_output": "Agent runs time_series_analyzer.py on the residual quantity with both --detect-steady-state and --absolute-threshold 1e-6. It reports that the residual decreased monotonically from 1e-2 to a FINAL value of 5e-6, so the 1e-6 absolute threshold was NOT reached (convergence_threshold.reached=false) and the relative steady_state.reached=false, but convergence.type='fast', so the run is converging fast yet has not crossed the 1e-6 target.",
+      "files": ["evals/files/history.json"],
+      "assertions": [
+        "Invokes scripts/time_series_analyzer.py with --input evals/files/history.json --quantity residual and uses --absolute-threshold 1e-6 (the physically correct residual test)",
+        "States that the 1e-6 absolute threshold was NOT reached because the final residual is 5e-6 (convergence_threshold.reached=false); does not falsely claim 1e-6 was reached",
+        "Reports steady_state.reached=false and convergence.type='fast' for the monotonically decreasing residual",
+        "Reports the final residual value of 5e-6 from the history series"
+      ],
+      "script_checks": [
+        {
+          "description": "absolute-threshold mode shows the 1e-6 target is NOT reached (final residual 5e-6)",
+          "cmd": ["scripts/time_series_analyzer.py", "--input", "evals/files/history.json", "--quantity", "residual", "--absolute-threshold", "1e-6", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "quantity", "op": "eq", "value": "residual"},
+            {"path": "convergence_threshold.reached", "op": "eq", "value": false},
+            {"path": "convergence_threshold.threshold", "op": "approx", "value": 1e-6, "rel_tol": 1e-6},
+            {"path": "convergence_threshold.final_value", "op": "approx", "value": 5e-6, "rel_tol": 1e-6},
+            {"path": "statistics.last", "op": "approx", "value": 5e-6, "rel_tol": 1e-6},
+            {"path": "statistics.first", "op": "approx", "value": 0.01, "rel_tol": 1e-6},
+            {"path": "monotonicity.direction", "op": "eq", "value": "decreasing"},
+            {"path": "convergence.type", "op": "eq", "value": "fast"}
+          ]
+        },
+        {
+          "description": "relative steady-state test reports not-reached for the still-decreasing residual",
+          "cmd": ["scripts/time_series_analyzer.py", "--input", "evals/files/history.json", "--quantity", "residual", "--detect-steady-state", "--tolerance", "1e-6", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "steady_state.reached", "op": "eq", "value": false},
+            {"path": "steady_state.tolerance", "op": "approx", "value": 1e-6, "rel_tol": 1e-6},
+            {"path": "convergence.type", "op": "eq", "value": "fast"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Compute the volume fraction of the solid phase (phi > 0.5) and the interface area from evals/files/field_output.json using the phi field with threshold 0.5.",
+      "expected_output": "Agent runs derived_quantities.py twice on evals/files/field_output.json: once for volume_fraction (result 0.32, 32 of 100 cells above 0.5) and once for interface_area (interface_length 2.4 on the 10x10 grid).",
+      "files": ["evals/files/field_output.json"],
+      "assertions": [
+        "Invokes scripts/derived_quantities.py with --input evals/files/field_output.json --quantity volume_fraction --field phi --threshold 0.5 --json",
+        "Invokes scripts/derived_quantities.py with --input evals/files/field_output.json --quantity interface_area --field phi --threshold 0.5 --json",
+        "Reports volume_fraction=0.32 (32 of 100 cells with phi above 0.5)",
+        "Reports interface_length approximately 2.4 from the marching-squares approximation"
+      ],
+      "script_checks": [
+        {
+          "description": "volume fraction of phi>0.5 on the pinned 10x10 fixture",
+          "cmd": ["scripts/derived_quantities.py", "--input", "evals/files/field_output.json", "--quantity", "volume_fraction", "--field", "phi", "--threshold", "0.5", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.volume_fraction", "op": "approx", "value": 0.32, "rel_tol": 1e-6},
+            {"path": "results.count", "op": "eq", "value": 32},
+            {"path": "results.total", "op": "eq", "value": 100},
+            {"path": "results.condition", "op": "eq", "value": "above"},
+            {"path": "results.shape", "op": "contains", "value": 10}
+          ]
+        },
+        {
+          "description": "interface length from marching-squares approximation on the same fixture",
+          "cmd": ["scripts/derived_quantities.py", "--input", "evals/files/field_output.json", "--quantity", "interface_area", "--field", "phi", "--threshold", "0.5", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.interface_length", "op": "approx", "value": 2.4, "rel_tol": 1e-6},
+            {"path": "results.cells_crossed", "op": "eq", "value": 24},
+            {"path": "results.method", "op": "eq", "value": "marching_squares_approximation"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Compare my simulation profile at evals/files/profile.json against the analytical solution in evals/files/analytical.json using L2 error and RMSE metrics, and tell me how good the agreement is.",
+      "expected_output": "Agent runs comparison_tool.py to compute l2_error and rmse between the two pinned profile files, reporting l2_error approximately 0.00458 (interpretation 'excellent', well under 1%) and rmse approximately 0.00176.",
+      "files": ["evals/files/profile.json", "evals/files/analytical.json"],
+      "assertions": [
+        "Invokes scripts/comparison_tool.py with --simulation evals/files/profile.json --reference evals/files/analytical.json and the l2_error and rmse metrics --json",
+        "Reports l2_error approximately 0.00458 with interpretation 'excellent' (under 1%)",
+        "Reports rmse approximately 0.00176",
+        "Interprets the agreement as excellent given the L2 error is well below 1%"
+      ],
+      "script_checks": [
+        {
+          "description": "comparison_tool computes the real l2_error and rmse on the pinned profiles",
+          "cmd": ["scripts/comparison_tool.py", "--simulation", "evals/files/profile.json", "--reference", "evals/files/analytical.json", "--metric", "l2_error,rmse", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "simulation_points", "op": "eq", "value": 11},
+            {"path": "reference_points", "op": "eq", "value": 11},
+            {"path": "metrics.l2_error.value", "op": "approx", "value": 0.004577697660458816, "rel_tol": 1e-4},
+            {"path": "metrics.l2_error.interpretation", "op": "eq", "value": "excellent"},
+            {"path": "metrics.rmse.value", "op": "approx", "value": 0.0017580981459830653, "rel_tol": 1e-4}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I need a line profile of the phi field along the x-axis at y=0.5 from my 2D simulation output at evals/files/field_output.json. Extract 200 points from x=0 to x=1.",
+      "expected_output": "Agent runs profile_extractor.py to extract a 200-point 1D line profile of phi along y=0.5; the profile rises from 0.02 at the edges to 1.0 in the center, with mean approximately 0.6877.",
+      "files": ["evals/files/field_output.json"],
+      "assertions": [
+        "Invokes scripts/profile_extractor.py with --input evals/files/field_output.json --field phi --start '0,0.5,0' --end '1,0.5,0' --points 200 --json",
+        "Requests exactly 200 sample points along a horizontal line at y=0.5 from x=0 to x=1",
+        "Reports the profile spans phi min=0.02 to max=1.0 with mean approximately 0.6877",
+        "Output includes the 1D profile values (200 points) suitable for plotting"
+      ],
+      "script_checks": [
+        {
+          "description": "profile_extractor returns 200 points with the real phi profile statistics",
+          "cmd": ["scripts/profile_extractor.py", "--input", "evals/files/field_output.json", "--field", "phi", "--start", "0,0.5,0", "--end", "1,0.5,0", "--points", "200", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "points", "op": "eq", "value": 200},
+            {"path": "field", "op": "eq", "value": "phi"},
+            {"path": "line_length", "op": "approx", "value": 1.0, "rel_tol": 1e-6},
+            {"path": "statistics.min", "op": "approx", "value": 0.02, "rel_tol": 1e-6},
+            {"path": "statistics.max", "op": "approx", "value": 1.0, "rel_tol": 1e-6},
+            {"path": "statistics.mean", "op": "approx", "value": 0.6877386934673366, "rel_tol": 1e-4}
+          ]
+        }
+      ]
+    }
+  ]
+}

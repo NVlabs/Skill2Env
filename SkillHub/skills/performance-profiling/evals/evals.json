@@ -1,0 +1,145 @@
+{
+  "skill_name": "performance-profiling",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "My FEM simulation is taking forever. I have a log file at output/simulation.log with timing information. Can you tell me which phase is the bottleneck?",
+      "expected_output": "Agent runs timing_analyzer.py on the log file and identifies the dominant phase (e.g., solver, assembly, or I/O) with its percentage of total runtime.",
+      "files": ["files/simulation.log"],
+      "assertions": [
+        "Invokes scripts/timing_analyzer.py with --log output/simulation.log --json",
+        "Output includes results.phases, results.slowest_phase, and results.total_time",
+        "Identifies the slowest phase and reports its fraction of total runtime",
+        "Provides actionable recommendation based on which phase dominates (solver -> preconditioner tuning, assembly -> caching, I/O -> reduce frequency)"
+      ],
+      "script_checks": [
+        {
+          "description": "timing_analyzer identifies solver as slowest phase (~77% of 110s total)",
+          "cmd": ["scripts/timing_analyzer.py", "--log", "evals/files/simulation.log", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.slowest_phase", "op": "eq", "value": "solver"},
+            {"path": "results.total_time", "op": "approx", "value": 110.0, "rel_tol": 1e-6},
+            {"path": "results.phases.1.name", "op": "eq", "value": "solver"},
+            {"path": "results.phases.1.total_time", "op": "approx", "value": 85.0, "rel_tol": 1e-6},
+            {"path": "results.phases.1.percentage", "op": "approx", "value": 77.27272727272727, "rel_tol": 1e-9},
+            {"path": "results.phases.1.count", "op": "eq", "value": 1}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I ran my LAMMPS simulation on 1, 2, 4, 8, and 16 cores. The timing data is in scaling_results.json. Is my code scaling well? This is a strong scaling test with fixed problem size.",
+      "expected_output": "Agent runs scaling_analyzer.py for strong scaling and reports parallel efficiency at each core count, identifying where efficiency drops below acceptable thresholds.",
+      "files": ["files/scaling_results.json"],
+      "assertions": [
+        "Invokes scripts/scaling_analyzer.py with --data scaling_results.json --type strong --json",
+        "Output includes results.results (per-processor entries) and results.efficiency_threshold_processors",
+        "Reports parallel efficiency values for each processor count",
+        "Identifies the processor count where efficiency drops below 0.70-0.80 threshold"
+      ],
+      "script_checks": [
+        {
+          "description": "strong scaling efficiency drops below 0.70 at 8 processors; baseline 1 proc",
+          "cmd": ["scripts/scaling_analyzer.py", "--data", "evals/files/scaling_results.json", "--type", "strong", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.type", "op": "eq", "value": "strong"},
+            {"path": "results.baseline.processors", "op": "eq", "value": 1},
+            {"path": "results.efficiency_threshold_processors", "op": "eq", "value": 8},
+            {"path": "results.average_efficiency", "op": "approx", "value": 0.7891423348319899, "rel_tol": 1e-9},
+            {"path": "results.results.3.processors", "op": "eq", "value": 8},
+            {"path": "results.results.3.efficiency", "op": "approx", "value": 0.6756756756756757, "rel_tol": 1e-9},
+            {"path": "results.results.4.efficiency", "op": "approx", "value": 0.44642857142857145, "rel_tol": 1e-9}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "estimate memory for my simulation. mesh is 512x512x256, 3 fields (phi, concentration, temperature), double precision, with a sparse matrix solver. I have 64GB available across 4 nodes.",
+      "expected_output": "Agent runs memory_profiler.py to estimate total memory and per-process memory, checking if it fits within available 64GB.",
+      "files": ["files/memory_params.json"],
+      "assertions": [
+        "Invokes scripts/memory_profiler.py with appropriate --params JSON containing mesh dimensions, fields, and solver config (solver type sparse/iterative), and --available-gb 16.0 (per node)",
+        "Output includes results.total_memory_gb, results.per_process_gb, and results.matrix_storage_gb",
+        "Reports whether the simulation fits within available memory",
+        "Includes warnings if memory usage exceeds 80% of available capacity"
+      ],
+      "script_checks": [
+        {
+          "description": "512x512x256 mesh, 3 double fields, iterative solver: 24.75 GB total exceeds 16 GB/node",
+          "cmd": ["scripts/memory_profiler.py", "--params", "evals/files/memory_params.json", "--available-gb", "16.0", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.mesh_points", "op": "eq", "value": 67108864},
+            {"path": "results.field_memory_gb", "op": "approx", "value": 1.5, "rel_tol": 1e-9},
+            {"path": "results.solver_workspace_gb", "op": "approx", "value": 7.5, "rel_tol": 1e-9},
+            {"path": "results.matrix_storage_gb", "op": "approx", "value": 15.75, "rel_tol": 1e-9},
+            {"path": "results.total_memory_gb", "op": "approx", "value": 24.75, "rel_tol": 1e-9},
+            {"path": "results.per_process_gb", "op": "approx", "value": 6.1875, "rel_tol": 1e-9},
+            {"path": "results.warnings.0", "op": "contains", "value": "exceeds available memory"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I have timing results in timing.json and scaling results in scaling.json. Give me a comprehensive bottleneck analysis with optimization recommendations.",
+      "expected_output": "Agent runs bottleneck_detector.py combining both timing and scaling data to produce a unified analysis with prioritized recommendations.",
+      "files": ["files/timing.json", "files/scaling.json"],
+      "assertions": [
+        "Invokes scripts/bottleneck_detector.py with --timing timing.json --scaling scaling.json --json",
+        "Output includes results.bottlenecks list and results.recommendations list",
+        "When a phase dominates runtime, results.bottlenecks is non-empty and the dominant phase appears with a matching recommendation category (e.g. a solver-dominated run yields a 'solver' recommendation), not the 'No significant bottlenecks detected' placeholder",
+        "Combines timing and scaling analysis into a unified bottleneck report",
+        "Provides prioritized optimization recommendations with specific actions"
+      ],
+      "script_checks": [
+        {
+          "description": "solver-dominated timing (77.3%) yields a high-priority solver bottleneck and recommendation",
+          "cmd": ["scripts/bottleneck_detector.py", "--timing", "evals/files/timing.json", "--scaling", "evals/files/scaling.json", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.bottlenecks.0.type", "op": "eq", "value": "timing"},
+            {"path": "results.bottlenecks.0.phase", "op": "eq", "value": "solver"},
+            {"path": "results.bottlenecks.0.category", "op": "eq", "value": "solver"},
+            {"path": "results.bottlenecks.0.severity", "op": "eq", "value": "high"},
+            {"path": "results.bottlenecks.0.value", "op": "approx", "value": 77.27272727272727, "rel_tol": 1e-9},
+            {"path": "results.recommendations.0.priority", "op": "eq", "value": "high"},
+            {"path": "results.recommendations.0.category", "op": "eq", "value": "solver"},
+            {"path": "results.recommendations.0.strategies.0", "op": "contains", "value": "multigrid"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "My log has a non-standard timing format: lines look like 'Phase [solver] completed in 45.2 seconds'. Can you parse it?",
+      "expected_output": "Agent uses timing_analyzer.py with a custom regex pattern to parse the non-standard log format.",
+      "files": ["files/custom_format.log"],
+      "assertions": [
+        "Invokes scripts/timing_analyzer.py with --log and a custom --pattern regex matching 'Phase\\s+\\[(\\w+)\\]\\s+completed\\s+in\\s+([\\d.]+)\\s+seconds'",
+        "Uses the --pattern flag to specify the custom timing format",
+        "Output successfully extracts phase names and times from the non-standard format",
+        "Falls back gracefully if the pattern does not match, suggesting alternative patterns"
+      ],
+      "script_checks": [
+        {
+          "description": "custom --pattern extracts solver/assembly/io phases from non-standard format",
+          "cmd": ["scripts/timing_analyzer.py", "--log", "evals/files/custom_format.log", "--pattern", "Phase\\s+\\[(\\w+)\\]\\s+completed\\s+in\\s+([\\d.]+)\\s+seconds", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.slowest_phase", "op": "eq", "value": "solver"},
+            {"path": "results.total_time", "op": "approx", "value": 105.5, "rel_tol": 1e-6},
+            {"path": "results.phases.0.name", "op": "eq", "value": "assembly"},
+            {"path": "results.phases.1.name", "op": "eq", "value": "solver"},
+            {"path": "results.phases.1.total_time", "op": "approx", "value": 85.0, "rel_tol": 1e-6},
+            {"path": "results.phases.2.name", "op": "eq", "value": "io"}
+          ]
+        }
+      ]
+    }
+  ]
+}

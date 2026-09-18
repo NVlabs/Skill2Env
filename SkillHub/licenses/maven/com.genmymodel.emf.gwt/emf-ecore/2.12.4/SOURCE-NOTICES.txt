@@ -1,0 +1,495 @@
+Source files: org/eclipse/emf/server/ecore/resource/URIServiceImpl.java, org/eclipse/emf/ecore/impl/BasicEObjectImpl_CustomFieldSerializer.java, org/eclipse/emf/ecore/resource/URIService.java, org/eclipse/emf/ecore/resource/URIServiceAsync.java
+
+/**
+ * Copyright (c) 2010 Ed Merks and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   Ed Merks - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/xml/namespace/impl/XMLNamespaceDocumentRootImpl.java, org/eclipse/emf/ecore/xml/type/SimpleAnyType.java, org/eclipse/emf/ecore/xml/type/XMLTypeFactory.java, org/eclipse/emf/ecore/xml/type/XMLTypeDocumentRoot.java, org/eclipse/emf/ecore/xml/namespace/impl/XMLNamespaceFactoryImpl.java, org/eclipse/emf/ecore/xml/namespace/XMLNamespaceFactory.java, org/eclipse/emf/ecore/xml/namespace/SpaceType.java, org/eclipse/emf/ecore/xml/type/AnyType.java, org/eclipse/emf/ecore/xml/type/impl/SimpleAnyTypeImpl.java, org/eclipse/emf/ecore/xml/type/impl/XMLTypeFactoryImpl.java, org/eclipse/emf/ecore/util/DelegatingFeatureMap.java, org/eclipse/emf/ecore/util/ExtendedMetaData.java, org/eclipse/emf/ecore/xml/namespace/impl/XMLNamespacePackageImpl.java, org/eclipse/emf/ecore/xml/type/InvalidDatatypeValueException.java, org/eclipse/emf/ecore/xml/type/impl/XMLTypePackageImpl.java, org/eclipse/emf/ecore/util/BasicExtendedMetaData.java, org/eclipse/emf/ecore/xml/type/impl/AnyTypeImpl.java, org/eclipse/emf/ecore/util/FeatureMap.java, org/eclipse/emf/ecore/util/FeatureMapUtil.java, org/eclipse/emf/ecore/xml/type/impl/XMLTypeDocumentRootImpl.java, org/eclipse/emf/ecore/xml/namespace/XMLNamespacePackage.java, org/eclipse/emf/ecore/xml/type/XMLTypePackage.java, org/eclipse/emf/ecore/util/BasicFeatureMap.java, org/eclipse/emf/ecore/xml/namespace/XMLNamespaceDocumentRoot.java
+
+/**
+ * Copyright (c) 2003-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/xml/type/ProcessingInstruction.java, org/eclipse/emf/ecore/xml/type/impl/ProcessingInstructionImpl.java
+
+/**
+ * Copyright (c) 2006-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Peter Nehrer and IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/xml/type/internal/RegEx.java
+
+/**
+ * Copyright (c) 2004-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ *
+ * ---------------------------------------------------------------------
+ *
+ * The Apache Software License, Version 1.1
+ *
+ *
+ * Copyright (c) 1999-2004 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Xerces" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation and was
+ * originally based on software copyright (c) 1999-2003, International
+ * Business Machines, Inc., http://www.apache.org.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ */
+
+Source files: org/eclipse/emf/ecore/EOperation.java, org/eclipse/emf/ecore/EcorePackage.java, org/eclipse/emf/ecore/impl/EOperationImpl.java, org/eclipse/emf/ecore/EObject.java, org/eclipse/emf/ecore/impl/EcoreFactoryImpl.java, org/eclipse/emf/ecore/impl/EcorePackageImpl.java
+
+/**
+ * Copyright (c) 2002-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   IBM - Initial API and implementation
+ *   Christian Damus (Zeligsoft) - 255469
+ */
+
+Source files: org/eclipse/emf/ecore/util/EObjectEList.java, org/eclipse/emf/ecore/InternalEObject.java, org/eclipse/emf/ecore/impl/ETypedElementImpl.java, org/eclipse/emf/ecore/util/EDataTypeUniqueEList.java, org/eclipse/emf/ecore/util/InternalEList.java, org/eclipse/emf/ecore/util/EObjectContainmentEList.java, org/eclipse/emf/ecore/util/EcoreEMap.java, org/eclipse/emf/ecore/resource/impl/ResourceFactoryRegistryImpl.java, org/eclipse/emf/ecore/impl/EAnnotationImpl.java, org/eclipse/emf/ecore/util/EcoreSwitch.java, org/eclipse/emf/ecore/util/EcoreAdapterFactory.java, org/eclipse/emf/ecore/EAnnotation.java, org/eclipse/emf/ecore/util/EObjectResolvingEList.java, org/eclipse/emf/ecore/util/EObjectWithInverseResolvingEList.java, org/eclipse/emf/ecore/util/EObjectWithInverseEList.java, org/eclipse/emf/ecore/util/ECrossReferenceEList.java, org/eclipse/emf/ecore/util/EObjectContainmentWithInverseEList.java, org/eclipse/emf/ecore/impl/EStringToStringMapEntryImpl.java, org/eclipse/emf/ecore/util/EDataTypeEList.java, org/eclipse/emf/ecore/resource/ResourceSet.java, org/eclipse/emf/ecore/resource/impl/ResourceFactoryImpl.java, org/eclipse/emf/ecore/resource/impl/URIMappingRegistryImpl.java, org/eclipse/emf/ecore/resource/impl/ResourceSetImpl.java
+
+/**
+ * Copyright (c) 2002-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/util/EcoreValidator.java
+
+/**
+ * Copyright (c) 2006-2012 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ *   Christian Damus (Zeligsoft) - 255469
+ */
+
+Source files: org/eclipse/emf/server/ecore/resource/DatastoreURIHandlerImpl.java, org/eclipse/emf/ecore/resource/impl/LocalURIHandlerImpl.java, org/eclipse/emf/ecore/resource/URIServiceCallback.java
+
+/**
+ * Copyright (c) 2010-2011 Ed Merks and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   Ed Merks - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/EParameter.java, org/eclipse/emf/ecore/EStructuralFeature.java, org/eclipse/emf/ecore/impl/EEnumImpl.java, org/eclipse/emf/ecore/impl/ENamedElementImpl.java, org/eclipse/emf/ecore/impl/EAttributeImpl.java, org/eclipse/emf/ecore/impl/EEnumLiteralImpl.java, org/eclipse/emf/ecore/EDataType.java, org/eclipse/emf/ecore/EFactory.java, org/eclipse/emf/ecore/EAttribute.java, org/eclipse/emf/ecore/impl/EPackageImpl.java, org/eclipse/emf/ecore/impl/EReferenceImpl.java, org/eclipse/emf/ecore/impl/EModelElementImpl.java, org/eclipse/emf/ecore/impl/DynamicEObjectImpl.java, org/eclipse/emf/ecore/impl/EClassifierImpl.java, org/eclipse/emf/ecore/impl/EClassImpl.java, org/eclipse/emf/ecore/EEnumLiteral.java, org/eclipse/emf/ecore/EcoreFactory.java, org/eclipse/emf/ecore/EEnum.java, org/eclipse/emf/ecore/impl/EDataTypeImpl.java, org/eclipse/emf/ecore/EClassifier.java, org/eclipse/emf/ecore/impl/EObjectImpl.java, org/eclipse/emf/ecore/EReference.java, org/eclipse/emf/ecore/EClass.java, org/eclipse/emf/ecore/ETypedElement.java, org/eclipse/emf/ecore/EPackage.java, org/eclipse/emf/ecore/EModelElement.java, org/eclipse/emf/ecore/ENamedElement.java, org/eclipse/emf/ecore/impl/EStoreEObjectImpl.java, org/eclipse/emf/ecore/impl/ESuperAdapter.java, org/eclipse/emf/ecore/plugin/EcorePluginProperties.java, org/eclipse/emf/ecore/impl/EPackageRegistryImpl.java, org/eclipse/emf/ecore/impl/EParameterImpl.java
+
+/**
+ * Copyright (c) 2002-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/EGenericType.java, org/eclipse/emf/ecore/ETypeParameter.java, org/eclipse/emf/ecore/impl/ETypeParameterImpl.java, org/eclipse/emf/ecore/impl/EGenericTypeImpl.java
+
+/**
+ * Copyright (c) 2006-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/resource/impl/ExtensibleURIConverterImpl.java, org/eclipse/emf/ecore/resource/impl/ResourceImpl.java, org/eclipse/emf/ecore/util/EcoreEList.java, org/eclipse/emf/ecore/util/DelegatingEcoreEList.java, org/eclipse/emf/ecore/util/EcoreUtil.java
+
+/**
+ * Copyright (c) 2002-2012 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/resource/impl/URIHandlerImpl.java, org/eclipse/emf/server/ecore/resource/URIHandlerImpl.java, org/eclipse/emf/ecore/resource/impl/PlatformResourceURIHandlerImpl.java, org/eclipse/emf/ecore/resource/ContentHandler.java, org/eclipse/emf/ecore/resource/impl/ContentHandlerImpl.java
+
+/**
+ * Copyright (c) 2007-2011 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/resource/Resource.java, org/eclipse/emf/ecore/resource/URIConverter.java
+
+/**
+ * Copyright (c) 2002-2011 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/impl/EStructuralFeatureImpl.java, org/eclipse/emf/ecore/util/EContentAdapter.java, org/eclipse/emf/ecore/plugin/EcorePlugin.java, org/eclipse/emf/ecore/impl/EFactoryImpl.java, org/eclipse/emf/ecore/impl/ENotificationImpl.java
+
+/**
+ * Copyright (c) 2002-2012 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/util/ECrossReferenceAdapter.java
+
+/**
+ * Copyright (c) 2005-2012 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/util/EContentsEList.java
+
+/**
+ * Copyright (c) 2002-2014 IBM Corporation, itemis AG, CEA, and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ *   Ed Merks (itemis AG) - bug 433027
+ *   Christian W. Damus (CEA) - bug 433027
+ */
+
+Source files: org/eclipse/emf/ecore/util/DelegatingNotifyingInternalEListImpl.java, org/eclipse/emf/ecore/util/AbstractSequentialInternalEList.java, org/eclipse/emf/ecore/util/NotifyingInternalEListImpl.java, org/eclipse/emf/ecore/resource/impl/ContentHandlerRegistryImpl.java
+
+/**
+ * Copyright (c) 2007-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/EValidator.java, org/eclipse/emf/ecore/impl/DynamicEStoreEObjectImpl.java, org/eclipse/emf/ecore/util/Diagnostician.java, org/eclipse/emf/ecore/util/EObjectValidator.java, org/eclipse/emf/ecore/impl/EValidatorRegistryImpl.java
+
+/**
+ * Copyright (c) 2004-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/impl/FlatEObjectImpl.java
+
+/**
+ * Copyright (c) 2006-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/util/BasicInvocationDelegate.java
+
+/**
+ * Copyright (c) 2008-2010 Zeligsoft Inc. and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *   Zeligsoft - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/util/BasicSettingDelegate.java
+
+/**
+ * Copyright (c) 2008-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/util/Switch.java, org/eclipse/emf/ecore/util/ComposedSwitch.java
+
+/**
+ * Copyright (c) 2009 TIBCO Software Inc. and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   Adrian Price
+ */
+
+Source files: org/eclipse/emf/ecore/xml/type/util/XMLTypeUtil.java, org/eclipse/emf/ecore/xml/type/util/XMLTypeValidator.java
+
+/**
+ * Copyright (c) 2004-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/resource/impl/BinaryResourceImpl.java, org/eclipse/emf/ecore/resource/URIHandler.java
+
+/**
+ * Copyright (c) 2007-2012 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/impl/ValidationDelegateRegistryImpl.java
+
+/**
+ * Copyright (c) 2009-2010 Kenn Hussey and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   Kenn Hussey - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/impl/BasicEObjectImpl.java
+
+/**
+ * Copyright (c) 2002-2012 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   IBM - Initial API and implementation
+ *   Christian Damus (Zeligsoft) - 255469
+ */
+
+Source files: org/eclipse/emf/ecore/xml/namespace/util/XMLNamespaceValidator.java, org/eclipse/emf/ecore/util/BasicInternalEList.java
+
+/**
+ * Copyright (c) 2005-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/ecore/xml/type/internal/DataValue.java
+
+/**
+ * Copyright (c) 2003-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ *
+ * ---------------------------------------------------------------------
+ *
+ * The Apache Software License, Version 1.1
+ *
+ *
+ * Copyright (c) 1999-2004 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Xerces" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation and was
+ * originally based on software copyright (c) 1999, International
+ * Business Machines, Inc., http://www.apache.org.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ */
+
+Source files: org/eclipse/emf/ecore/impl/MinimalEObjectImpl.java
+
+/**
+ * Copyright (c) 2009-2010 Ed Merks and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Ed Merks - Initial API and implementation
+ */

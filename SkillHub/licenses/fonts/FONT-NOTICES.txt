@@ -1,0 +1,544 @@
+# Font copyright and license declarations
+
+The following declarations are copied from the name tables of the distributed font binaries. Each binary declares SIL Open Font License 1.1. Full OFL terms and the upstream family notices are provided with this inventory.
+
+## ArsenalSC-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/ArsenalSC-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/ArsenalSC-Regular.ttf
+
+Copyright 2012 The Arsenal Project Authors (andrij.design@gmail.com)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org
+
+https://openfontlicense.org
+
+## BigShoulders-Bold.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/BigShoulders-Bold.ttf, SkillHub/skills/ui-styling/canvas-fonts/BigShoulders-Bold.ttf
+
+Copyright 2019 The Big Shoulders Project Authors (https://github.com/xotypeco/big_shoulders)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org
+
+https://openfontlicense.org
+
+## BigShoulders-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/BigShoulders-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/BigShoulders-Regular.ttf
+
+Copyright 2019 The Big Shoulders Project Authors (https://github.com/xotypeco/big_shoulders)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org
+
+https://openfontlicense.org
+
+## Boldonse-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/Boldonse-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/Boldonse-Regular.ttf
+
+Copyright 2024 The Boldonse Project Authors (https://github.com/googlefonts/boldonse)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org
+
+https://openfontlicense.org
+
+## BricolageGrotesque-Bold.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/BricolageGrotesque-Bold.ttf, SkillHub/skills/ui-styling/canvas-fonts/BricolageGrotesque-Bold.ttf
+
+Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## BricolageGrotesque-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/BricolageGrotesque-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/BricolageGrotesque-Regular.ttf
+
+Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## CrimsonPro-Bold.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/CrimsonPro-Bold.ttf, SkillHub/skills/ui-styling/canvas-fonts/CrimsonPro-Bold.ttf
+
+Copyright 2018 The Crimson Pro Project Authors (https://github.com/Fonthausen/CrimsonPro)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## CrimsonPro-Italic.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/CrimsonPro-Italic.ttf, SkillHub/skills/ui-styling/canvas-fonts/CrimsonPro-Italic.ttf
+
+Copyright 2018 The Crimson Pro Project Authors (https://github.com/Fonthausen/CrimsonPro)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## CrimsonPro-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/CrimsonPro-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/CrimsonPro-Regular.ttf
+
+Copyright 2018 The Crimson Pro Project Authors (https://github.com/Fonthausen/CrimsonPro)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## DMMono-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/DMMono-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/DMMono-Regular.ttf
+
+Copyright 2020 The DM Mono Project Authors (https://www.github.com/googlefonts/dm-mono)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## EricaOne-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/EricaOne-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/EricaOne-Regular.ttf
+
+Copyright (c) 2011 by LatinoType Limitada (info@latinotype.com),  with Reserved Font Names "Erica" "Erica One"
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## GeistMono-Bold.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/GeistMono-Bold.ttf, SkillHub/skills/ui-styling/canvas-fonts/GeistMono-Bold.ttf
+
+Copyright 2024 The Geist Project Authors (https://github.com/vercel/geist-font.git)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org
+
+https://openfontlicense.org
+
+## GeistMono-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/GeistMono-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/GeistMono-Regular.ttf
+
+Copyright 2024 The Geist Project Authors (https://github.com/vercel/geist-font.git)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org
+
+https://openfontlicense.org
+
+## Gloock-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/Gloock-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/Gloock-Regular.ttf
+
+Copyright 2022 The Gloock Project Authors (https://github.com/duartp/gloock)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## IBMPlexMono-Bold.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/IBMPlexMono-Bold.ttf, SkillHub/skills/ui-styling/canvas-fonts/IBMPlexMono-Bold.ttf
+
+Copyright 2017 IBM Corp. All rights reserved.
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## IBMPlexMono-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/IBMPlexMono-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/IBMPlexMono-Regular.ttf
+
+Copyright 2017 IBM Corp. All rights reserved.
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## IBMPlexSerif-Bold.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/IBMPlexSerif-Bold.ttf, SkillHub/skills/ui-styling/canvas-fonts/IBMPlexSerif-Bold.ttf
+
+Copyright 2020 IBM Corp. All rights reserved.
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## IBMPlexSerif-BoldItalic.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/IBMPlexSerif-BoldItalic.ttf, SkillHub/skills/ui-styling/canvas-fonts/IBMPlexSerif-BoldItalic.ttf
+
+Copyright 2020 IBM Corp. All rights reserved.
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## IBMPlexSerif-Italic.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/IBMPlexSerif-Italic.ttf, SkillHub/skills/ui-styling/canvas-fonts/IBMPlexSerif-Italic.ttf
+
+Copyright 2020 IBM Corp. All rights reserved.
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## IBMPlexSerif-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/IBMPlexSerif-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/IBMPlexSerif-Regular.ttf
+
+Copyright 2020 IBM Corp. All rights reserved.
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## InstrumentSans-Bold.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/InstrumentSans-Bold.ttf, SkillHub/skills/ui-styling/canvas-fonts/InstrumentSans-Bold.ttf
+
+Copyright 2022 The Instrument Sans Project Authors (https://github.com/Instrument/instrument-sans)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## InstrumentSans-BoldItalic.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/InstrumentSans-BoldItalic.ttf, SkillHub/skills/ui-styling/canvas-fonts/InstrumentSans-BoldItalic.ttf
+
+Copyright 2022 The Instrument Sans Project Authors (https://github.com/Instrument/instrument-sans)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## InstrumentSans-Italic.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/InstrumentSans-Italic.ttf, SkillHub/skills/ui-styling/canvas-fonts/InstrumentSans-Italic.ttf
+
+Copyright 2022 The Instrument Sans Project Authors (https://github.com/Instrument/instrument-sans)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## InstrumentSans-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/InstrumentSans-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/InstrumentSans-Regular.ttf
+
+Copyright 2022 The Instrument Sans Project Authors (https://github.com/Instrument/instrument-sans)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## InstrumentSerif-Italic.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/InstrumentSerif-Italic.ttf, SkillHub/skills/ui-styling/canvas-fonts/InstrumentSerif-Italic.ttf
+
+Copyright 2022 The Instrument Serif Project Authors (https://github.com/Instrument/instrument-serif)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## InstrumentSerif-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/InstrumentSerif-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/InstrumentSerif-Regular.ttf
+
+Copyright 2022 The Instrument Serif Project Authors (https://github.com/Instrument/instrument-serif)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## Italiana-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/Italiana-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/Italiana-Regular.ttf
+
+Copyright (c) 2011 by Santiago Orozco (hi@typemade.mx) with reserved name Italiana
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## JetBrainsMono-Bold.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/JetBrainsMono-Bold.ttf, SkillHub/skills/ui-styling/canvas-fonts/JetBrainsMono-Bold.ttf
+
+Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## JetBrainsMono-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/JetBrainsMono-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/JetBrainsMono-Regular.ttf
+
+Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## Jura-Light.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/Jura-Light.ttf, SkillHub/skills/ui-styling/canvas-fonts/Jura-Light.ttf
+
+Copyright 2019 The Jura Project Authors (https://github.com/ossobuffo/jura)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## Jura-Medium.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/Jura-Medium.ttf, SkillHub/skills/ui-styling/canvas-fonts/Jura-Medium.ttf
+
+Copyright 2019 The Jura Project Authors (https://github.com/ossobuffo/jura)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## LibreBaskerville-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/LibreBaskerville-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/LibreBaskerville-Regular.ttf
+
+Copyright 2012 The Libre Baskerville Project Authors (https://github.com/impallari/Libre-Baskerville)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org
+
+https://openfontlicense.org
+
+## Lora-Bold.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/Lora-Bold.ttf, SkillHub/skills/ui-styling/canvas-fonts/Lora-Bold.ttf
+
+Copyright 2011 The Lora Project Authors (https://github.com/cyrealtype/Lora-Cyrillic), with Reserved Font Name "Lora".
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## Lora-BoldItalic.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/Lora-BoldItalic.ttf, SkillHub/skills/ui-styling/canvas-fonts/Lora-BoldItalic.ttf
+
+Copyright 2011 The Lora Project Authors (https://github.com/cyrealtype/Lora-Cyrillic), with Reserved Font Name "Lora".
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## Lora-Italic.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/Lora-Italic.ttf, SkillHub/skills/ui-styling/canvas-fonts/Lora-Italic.ttf
+
+Copyright 2011 The Lora Project Authors (https://github.com/cyrealtype/Lora-Cyrillic), with Reserved Font Name "Lora".
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## Lora-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/Lora-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/Lora-Regular.ttf
+
+Copyright 2011 The Lora Project Authors (https://github.com/cyrealtype/Lora-Cyrillic), with Reserved Font Name "Lora".
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## NationalPark-Bold.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/NationalPark-Bold.ttf, SkillHub/skills/ui-styling/canvas-fonts/NationalPark-Bold.ttf
+
+Copyright 2024 The National Park Project Authors (https://github.com/benhoepner/National-Park)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org
+
+https://openfontlicense.org
+
+## NationalPark-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/NationalPark-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/NationalPark-Regular.ttf
+
+Copyright 2024 The National Park Project Authors (https://github.com/benhoepner/National-Park)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org
+
+https://openfontlicense.org
+
+## NothingYouCouldDo-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/NothingYouCouldDo-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/NothingYouCouldDo-Regular.ttf
+
+Copyright (c) 2010, Kimberly Geswein (kimberlygeswein.com). This Font Software is licensed under the SIL Open Font License, Version 1.1.  This license available with a FAQ at:  http://scripts.sil.org/OFL
+
+Copyright (c) 2010, Kimberly Geswein (kimberlygeswein.com). This Font Software is licensed under the SIL Open Font License, Version 1.1.  This license available with a FAQ at:  http://scripts.sil.org/OFL
+
+ http://scripts.sil.org/OFL
+
+## Outfit-Bold.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/Outfit-Bold.ttf, SkillHub/skills/ui-styling/canvas-fonts/Outfit-Bold.ttf
+
+Copyright 2021 The Outfit Project Authors (https://github.com/Outfitio/Outfit-Fonts)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## Outfit-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/Outfit-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/Outfit-Regular.ttf
+
+Copyright 2021 The Outfit Project Authors (https://github.com/Outfitio/Outfit-Fonts)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## PixelifySans-Medium.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/PixelifySans-Medium.ttf, SkillHub/skills/ui-styling/canvas-fonts/PixelifySans-Medium.ttf
+
+Copyright 2021 The Pixelify Sans Project Authors (https://github.com/eifetx/Pixelify-Sans)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## PoiretOne-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/PoiretOne-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/PoiretOne-Regular.ttf
+
+Copyright (c) 2011, Denis Masharov (denis.masharov@gmail.com)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## RedHatMono-Bold.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/RedHatMono-Bold.ttf, SkillHub/skills/ui-styling/canvas-fonts/RedHatMono-Bold.ttf
+
+Copyright 2024 The Red Hat Project Authors (https://github.com/RedHatOfficial/RedHatFont)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org
+
+https://openfontlicense.org
+
+## RedHatMono-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/RedHatMono-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/RedHatMono-Regular.ttf
+
+Copyright 2024 The Red Hat Project Authors (https://github.com/RedHatOfficial/RedHatFont)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org
+
+https://openfontlicense.org
+
+## Silkscreen-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/Silkscreen-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/Silkscreen-Regular.ttf
+
+Copyright 2001 The Silkscreen Project Authors (https://github.com/googlefonts/silkscreen)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## SmoochSans-Medium.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/SmoochSans-Medium.ttf, SkillHub/skills/ui-styling/canvas-fonts/SmoochSans-Medium.ttf
+
+Copyright 2016 The Smooch Sans Project Authors (https://github.com/googlefonts/smooch-sans)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## Tektur-Medium.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/Tektur-Medium.ttf, SkillHub/skills/ui-styling/canvas-fonts/Tektur-Medium.ttf
+
+Copyright 2023 The Tektur Project Authors (https://www.github.com/hyvyys/Tektur)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## Tektur-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/Tektur-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/Tektur-Regular.ttf
+
+Copyright 2023 The Tektur Project Authors (https://www.github.com/hyvyys/Tektur)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+
+## WorkSans-Bold.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/WorkSans-Bold.ttf, SkillHub/skills/ui-styling/canvas-fonts/WorkSans-Bold.ttf
+
+Copyright 2019 The Work Sans Project Authors (https://github.com/weiweihuanghuang/Work-Sans)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## WorkSans-BoldItalic.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/WorkSans-BoldItalic.ttf, SkillHub/skills/ui-styling/canvas-fonts/WorkSans-BoldItalic.ttf
+
+Copyright 2019 The Work Sans Project Authors (https://github.com/weiweihuanghuang/Work-Sans)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## WorkSans-Italic.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/WorkSans-Italic.ttf, SkillHub/skills/ui-styling/canvas-fonts/WorkSans-Italic.ttf
+
+Copyright 2019 The Work Sans Project Authors (https://github.com/weiweihuanghuang/Work-Sans)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## WorkSans-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/WorkSans-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/WorkSans-Regular.ttf
+
+Copyright 2019 The Work Sans Project Authors (https://github.com/weiweihuanghuang/Work-Sans)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL
+
+http://scripts.sil.org/OFL
+
+## YoungSerif-Regular.ttf
+
+Files: SkillHub/skills/anthropic/canvas-design/canvas-fonts/YoungSerif-Regular.ttf, SkillHub/skills/ui-styling/canvas-fonts/YoungSerif-Regular.ttf
+
+Copyright 2023 The Young Serif Project Authors (https://github.com/noirblancrouge/YoungSerif)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
+
+https://scripts.sil.org/OFL
+

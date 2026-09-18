@@ -1,0 +1,4 @@
+interface:
+  display_name: "React Native Brownfield Migration"
+  short_description: "Incremental migration to React Native or Expo using @callstack/react-native-brownfield with strategy and phased integration steps"
+  default_prompt: "Use $react-native-brownfield-migration to plan and execute incremental migration from native iOS/Android to React Native or Expo using @callstack/react-native-brownfield, including initial setup, packaging, and phased host integration."

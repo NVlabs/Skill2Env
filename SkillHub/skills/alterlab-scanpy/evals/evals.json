@@ -1,0 +1,62 @@
+{
+  "skill": "alterlab-scanpy",
+  "evals": [
+    {
+      "id": "standard-scrnaseq-pipeline",
+      "prompt": "I just loaded a 10X PBMC dataset into an AnnData. Run the standard scRNA-seq workflow: QC and filtering, normalize and log-transform, pick highly variable genes, PCA, neighbors, UMAP, and Leiden clustering.",
+      "expected_output": "Invokes alterlab-scanpy: runs the established pipeline - calculate_qc_metrics + filter_cells/filter_genes, normalize_total + log1p, highly_variable_genes, pca, neighbors, umap, leiden - in the canonical order using sc.pp/sc.tl/sc.pl functions.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "leiden" },
+        { "type": "behavior", "value": "Walks the canonical scanpy sequence: QC filtering, normalize_total + log1p, highly_variable_genes, pca, neighbors, umap, leiden." }
+      ]
+    },
+    {
+      "id": "qc-mito-filtering",
+      "prompt": "My single-cell data has some dying cells with high mitochondrial content. How do I flag the mitochondrial genes, compute QC metrics, visualize them, and filter out the low-quality cells?",
+      "expected_output": "Invokes alterlab-scanpy: marks MT genes via var_names.str.startswith('MT-'), runs sc.pp.calculate_qc_metrics(qc_vars=['mt']), visualizes with sc.pl.violin, then filters on pct_counts_mt and min_genes/min_cells thresholds.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "calculate_qc_metrics" },
+        { "type": "behavior", "value": "Flags MT- genes, computes QC metrics with qc_vars=['mt'], and filters cells by pct_counts_mt and gene/count thresholds." }
+      ]
+    },
+    {
+      "id": "marker-genes-per-cluster",
+      "prompt": "I have Leiden clusters on my dataset. Find the marker genes that distinguish each cluster, show me a dotplot and a ranked-genes heatmap, and let me pull the top markers for cluster 0 as a DataFrame.",
+      "expected_output": "Invokes alterlab-scanpy: runs sc.tl.rank_genes_groups(adata, 'leiden', method='wilcoxon'), visualizes with rank_genes_groups_dotplot and rank_genes_groups_heatmap, and extracts cluster 0 with sc.get.rank_genes_groups_df.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "rank_genes_groups" },
+        { "type": "behavior", "value": "Uses rank_genes_groups with the wilcoxon method and the rank_genes_groups dotplot/heatmap plotting helpers." }
+      ]
+    },
+    {
+      "id": "de-between-conditions",
+      "prompt": "Within my T-cell population, I want to find genes that are differentially expressed between treated and control cells.",
+      "expected_output": "Invokes alterlab-scanpy: subsets to the T-cell population, then runs sc.tl.rank_genes_groups(groupby='condition', groups=['treated'], reference='control') and plots the result for the condition contrast.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Subsets the cell population then runs rank_genes_groups across condition with an explicit reference group for the treated-vs-control contrast." }
+      ]
+    },
+    {
+      "id": "near-miss-scvi-tools",
+      "prompt": "I have strong batch effects across ten donors and want a deep generative model to learn a batch-corrected latent representation of my cells - something like a VAE I can also use for label transfer.",
+      "expected_output": "Should NOT trigger alterlab-scanpy. Deep generative / probabilistic models (scVI VAE latent spaces, label transfer via scANVI) are alterlab-scvi-tools territory. scanpy covers the standard pipeline and defers deep generative modeling to scvi-tools (it only offers ComBat/Harmony-style correction).",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "scvi-tools" }
+      ]
+    },
+    {
+      "id": "near-miss-anndata",
+      "prompt": "I have five separate .h5ad files and I just want to concatenate them into one AnnData along the cells axis with an inner join and a batch key, then write the combined object back to disk. No analysis yet.",
+      "expected_output": "Should NOT trigger alterlab-scanpy. Pure concatenation/I-O of .h5ad files (ad.concat with axis/join/label, write_h5ad) is alterlab-anndata's data-format territory. scanpy is the analysis pipeline and defers object construction/concatenation to anndata.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "anndata" }
+      ]
+    }
+  ]
+}

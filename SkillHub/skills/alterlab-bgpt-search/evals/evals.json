@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-bgpt-search",
+  "evals": [
+    {
+      "id": "structured-experimental-data",
+      "prompt": "I'm building an evidence table for a meta-analysis on CRISPR gene editing efficiency in human cells. I need the actual sample sizes, methods, and quantitative results from the papers, not just abstracts. Can you pull that?",
+      "expected_output": "Invokes alterlab-bgpt-search and runs the BGPT MCP `search_papers` tool, because the user needs structured experimental data extracted from full-text studies (sample sizes, methods, quantitative results, quality scores) rather than titles/abstracts. Returns the 25+ structured fields per paper suitable for an evidence table.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Routes to the BGPT MCP search_papers tool and emphasizes structured full-text experimental data (sample sizes, methods, quantitative results, quality scores) rather than abstracts." }
+      ]
+    },
+    {
+      "id": "effect-sizes-across-studies",
+      "prompt": "Find me papers reporting effect sizes and sample sizes for mindfulness interventions on anxiety, so I can compare methodologies across the studies.",
+      "expected_output": "Invokes alterlab-bgpt-search via the BGPT MCP server to retrieve quantitative results (effect sizes, sample sizes) and methods fields across studies, enabling cross-study methodology comparison. This is BGPT's core use case: extracting structured experimental detail abstracts do not provide.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Surfaces per-study sample sizes, effect sizes, and methods for cross-study comparison." }
+      ]
+    },
+    {
+      "id": "quality-scored-evidence",
+      "prompt": "For a clinical guideline I need scientific papers on statin use in primary prevention that come with study quality scores and evidence grading. Can you search a database that gives me quality assessments per paper?",
+      "expected_output": "Invokes alterlab-bgpt-search because BGPT returns quality scores and study quality assessments as part of its 25+ structured fields per paper, which is exactly what the user needs for building clinical guideline evidence tables.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "quality" }
+      ]
+    },
+    {
+      "id": "scoping-review-deep-data",
+      "prompt": "I'm running a scoping review on gut microbiome and depression and I want the experimental protocols and conclusions extracted from the full text of each study, not a web summary.",
+      "expected_output": "Invokes alterlab-bgpt-search and uses the BGPT MCP `search_papers` tool to gather structured data (methods, protocols, conclusions) extracted from full-text studies for a scoping review, the database's purpose-built strength.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Gathers full-text-extracted methods, protocols, and conclusions rather than a generic web summary." }
+      ]
+    },
+    {
+      "id": "near-miss-perplexity",
+      "prompt": "What are the latest developments and announcements in CRISPR gene editing from the past three months? Give me a current, web-grounded summary with citations.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-perplexity. The user wants a real-time, web-grounded summary of recent news/developments with citations, not structured experimental data extracted from a curated full-text paper database. BGPT searches papers for experimental detail; current web-grounded answers are Perplexity's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-perplexity" }
+      ]
+    },
+    {
+      "id": "near-miss-pyzotero",
+      "prompt": "I already have 40 PDFs in my Zotero library. Can you organize them into collections, fix the metadata, and export a BibTeX file for my paper?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pyzotero (citation/library management). The user wants to manage an existing Zotero reference library and export citations, not search a database for structured experimental data from papers.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pyzotero" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "skill_name": "workflow-engine-mapper",
+  "evals": [
+    {
+      "id": "aiida_provenance_campaign",
+      "prompt": "Map a 500-run Quantum ESPRESSO campaign on HPC with strong provenance requirements. It must be restartable.",
+      "expected_outputs": ["AiiDA", "provenance", "scheduler"],
+      "assertions": [
+        "Runs workflow_engine_mapper.py with --code qe --runs 500 --needs-provenance --needs-restart --hpc",
+        "Reports recommended_engine='aiida' from the script (provenance AND remote/large gating)",
+        "Reports dag_pattern='map over structures/parameters -> collect -> rank with restart checkpoints' from the script",
+        "Reports provenance_requirements.store_environment=true and store_code_version=true from the script",
+        "Reports restart_strategy.resume_by_job_id_or_name=true from the script",
+        "migration_triggers from the script lists the remote-scheduler and auditable-provenance triggers"
+      ],
+      "script_checks": [
+        {
+          "description": "500-run QE/HPC/provenance/restart -> aiida, sweep DAG with checkpoints",
+          "cmd": [
+            "scripts/workflow_engine_mapper.py",
+            "--task",
+            "500-run Quantum ESPRESSO campaign on HPC with provenance",
+            "--code",
+            "qe",
+            "--runs",
+            "500",
+            "--needs-provenance",
+            "--needs-restart",
+            "--hpc",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.recommended_engine", "op": "eq", "value": "aiida"},
+            {"path": "results.dag_pattern", "op": "eq", "value": "map over structures/parameters -> collect -> rank with restart checkpoints"},
+            {"path": "results.provenance_requirements.store_code_version", "op": "eq", "value": true},
+            {"path": "results.provenance_requirements.store_environment", "op": "eq", "value": true},
+            {"path": "results.restart_strategy.checkpoint_jobs", "op": "eq", "value": true},
+            {"path": "results.restart_strategy.resume_by_job_id_or_name", "op": "eq", "value": true},
+            {"path": "results.migration_triggers", "op": "contains", "value": "remote scheduler interaction should be explicit"},
+            {"path": "results.migration_triggers", "op": "contains", "value": "results need an auditable provenance trail"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "atomate2_vasp_dos",
+      "prompt": "Choose a workflow pattern for VASP relax-static-DOS calculations across 50 structures. No remote HPC and no strict provenance database needed.",
+      "expected_outputs": ["atomate2", "relax", "static", "branch"],
+      "assertions": [
+        "Runs workflow_engine_mapper.py with --code vasp --runs 50 (no --needs-provenance, no --hpc)",
+        "Reports recommended_engine='atomate2' from the script (VASP with >=10 runs, no provenance/HPC gating to aiida)",
+        "Reports dag_pattern='relax -> static -> property branches' from the script",
+        "Reports provenance_requirements.store_code_version=true but store_environment=false from the script",
+        "Reports restart_strategy.checkpoint_jobs=true (runs>=20) even though restart was not explicitly requested",
+        "migration_triggers from the script contains exactly the 'run count is high enough to need structured metadata' trigger"
+      ],
+      "script_checks": [
+        {
+          "description": "VASP 50 structures, no provenance/HPC -> atomate2, branch DAG",
+          "cmd": [
+            "scripts/workflow_engine_mapper.py",
+            "--task",
+            "VASP relax-static-DOS calculations across 50 structures",
+            "--code",
+            "vasp",
+            "--runs",
+            "50",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.recommended_engine", "op": "eq", "value": "atomate2"},
+            {"path": "results.dag_pattern", "op": "eq", "value": "relax -> static -> property branches"},
+            {"path": "results.provenance_requirements.store_inputs", "op": "eq", "value": true},
+            {"path": "results.provenance_requirements.store_outputs", "op": "eq", "value": true},
+            {"path": "results.provenance_requirements.store_code_version", "op": "eq", "value": true},
+            {"path": "results.provenance_requirements.store_environment", "op": "eq", "value": false},
+            {"path": "results.restart_strategy.checkpoint_jobs", "op": "eq", "value": true},
+            {"path": "results.restart_strategy.needed", "op": "eq", "value": false},
+            {"path": "results.restart_strategy.resume_by_job_id_or_name", "op": "eq", "value": true},
+            {"path": "results.migration_triggers", "op": "contains", "value": "run count is high enough to need structured metadata"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "one_off_exploration",
+      "prompt": "I need one local ASE test calculation to inspect a structure.",
+      "expected_outputs": ["one-off", "migrate to a workflow engine"],
+      "assertions": [
+        "Runs workflow_engine_mapper.py with --code ase --runs 1 (no provenance/HPC/restart flags)",
+        "Reports recommended_engine='one-off' from the script",
+        "Reports dag_pattern='linear' from the script",
+        "Reports provenance_requirements.store_code_version=false and store_environment=false from the script",
+        "Reports restart_strategy.resume_by_job_id_or_name=false and checkpoint_jobs=false from the script",
+        "migration_triggers from the script names when to migrate: 'migrate to a workflow engine once results will be compared, published, screened, or resumed, or runs reach ~5+'"
+      ],
+      "script_checks": [
+        {
+          "description": "Single local ASE run -> one-off, linear DAG, forward-looking migration trigger",
+          "cmd": [
+            "scripts/workflow_engine_mapper.py",
+            "--task",
+            "one local ASE test calculation to inspect a structure",
+            "--code",
+            "ase",
+            "--runs",
+            "1",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.recommended_engine", "op": "eq", "value": "one-off"},
+            {"path": "results.dag_pattern", "op": "eq", "value": "linear"},
+            {"path": "results.provenance_requirements.store_code_version", "op": "eq", "value": false},
+            {"path": "results.provenance_requirements.store_environment", "op": "eq", "value": false},
+            {"path": "results.restart_strategy.checkpoint_jobs", "op": "eq", "value": false},
+            {"path": "results.restart_strategy.resume_by_job_id_or_name", "op": "eq", "value": false},
+            {"path": "results.migration_triggers", "op": "contains", "value": "migrate to a workflow engine once results will be compared, published, screened, or resumed, or runs reach ~5+"}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-qualitative-methods",
+  "evals": [
+    {
+      "id": "thematic-analysis-coding",
+      "prompt": "I have 14 interview transcripts about early-career faculty experiences and I want to run a reflexive thematic analysis. Walk me through coding and developing themes properly.",
+      "expected_output": "Invokes alterlab-qualitative-methods and guides the user through Braun & Clarke's six-phase reflexive thematic analysis (familiarization, systematic coding, generating initial themes, reviewing themes, defining/naming, writing up), distinguishing semantic from latent codes and warning that a theme is a pattern of shared meaning, not a topic.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "thematic analysis" }
+      ]
+    },
+    {
+      "id": "methodology-selection",
+      "prompt": "I want to understand how individual cancer patients make sense of living with uncertainty. I have a small homogeneous sample. Which qualitative methodology fits, and why not grounded theory?",
+      "expected_output": "Invokes alterlab-qualitative-methods and uses the methodology decision framework to recommend Interpretative Phenomenological Analysis (IPA) for lived experience and meaning-making with a small homogeneous sample, contrasting it with grounded theory (which aims to generate theory about social processes), citing Smith, Flowers & Larkin.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Recommends IPA for lived-experience meaning-making with a small homogeneous sample and explains why grounded theory is a poorer fit." }
+      ]
+    },
+    {
+      "id": "grounded-theory-coding",
+      "prompt": "I'm doing a grounded theory study on how early-career faculty cope with the tenure track. How do I move from open coding to identifying a core category, and when do I stop sampling?",
+      "expected_output": "Invokes alterlab-qualitative-methods and explains the grounded theory coding progression (open → axial → selective coding, or Charmaz's initial → focused), the paradigm model in axial coding, identifying a core category in selective coding, and theoretical sampling continuing until theoretical saturation.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "saturation" }
+      ]
+    },
+    {
+      "id": "trustworthiness-criteria",
+      "prompt": "How do I establish rigor and trustworthiness for my qualitative findings? A reviewer wants me to address credibility and dependability and asked about member checking.",
+      "expected_output": "Invokes alterlab-qualitative-methods and applies Lincoln & Guba's trustworthiness criteria (credibility, transferability, dependability, confirmability) with concrete strategies (triangulation, peer debriefing, audit trail, thick description, reflexive journal) and lays out a member-checking protocol.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "trustworthiness" }
+      ]
+    },
+    {
+      "id": "near-miss-mixed-methods",
+      "prompt": "I'll collect interviews and a validated survey on the same participants, analyze both, and merge them in a joint display to see where they converge and diverge. How do I design and integrate this?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-mixed-methods. The study has both a qualitative and a quantitative strand with intentional integration (joint display, convergence/divergence), which is a convergent mixed methods design and the mixed-methods skill's territory, not single-tradition qualitative analysis.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-mixed-methods" }
+      ]
+    },
+    {
+      "id": "near-miss-survey-design",
+      "prompt": "I need to design and validate a questionnaire measuring student engagement — item wording, Likert response options, and pilot testing for reliability.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-survey-design. The request is about constructing and psychometrically validating a quantitative survey instrument, not designing or analyzing qualitative inquiry, so it belongs to the survey-design skill.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-survey-design" }
+      ]
+    }
+  ]
+}

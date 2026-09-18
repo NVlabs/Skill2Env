@@ -1,0 +1,174 @@
+{
+  "skill_name": "ontology-explorer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Show me the top-level classes in the CMSO ontology. I want to understand the overall hierarchy before I dive into specifics.",
+      "expected_output": "Agent runs class_browser.py with --list-roots to display all root-level CMSO classes, giving the user an overview of the ontology structure.",
+      "assertions": [
+        "Invokes scripts/class_browser.py with --ontology cmso --list-roots --json",
+        "Output includes results.roots listing the top-level CMSO classes",
+        "Shows root classes like Material, Computational Sample, Structure, Unit Cell, etc.",
+        "Explains the hierarchy: root classes are broadest concepts, children are more specific"
+      ],
+      "script_checks": [
+        {
+          "description": "class_browser --list-roots returns the CMSO root classes",
+          "cmd": ["scripts/class_browser.py", "--ontology", "cmso", "--list-roots", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.roots", "op": "contains", "value": "Material"},
+            {"path": "results.roots", "op": "contains", "value": "Computational Sample"},
+            {"path": "results.roots", "op": "contains", "value": "Structure"},
+            {"path": "results.roots", "op": "contains", "value": "Unit Cell"},
+            {"path": "results.roots", "op": "contains", "value": "Space Group"},
+            {"path": "results.roots.0", "op": "eq", "value": "Angle"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I'm working with crystal structures. What does the CMSO ontology say about the UnitCell class? Show me its children, parent classes, and any properties it has.",
+      "expected_output": "Agent inspects the UnitCell class and also looks up its properties, showing the class hierarchy path and applicable properties.",
+      "assertions": [
+        "Invokes scripts/class_browser.py with --ontology cmso --class UnitCell --json",
+        "Invokes scripts/property_lookup.py with --ontology cmso --class UnitCell --json",
+        "Output includes class hierarchy (parent classes, children/subclasses)",
+        "Shows properties applicable to UnitCell (e.g., has Bravais lattice, lattice parameters)"
+      ],
+      "script_checks": [
+        {
+          "description": "class_browser --class UnitCell resolves the canonical label and properties",
+          "cmd": ["scripts/class_browser.py", "--ontology", "cmso", "--class", "UnitCell", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.class_info.label", "op": "eq", "value": "Unit Cell"},
+            {"path": "results.class_info.iri", "op": "eq", "value": "http://purls.helmholtz-metadaten.de/cmso/UnitCell"},
+            {"path": "results.path_to_root.0", "op": "eq", "value": "Unit Cell"},
+            {"path": "results.properties.object_properties.0.name", "op": "eq", "value": "has basis"},
+            {"path": "results.properties.object_properties.0.range", "op": "eq", "value": "Basis"},
+            {"path": "results.properties.data_properties.0.name", "op": "eq", "value": "has Bravais lattice"}
+          ]
+        },
+        {
+          "description": "property_lookup --class UnitCell lists all UnitCell properties with domain Unit Cell",
+          "cmd": ["scripts/property_lookup.py", "--ontology", "cmso", "--class", "UnitCell", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.class_name", "op": "eq", "value": "Unit Cell"},
+            {"path": "results.class_properties.0.name", "op": "eq", "value": "has Bravais lattice"},
+            {"path": "results.class_properties.0.type", "op": "eq", "value": "data"},
+            {"path": "results.class_properties.0.domain", "op": "eq", "value": "Unit Cell"},
+            {"path": "results.class_properties.1.name", "op": "eq", "value": "has basis"},
+            {"path": "results.class_properties.2.name", "op": "eq", "value": "has lattice parameter"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "search for anything related to 'lattice' in CMSO - both classes and properties",
+      "expected_output": "Agent searches for lattice-related classes and properties across the CMSO ontology using the search functionality of both scripts.",
+      "assertions": [
+        "Invokes scripts/class_browser.py with --ontology cmso --search lattice --json",
+        "Invokes scripts/property_lookup.py with --ontology cmso --search lattice --json",
+        "Returns matching classes (e.g., Lattice Parameter, Lattice Vector) with relevance scores",
+        "Returns matching properties (e.g., has Bravais lattice, has lattice parameter) with domain/range info"
+      ],
+      "script_checks": [
+        {
+          "description": "class_browser --search lattice returns lattice classes with relevance scores",
+          "cmd": ["scripts/class_browser.py", "--ontology", "cmso", "--search", "lattice", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.search_results.0.label", "op": "eq", "value": "Lattice Angle"},
+            {"path": "results.search_results.0.relevance", "op": "eq", "value": 1},
+            {"path": "results.search_results.1.label", "op": "eq", "value": "Lattice Parameter"},
+            {"path": "results.search_results.4.label", "op": "eq", "value": "Simulation Cell Vector"},
+            {"path": "results.search_results.4.relevance", "op": "approx", "value": 0.5, "rel_tol": 1e-9}
+          ]
+        },
+        {
+          "description": "property_lookup --search lattice returns the two lattice properties with domain/range",
+          "cmd": ["scripts/property_lookup.py", "--ontology", "cmso", "--search", "lattice", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.search_results.0.name", "op": "eq", "value": "has Bravais lattice"},
+            {"path": "results.search_results.0.type", "op": "eq", "value": "data"},
+            {"path": "results.search_results.0.domain", "op": "eq", "value": "Unit Cell"},
+            {"path": "results.search_results.1.name", "op": "eq", "value": "has lattice parameter"},
+            {"path": "results.search_results.1.type", "op": "eq", "value": "object"},
+            {"path": "results.search_results.1.range", "op": "eq", "value": "Lattice Parameter"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Look up the property 'has space group' in CMSO. I want to know its domain, range, and what type of property it is.",
+      "expected_output": "Agent runs property_lookup.py to get the full definition of the 'has space group' property including domain, range, and property type.",
+      "assertions": [
+        "Invokes scripts/property_lookup.py with --ontology cmso --property 'has space group' --json",
+        "Output includes results.property_info with domain and range definitions",
+        "Identifies whether it is an object property or data property",
+        "Shows which class(es) the property applies to (domain) and what values it takes (range)"
+      ],
+      "script_checks": [
+        {
+          "description": "property_lookup --property 'has space group' returns full property_info",
+          "cmd": ["scripts/property_lookup.py", "--ontology", "cmso", "--property", "has space group", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.property_info.name", "op": "eq", "value": "has space group"},
+            {"path": "results.property_info.type", "op": "eq", "value": "object"},
+            {"path": "results.property_info.domain", "op": "eq", "value": "Crystal Structure"},
+            {"path": "results.property_info.range", "op": "eq", "value": "Space Group"},
+            {"path": "results.property_info.iri", "op": "eq", "value": "http://purls.helmholtz-metadaten.de/cmso/hasSpaceGroup"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I have an OWL file at https://raw.githubusercontent.com/OCDO/cmso/main/cmso.owl that I want to parse and generate a fresh summary JSON from. Can you do that?",
+      "expected_output": "Agent runs owl_parser.py to parse the remote OWL file, then ontology_summarizer.py to generate a summary JSON, noting this requires internet access.",
+      "assertions": [
+        "Invokes scripts/owl_parser.py with --source https://raw.githubusercontent.com/OCDO/cmso/main/cmso.owl --json",
+        "Invokes scripts/ontology_summarizer.py with --source https://raw.githubusercontent.com/OCDO/cmso/main/cmso.owl --output summary.json --json",
+        "Mentions that internet access is required for fetching remote OWL files",
+        "Output from owl_parser includes results.metadata, results.classes, results.class_hierarchy"
+      ],
+      "files": ["files/mini_ontology.owl"],
+      "script_checks": [
+        {
+          "description": "owl_parser parses a local OWL fixture into metadata/classes/hierarchy",
+          "cmd": ["scripts/owl_parser.py", "--source", "evals/files/mini_ontology.owl", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.metadata.iri", "op": "eq", "value": "http://example.org/mini"},
+            {"path": "results.metadata.title", "op": "eq", "value": "Mini Test Ontology"},
+            {"path": "results.metadata.version", "op": "eq", "value": "0.1.0"},
+            {"path": "results.num_classes", "op": "eq", "value": 3},
+            {"path": "results.num_object_properties", "op": "eq", "value": 1},
+            {"path": "results.num_data_properties", "op": "eq", "value": 1},
+            {"path": "results.classes.1.label", "op": "eq", "value": "Crystalline Material"},
+            {"path": "results.classes.1.parent", "op": "eq", "value": "Material"},
+            {"path": "results.class_hierarchy.Material.Crystalline Material", "op": "exists"}
+          ]
+        },
+        {
+          "description": "ontology_summarizer writes a summary JSON and reports statistics",
+          "cmd": ["scripts/ontology_summarizer.py", "--source", "evals/files/mini_ontology.owl", "--output", "evals/files/mini_summary_out.json", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.output_file", "op": "eq", "value": "evals/files/mini_summary_out.json"},
+            {"path": "results.statistics.num_classes", "op": "eq", "value": 3},
+            {"path": "results.statistics.num_object_properties", "op": "eq", "value": 1},
+            {"path": "results.statistics.num_data_properties", "op": "eq", "value": 1}
+          ]
+        }
+      ]
+    }
+  ]
+}

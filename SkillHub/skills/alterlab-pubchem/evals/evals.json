@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-pubchem",
+  "evals": [
+    {
+      "id": "name-to-properties",
+      "prompt": "Look up caffeine in PubChem and give me its CID, molecular formula, molecular weight, XLogP, and TPSA.",
+      "expected_output": "Invokes alterlab-pubchem. Uses PubChemPy (pcp.get_compounds / get_properties) to resolve caffeine by name to a CID and retrieve MolecularFormula, MolecularWeight, XLogP, and TPSA via PUG-REST.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "CID" }
+      ]
+    },
+    {
+      "id": "similarity-search",
+      "prompt": "Starting from gefitinib, find structurally similar compounds in PubChem at 85% Tanimoto similarity so I can explore analogs.",
+      "expected_output": "Invokes alterlab-pubchem. Gets gefitinib's canonical SMILES, then runs a PUG-REST similarity search (searchtype='similarity', Threshold=85) returning structurally related compounds. Notes similarity searches are asynchronous and may take 15-30 seconds.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "similarity" }
+      ]
+    },
+    {
+      "id": "substructure-screen",
+      "prompt": "Find me PubChem compounds that contain a sulfonamide group, capped at 100 records, for a substructure-based virtual screen.",
+      "expected_output": "Invokes alterlab-pubchem. Runs a PUG-REST substructure search (searchtype='substructure', MaxRecords=100) with the sulfonamide SMILES motif, returning compounds containing the pharmacophore.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "substructure" }
+      ]
+    },
+    {
+      "id": "drug-likeness-batch",
+      "prompt": "For aspirin, ibuprofen, naproxen, and celecoxib, pull their MW, LogP, TPSA, and H-bond donor/acceptor counts from PubChem and tell me which violate Lipinski's Rule of Five.",
+      "expected_output": "Invokes alterlab-pubchem. Batch-retrieves the requested properties for each compound via PubChemPy and evaluates Lipinski's Rule of Five (MW<=500, LogP<=5, HBD<=5, HBA<=10), reporting violations per compound. Observes rate-limit best practices (delays between requests).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Lipinski" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-bindingdb",
+      "prompt": "I need the measured Ki and IC50 binding affinities of these inhibitors against ABL1 (UniProt P00519) for an SAR study.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-bindingdb. The user wants measured protein-target binding constants (Ki, IC50) indexed by UniProt target, which is BindingDB's domain, not PubChem's compound properties and structure search.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-bindingdb" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-zinc-db",
+      "prompt": "Assemble a docking-ready library of purchasable lead-like compounds with their supplier catalog codes and 3D structures for a virtual screen.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-zinc-db. The user wants commercially-available (purchasable) compounds with supplier codes and docking-ready 3D structures, which is ZINC's domain, not PubChem's general compound and property database.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-zinc-db" }
+      ]
+    }
+  ]
+}

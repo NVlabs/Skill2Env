@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-survey-analysis",
+  "evals": [
+    {
+      "id": "anes-weighted-estimate",
+      "prompt": "I have ANES data with V160101 weights and V160201 strata. Give me the weighted percentage who trust government, with correct standard errors.",
+      "expected_output": "Invokes alterlab-survey-analysis: builds a survey design object (weights + strata + PSU) and computes a design-based proportion with Taylor or replicate-weight SEs — not df.mean(). Uses samplics or R survey/srvyr, and reports the design effect.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "design" },
+        { "type": "behavior", "value": "Declares a survey design (weights/strata/PSU) before estimating and uses design-based standard errors, not naive ones." }
+      ]
+    },
+    {
+      "id": "narrow-ci-diagnosis",
+      "prompt": "Why are my survey confidence intervals so narrow? I just ran statsmodels.OLS on the DHS file.",
+      "expected_output": "Invokes alterlab-survey-analysis: diagnoses that the complex design (weights, stratification, clustering) was ignored, which underestimates SEs, and routes to design-based estimation with the DHS weights/strata/PSU.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Identifies ignored survey design as the cause of falsely narrow CIs and prescribes design-based SEs." }
+      ]
+    },
+    {
+      "id": "post-stratify-raking",
+      "prompt": "Post-stratify my sample so it matches the census age-by-sex margins.",
+      "expected_output": "Invokes alterlab-survey-analysis: applies post-stratification / raking (iterative proportional fitting) to calibrate the weights to the known population margins, using survey::rake or samplics calibration.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "rak" }
+      ]
+    },
+    {
+      "id": "near-miss-survey-design",
+      "prompt": "Help me write the questionnaire items and choose a sampling frame for a brand-new survey.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-survey-design. Instrument wording and sampling-frame design are upstream of weighted analysis.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-survey-design" }
+      ]
+    },
+    {
+      "id": "near-miss-ssci-sampling-gate",
+      "prompt": "How many respondents do I need and is my sampling frame adequate for this study?",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-ssci-sampling-gate. Frame adequacy and required sample size are the sampling gate's job, upstream of design-based analysis of collected data.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-ssci-sampling-gate" }
+      ]
+    }
+  ]
+}

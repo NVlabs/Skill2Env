@@ -1,0 +1,4 @@
+openai-whisper>=20231117
+torch>=2.0.0
+ffmpeg-python>=0.2.0
+click>=8.0.0

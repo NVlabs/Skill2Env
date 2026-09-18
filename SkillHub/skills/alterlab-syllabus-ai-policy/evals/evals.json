@@ -1,0 +1,69 @@
+{
+  "skill": "alterlab-syllabus-ai-policy",
+  "evals": [
+    {
+      "id": "draft-course-ai-policy",
+      "prompt": "I'm finalizing my syllabus for an undergraduate Research Methods course and I need an AI-use policy. The graded work is: a literature-review essay, an in-class final exam, and a data-analysis report. Draft a clear statement telling students where they can and can't use ChatGPT.",
+      "expected_output": "Invokes alterlab-syllabus-ai-policy. Assigns each of the three graded tasks an explicit tier (e.g. literature review = restricted, in-class exam = prohibited, data-analysis report = permitted) using the permitted/restricted/prohibited model, attaches a disclosure clause and a concrete citation template, and binds prohibited-tier misuse to the institution's academic-integrity code (left as a <CODE_REF> placeholder if not supplied, and flagged as such). Can use scripts/policy_builder.py to emit the paste-ready statement. Does not author the rest of the syllabus, outcomes, or rubrics.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Produces a per-assignment tier (prohibited/restricted/permitted) for every graded task rather than a single blanket 'use AI responsibly' line, and includes a disclosure + citation clause." }
+      ]
+    },
+    {
+      "id": "ai-disclosure-and-citation-rule",
+      "prompt": "For the assignments where I do allow students to use generative AI, how should they disclose it and cite it? We use APA in this course. Give me language I can drop into the syllabus.",
+      "expected_output": "Invokes alterlab-syllabus-ai-policy. Supplies a disclosure requirement (which tool/version, for what sub-tasks, how the student verified the output) and a concrete APA 7 citation template crediting the model maker, e.g. 'OpenAI. (2023). ChatGPT (Mar 14 version) [Large language model]. https://chat.openai.com/chat' with in-text '(OpenAI, 2023)', rather than telling students to 'cite appropriately'. References references/disclosure_and_citation.md for the verbatim template.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "OpenAI" },
+        { "type": "behavior", "value": "Gives a concrete APA AI-citation template and a structured disclosure requirement, not a vague 'cite appropriately' instruction." }
+      ]
+    },
+    {
+      "id": "academic-integrity-clause-for-ai",
+      "prompt": "I need an academic-integrity clause for my syllabus that specifically covers AI tools, and it has to be consistent with our university's student disciplinary code. Can you write one with per-assignment rules on where AI is and isn't allowed?",
+      "expected_output": "Invokes alterlab-syllabus-ai-policy. Writes a per-assignment tiered AI-use policy plus an integrity-binding sentence that ties prohibited-tier or undisclosed use to the named institutional code (inserted verbatim if supplied, otherwise a clearly-marked placeholder). Notes that detector outputs are probabilistic and not a sole basis for a finding, and that the policy states process rather than adjudicating individual cases.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Binds the policy to the institution's own academic-integrity code (or a marked placeholder, never an invented regulation name) and keeps per-assignment tiers." }
+      ]
+    },
+    {
+      "id": "per-assignment-ai-tiers",
+      "prompt": "Can you give me a simple table for my syllabus that says, assignment by assignment, whether students are allowed to use generative AI, only allowed for some steps, or not allowed at all?",
+      "expected_output": "Invokes alterlab-syllabus-ai-policy. Produces an assignment-by-assignment table mapping each task to prohibited / restricted (named sub-tasks only) / permitted, defaulting any unstated task to prohibited with an 'instructor to confirm' note rather than leaving it ambiguous. Can run scripts/policy_builder.py to generate the table.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Returns a per-assignment prohibited/restricted/permitted breakdown and applies default-deny to any task with no stated tier." }
+      ]
+    },
+    {
+      "id": "near-miss-teaching-design",
+      "prompt": "I'm building a brand-new undergraduate course from scratch. Can you help me design it end to end — learning outcomes, a weekly schedule, the assessment plan, and grading rubrics?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-teaching-design. The user wants full course/backward design — learning outcomes, schedule, assessments, and rubrics — not specifically an AI-use policy section. alterlab-syllabus-ai-policy only drafts the generative-AI use clause of a syllabus; whole-course design, outcomes, and rubrics are alterlab-teaching-design's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-teaching-design" }
+      ]
+    },
+    {
+      "id": "near-miss-research-ethics",
+      "prompt": "My research team wants to use ChatGPT to help transcribe and summarize interview recordings from human participants. What are the ethics and consent issues, and do we need IRB approval to run participant data through an AI tool?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-research-ethics. The question is about the research ethics of running human-subjects data through an AI tool — IRB review, informed consent, de-identification — not about a course syllabus AI-use policy. alterlab-syllabus-ai-policy writes teaching policy and makes no IRB or human-subjects determinations.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-research-ethics" }
+      ]
+    },
+    {
+      "id": "near-miss-citation-verifier",
+      "prompt": "A student turned in an essay and I suspect some of the references were made up by an AI. Can you check whether each citation in this bibliography actually exists?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-citation-verifier. The user wants to verify that specific citations actually exist (existence-check against scholarly databases), not draft a syllabus AI-use policy. alterlab-syllabus-ai-policy writes policy text and does not adjudicate individual submissions or verify citation existence.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-citation-verifier" }
+      ]
+    }
+  ]
+}

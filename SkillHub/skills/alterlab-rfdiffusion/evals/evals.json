@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-rfdiffusion",
+  "evals": [
+    {
+      "id": "unconditional-backbone",
+      "prompt": "Generate ten novel 100-residue protein backbones from scratch that I can then design sequences for.",
+      "expected_output": "Invokes alterlab-rfdiffusion: runs run_inference.py with a contig for a ~100-residue monomer and num_designs=10 to generate de-novo backbones (no sequence), noting the next steps are alterlab-proteinmpnn for sequence and alterlab-alphafold for validation. GPU-dispatched via alterlab-remote-compute.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "backbone" },
+        { "type": "behavior", "value": "Generates new backbones and defers sequence design to a downstream MPNN skill." }
+      ]
+    },
+    {
+      "id": "motif-scaffolding",
+      "prompt": "I have a functional loop with a specific geometry. Build a new stable protein fold that holds this motif in place.",
+      "expected_output": "Invokes alterlab-rfdiffusion for motif scaffolding: fixes the motif residues and generates a supporting fold around them via the contig map.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "scaffold" }
+      ]
+    },
+    {
+      "id": "binder-design",
+      "prompt": "Design a de-novo binder backbone against this target protein — I know the hotspot residues on its surface.",
+      "expected_output": "Invokes alterlab-rfdiffusion for binder design: generates binder backbones docked against the target using the hotspot residues, to be sequence-designed and interface-validated (ipTM) downstream.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "binder" }
+      ]
+    },
+    {
+      "id": "near-miss-proteinmpnn",
+      "prompt": "I already generated a backbone. Now I just need amino-acid sequences that will fold to it.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-proteinmpnn. RFdiffusion makes backbones; designing sequences for an existing backbone is ProteinMPNN's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-proteinmpnn" }
+      ]
+    },
+    {
+      "id": "near-miss-alphafold",
+      "prompt": "I have a known protein sequence and just want to predict its 3D structure.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-alphafold. Predicting a structure from a known sequence is folding (AlphaFold2/ColabFold), not de-novo backbone generation.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-alphafold" }
+      ]
+    }
+  ]
+}

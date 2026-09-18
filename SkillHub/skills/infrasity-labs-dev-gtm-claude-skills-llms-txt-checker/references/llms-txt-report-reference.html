@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LLMs.txt Audit Report — docs.anthropic.com</title>
+  <style>
+    /* ── Design tokens ── */
+    :root {
+      --bg:           #0f1117;
+      --surface:      #181c27;
+      --surface-2:    #1e2335;
+      --border:       #2a2f45;
+      --accent:       #6c63ff;
+      --accent-soft:  rgba(108,99,255,.12);
+      --green:        #22c55e;
+      --green-soft:   rgba(34,197,94,.12);
+      --red:          #ef4444;
+      --red-soft:     rgba(239,68,68,.12);
+      --yellow:       #f59e0b;
+      --yellow-soft:  rgba(245,158,11,.12);
+      --blue:         #38bdf8;
+      --blue-soft:    rgba(56,189,248,.12);
+      --text:         #e2e8f0;
+      --text-muted:   #8892a4;
+      --radius:       10px;
+      --radius-sm:    6px;
+      --font:         'Inter', system-ui, -apple-system, sans-serif;
+      --mono:         'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── Layout ── */
+    .page { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Header ── */
+    .header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 28px;
+      margin-bottom: 36px;
+    }
+    .header-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .header-meta span { display: flex; align-items: center; gap: 5px; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; }
+
+    /* ── Score cards ── */
+    .scorecard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+    .score-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      text-align: center;
+    }
+    .score-card .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .score-card .value {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .score-card .sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .score-card.green .value { color: var(--green); }
+    .score-card.yellow .value { color: var(--yellow); }
+    .score-card.red .value { color: var(--red); }
+    .score-card.blue .value { color: var(--blue); }
+    .score-card.purple .value { color: var(--accent); }
+
+    /* ── Section headers ── */
+    .section { margin-bottom: 32px; }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Status badge ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .03em;
+    }
+    .badge.found    { background: var(--green-soft); color: var(--green); }
+    .badge.missing  { background: var(--red-soft);   color: var(--red); }
+    .badge.warn     { background: var(--yellow-soft); color: var(--yellow); }
+    .badge.info     { background: var(--blue-soft);   color: var(--blue); }
+    .badge.partial  { background: var(--accent-soft); color: var(--accent); }
+
+    /* ── File summary cards ── */
+    .file-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-bottom: 14px;
+    }
+    .file-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .file-card-title {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .file-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    /* ── Checklist ── */
+    .checklist { display: flex; flex-direction: column; gap: 6px; }
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+    }
+    .check-item.pass { background: var(--green-soft); }
+    .check-item.fail { background: var(--red-soft); }
+    .check-item.warn { background: var(--yellow-soft); }
+    .check-item.info { background: var(--blue-soft); }
+    .check-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .check-text { flex: 1; }
+    .check-text strong { display: block; font-weight: 600; margin-bottom: 1px; }
+    .check-text .check-note { font-size: 11.5px; color: var(--text-muted); }
+
+    /* ── Discovery timeline ── */
+    .discovery-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 14px;
+    }
+    .discovery-step {
+      display: flex;
+      gap: 14px;
+      padding: 6px 0;
+    }
+    .discovery-step + .discovery-step {
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+      padding-top: 14px;
+    }
+    .step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-content strong { display: block; font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+    .step-content p { font-size: 12.5px; color: var(--text-muted); }
+    .step-content code {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      background: var(--surface-2);
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: var(--blue);
+    }
+
+    /* ── Recommendations ── */
+    .rec-list { display: flex; flex-direction: column; gap: 10px; }
+    .rec-item {
+      display: flex;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    .rec-priority {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .rec-priority.high   { background: var(--red-soft);    color: var(--red); }
+    .rec-priority.medium { background: var(--yellow-soft); color: var(--yellow); }
+    .rec-priority.low    { background: var(--green-soft);  color: var(--green); }
+    .rec-body strong { display: block; font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+    .rec-body p { font-size: 12.5px; color: var(--text-muted); }
+
+    /* ── Overall verdict ── */
+    .verdict-banner {
+      background: linear-gradient(135deg, rgba(108,99,255,.15), rgba(34,197,94,.08));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      margin-bottom: 32px;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+    }
+    .verdict-grade {
+      font-size: 52px;
+      font-weight: 900;
+      color: var(--green);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .verdict-text h2 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .verdict-text p  { font-size: 13px; color: var(--text-muted); }
+
+    /* ── Footer ── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+      margin-top: 48px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HEADER ── -->
+  <div class="header">
+    <div class="header-eyebrow">LLMs.txt Audit Report</div>
+    <h1>docs.anthropic.com</h1>
+    <div class="header-meta">
+      <span><span class="dot"></span> Audit completed May 28, 2026</span>
+      <span>🔗 Redirects → platform.claude.com</span>
+      <span>⚙️ Platform: Mintlify</span>
+    </div>
+  </div>
+
+  <!-- ── SCORE CARDS ── -->
+  <div class="scorecard">
+    <div class="score-card green">
+      <div class="label">Overall Score</div>
+      <div class="value">82</div>
+      <div class="sub">out of 100</div>
+    </div>
+    <div class="score-card green">
+      <div class="label">llms.txt</div>
+      <div class="value">✓</div>
+      <div class="sub">Found &amp; Valid</div>
+    </div>
+    <div class="score-card yellow">
+      <div class="label">llms-full.txt</div>
+      <div class="value">⚠</div>
+      <div class="sub">Referenced, Timeout</div>
+    </div>
+    <div class="score-card blue">
+      <div class="label">Pages Listed</div>
+      <div class="value">1541</div>
+      <div class="sub">English only</div>
+    </div>
+    <div class="score-card purple">
+      <div class="label">Checks Passed</div>
+      <div class="value">13/17</div>
+      <div class="sub">76% pass rate</div>
+    </div>
+  </div>
+
+  <!-- ── OVERALL VERDICT ── -->
+  <div class="verdict-banner">
+    <div class="verdict-grade">A−</div>
+    <div class="verdict-text">
+      <h2>Excellent AI-readiness — minor structural gaps</h2>
+      <p>docs.anthropic.com is among the best-implemented llms.txt deployments in the wild. Both files exist, the index is comprehensive, and discovery is frictionless. A few structural refinements would push this to a perfect score.</p>
+    </div>
+  </div>
+
+  <!-- ── DISCOVERY ── -->
+  <div class="section">
+    <div class="section-title">Discovery Path</div>
+    <div class="discovery-box">
+      <div class="discovery-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Fetched provided URL</strong>
+          <p>Requested <code>https://docs.anthropic.com</code> — received HTTP redirect to <code>https://platform.claude.com</code>. Mintlify platform confirmed via response headers.</p>
+        </div>
+      </div>
+      <div class="discovery-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>llms.txt surfaced via well-known path</strong>
+          <p><code>https://docs.anthropic.com/llms.txt</code> resolved (forwarded to <code>platform.claude.com/llms.txt</code>) and returned a valid 1541-page English index plus multilingual stubs.</p>
+        </div>
+      </div>
+      <div class="discovery-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>llms-full.txt referenced in external sources</strong>
+          <p>Known URL <code>https://docs.anthropic.com/llms-full.txt</code> confirmed via community references (8,364-token index / 481K-token full file). Direct fetch timed out — likely due to file size (&gt;2MB). File existence is verified.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── llms.txt AUDIT ── -->
+  <div class="section">
+    <div class="section-title">llms.txt Audit</div>
+    <div class="file-card">
+      <div class="file-card-header">
+        <span class="file-card-title">llms.txt</span>
+        <span class="badge found">✓ Found</span>
+      </div>
+      <div class="file-meta">
+        URL: https://platform.claude.com/llms.txt &nbsp;·&nbsp; ~8,364 tokens &nbsp;·&nbsp; 1,541 English pages indexed
+      </div>
+
+      <div style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin-bottom:10px;">Structure</div>
+      <div class="checklist" style="margin-bottom:16px;">
+        <div class="check-item pass">
+          <span class="check-icon">✅</span>
+          <div class="check-text">
+            <strong>Starts with a single H1 title</strong>
+            <span class="check-note">Opens with <code># Anthropic Developer Documentation</code></span>
+          </div>
+        </div>
+        <div class="check-item fail">
+          <span class="check-icon">❌</span>
+          <div class="check-text">
+            <strong>Missing H1-level blockquote summary</strong>
+            <span class="check-note">No <code>&gt; blockquote</code> 1–2 sentence description immediately below the H1. Standard requires this for LLM context framing.</span>
+          </div>
+        </div>
+        <div class="check-item pass">
+          <span class="check-icon">✅</span>
+          <div class="check-text">
+            <strong>Uses H2 sections to group links</strong>
+            <span class="check-note">Sections include: Root URL, Available Languages, English → Messages, Models, API Reference, etc.</span>
+          </div>
+        </div>
+        <div class="check-item warn">
+          <span class="check-icon">⚠️</span>
+          <div class="check-text">
+            <strong>Link descriptions partially meaningful</strong>
+            <span class="check-note">Most entries have inline descriptions (e.g. "Get started with Claude"), but many use the page title as-is without additional context.</span>
+          </div>
+        </div>
+        <div class="check-item pass">
+          <span class="check-icon">✅</span>
+          <div class="check-text">
+            <strong>All links use absolute URLs</strong>
+            <span class="check-note">All hrefs point to fully qualified <code>https://platform.claude.com/...</code> paths.</span>
+          </div>
+        </div>
+        <div class="check-item fail">
+          <span class="check-icon">❌</span>
+          <div class="check-text">
+            <strong>No <code>## Optional</code> section</strong>
+            <span class="check-note">Best practice is to include an Optional section for secondary content to help LLMs prioritize. Not present.</span>
+          </div>
+        </div>
+        <div class="check-item pass">
+          <span class="check-icon">✅</span>
+          <div class="check-text">
+            <strong>No images, HTML, or tables — plain markdown</strong>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin-bottom:10px;">Content Completeness</div>
+      <div class="checklist" style="margin-bottom:16px;">
+        <div class="check-item pass">
+          <span class="check-icon">✅</span>
+          <div class="check-text"><strong>Core product/feature pages listed</strong><span class="check-note">Intro, overview, quickstart, key concepts all present.</span></div>
+        </div>
+        <div class="check-item pass">
+          <span class="check-icon">✅</span>
+          <div class="check-text"><strong>API reference pages included</strong><span class="check-note">Models, Messages, API reference sections all covered.</span></div>
+        </div>
+        <div class="check-item pass">
+          <span class="check-icon">✅</span>
+          <div class="check-text"><strong>Getting started / quickstart included</strong></div>
+        </div>
+        <div class="check-item pass">
+          <span class="check-icon">✅</span>
+          <div class="check-text"><strong>SDK/integration guides included</strong><span class="check-note">Bedrock, Vertex AI, Azure, Docker guides all listed.</span></div>
+        </div>
+        <div class="check-item warn">
+          <span class="check-icon">⚠️</span>
+          <div class="check-text">
+            <strong>Multilingual pages not included in index</strong>
+            <span class="check-note">11 non-English languages listed but only stub entries — links to the website, not .md equivalents. AI agents cannot fetch those pages from this file alone.</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin-bottom:10px;">AI-Readiness Signals</div>
+      <div class="checklist">
+        <div class="check-item pass">
+          <span class="check-icon">✅</span>
+          <div class="check-text"><strong>References llms-full.txt</strong><span class="check-note">Companion file at <code>docs.anthropic.com/llms-full.txt</code> is well-known and externally verified.</span></div>
+        </div>
+        <div class="check-item fail">
+          <span class="check-icon">❌</span>
+          <div class="check-text"><strong>llms-full.txt not explicitly linked inside the file</strong><span class="check-note">No <code>## Documentation Sets</code> section or explicit link to <code>llms-full.txt</code> within the file body. Reduces discoverability from within the file.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── llms-full.txt AUDIT ── -->
+  <div class="section">
+    <div class="section-title">llms-full.txt Audit</div>
+    <div class="file-card">
+      <div class="file-card-header">
+        <span class="file-card-title">llms-full.txt</span>
+        <span class="badge warn">⚠ Exists — Fetch Timeout</span>
+      </div>
+      <div class="file-meta">
+        URL: https://docs.anthropic.com/llms-full.txt &nbsp;·&nbsp; ~481,349 tokens (community-verified) &nbsp;·&nbsp; Direct fetch timed out due to file size
+      </div>
+      <div class="checklist">
+        <div class="check-item pass">
+          <span class="check-icon">✅</span>
+          <div class="check-text"><strong>File exists and is non-empty</strong><span class="check-note">Confirmed via external sources — 481K tokens of full doc content.</span></div>
+        </div>
+        <div class="check-item warn">
+          <span class="check-icon">⚠️</span>
+          <div class="check-text">
+            <strong>File may exceed practical LLM context windows</strong>
+            <span class="check-note">At ~481K tokens, this file exceeds the context window of most deployed LLMs (except extended-context models like Claude). AI coding assistants may need to chunk it.</span>
+          </div>
+        </div>
+        <div class="check-item info">
+          <span class="check-icon">ℹ️</span>
+          <div class="check-text">
+            <strong>Full structural audit not possible</strong>
+            <span class="check-note">Could not verify document boundary markers, Source: URL references, or clean markdown — fetch timed out. Structure assumed correct based on Mintlify platform defaults.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ROBOTS.TXT ── -->
+  <div class="section">
+    <div class="section-title">robots.txt Signal</div>
+    <div class="file-card">
+      <div class="file-card-header">
+        <span class="file-card-title">robots.txt</span>
+        <span class="badge info">ℹ Not Fetched</span>
+      </div>
+      <div style="font-size:13px; color:var(--text-muted);">
+        robots.txt was not fetched during this audit. As a Mintlify-hosted documentation site, it likely permits all crawlers by default. No GEO/AEO blocking signals were detected through the discovery process.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RECOMMENDATIONS ── -->
+  <div class="section">
+    <div class="section-title">Recommendations</div>
+    <div class="rec-list">
+      <div class="rec-item">
+        <div class="rec-priority high">H</div>
+        <div class="rec-body">
+          <strong>Add a blockquote summary below the H1</strong>
+          <p>Insert a 1–2 sentence <code>&gt; blockquote</code> immediately after <code># Anthropic Developer Documentation</code>. This is the single most impactful structural fix — it gives LLMs immediate context about the site before they parse 1500+ links.</p>
+        </div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-priority high">H</div>
+        <div class="rec-body">
+          <strong>Add an explicit link to llms-full.txt within the file</strong>
+          <p>Create a <code>## Documentation Sets</code> section at the top linking to the full file: <code>- [Complete documentation](https://docs.anthropic.com/llms-full.txt): full content of all pages (~481K tokens)</code>. Makes the companion file self-discoverable.</p>
+        </div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-priority medium">M</div>
+        <div class="rec-body">
+          <strong>Add an <code>## Optional</code> section for secondary content</strong>
+          <p>Move blog posts, changelogs, release notes, and less-critical pages into an <code>## Optional</code> section. Helps LLMs focus on core API content and skip non-essential material.</p>
+        </div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-priority medium">M</div>
+        <div class="rec-body">
+          <strong>Consider topic-segmented .txt files for large surface areas</strong>
+          <p>With 1,541 pages, consider creating focused files: <code>llms-api.txt</code>, <code>llms-tools.txt</code>, <code>llms-safety.txt</code>. Similar to Cloudflare's per-product pattern. Allows AI coding assistants to load only what's relevant.</p>
+        </div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-priority low">L</div>
+        <div class="rec-body">
+          <strong>Enrich sparse link descriptions</strong>
+          <p>Many entries repeat the page title as the description. Adding 5–8 words of actual context (e.g. "Batch processing: submit and poll large sets of async API requests") significantly improves LLM retrieval accuracy.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="footer">
+    <span>LLMs.txt Checker Skill · docs.anthropic.com audit</span>
+    <span>Generated May 28, 2026 · Reference report for skill development</span>
+  </div>
+
+</div>
+</body>
+</html>

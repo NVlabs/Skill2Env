@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-qiime2-amplicon",
+  "evals": [
+    {
+      "id": "full-16s-pipeline",
+      "prompt": "I have demultiplexed paired-end 16S V4 (515F/806R) reads from 30 gut samples in a folder of .fastq.gz files. Walk me through a full QIIME 2 pipeline from raw FASTQs to a feature table, taxonomy against SILVA, and core diversity metrics.",
+      "expected_output": "Invokes alterlab-qiime2-amplicon and runs the canonical order: build a PairedEndFastqManifestPhred33V2 manifest and qiime tools import to demux.qza, qiime demux summarize, qiime cutadapt trim-paired with --p-front-f/--p-front-r to remove the 515F/806R primers BEFORE denoising, qiime dada2 denoise-paired (trunc-len-f/-r chosen from the quality .qzv), qiime feature-table summarize, qiime feature-classifier classify-sklearn against a version-matched SILVA 138 classifier, phylogeny align-to-tree-mafft-fasttree, then qiime diversity core-metrics-phylogenetic with --p-sampling-depth chosen from table.qzv. Explains the .qza/.qzv artifact and provenance model and notes the env is conda-only.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Trims primers with cutadapt BEFORE running DADA2, and chooses trunc-len and sampling-depth from the relevant .qzv visualizations rather than guessing." }
+      ]
+    },
+    {
+      "id": "primer-trim-order",
+      "prompt": "In my QIIME 2 16S workflow, should I run cutadapt to remove primers before or after DADA2 denoising? My ASV counts look inflated and a lot of reads are being flagged as chimeric.",
+      "expected_output": "Invokes alterlab-qiime2-amplicon and states that primer trimming with qiime cutadapt trim-paired must come BEFORE dada2 denoise-paired, because leftover primer/adapter bases corrupt DADA2's per-base error model and inflate spurious ASVs and chimeras. Recommends inspecting denoising-stats.qzv (merged and non-chimeric retention) and confirms the primers/--p-discard-untrimmed are set correctly.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "cutadapt" },
+        { "type": "behavior", "value": "Says primers must be removed before DADA2 and connects leftover primers to inflated ASVs/chimeras." }
+      ]
+    },
+    {
+      "id": "its-denoise-classify",
+      "prompt": "I'm processing fungal ITS amplicon FASTQs in QIIME 2 2026.1 and want to denoise with DADA2 and assign taxonomy. What's the right way, and has the summarize command changed in this version?",
+      "expected_output": "Invokes alterlab-qiime2-amplicon: for ITS it warns against aggressive fixed truncation (variable amplicon length) and suggests --p-trunc-len 0 after cutadapt primer trimming, denoise with dada2, then classify-sklearn against a UNITE classifier matched to the QIIME 2 version (not SILVA). Notes the 2026.1 change: the former summarize_plus pipeline is now 'feature-table summarize' (the old summarize was renamed _summarize), and that the distribution is renamed 'qiime2' in 2026.4. Emphasizes the classifier must be version-matched.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Routes ITS to a UNITE classifier (not SILVA) and explains the 2026.1 feature-table summarize / former summarize_plus change." }
+      ]
+    },
+    {
+      "id": "near-miss-scikit-bio-permanova",
+      "prompt": "I already exported my feature table and a Bray-Curtis distance matrix from QIIME 2. Now I just want to run a PERMANOVA in Python testing whether community composition differs by treatment group, and make a PCoA ordination plot.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scikit-bio. The user has already produced the feature/distance artifacts and now wants in-memory statistics (PERMANOVA) and ordination (PCoA) in Python — that is scikit-bio's territory, not running the QIIME 2 pipeline. alterlab-qiime2-amplicon is the raw-data-to-feature-table pipeline; downstream alpha/beta diversity stats on an exported table belong to alterlab-scikit-bio.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scikit-bio" }
+      ]
+    },
+    {
+      "id": "near-miss-nf-core-sarek-variants",
+      "prompt": "I have whole-genome paired-end FASTQs and want to call germline SNVs and indels to produce a VCF with a proper FASTQ-to-VCF variant-calling workflow. Which pipeline should I run?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-nf-core-sarek. The user wants germline variant calling (FASTQ to VCF) on whole-genome sequencing, which is a DNA variant-calling pipeline, not marker-gene amplicon/microbiome analysis. alterlab-qiime2-amplicon only handles 16S/18S/ITS amplicon data and does not call variants.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-nf-core-sarek" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "skill": "alterlab-clinicaltrials",
+  "evals": [
+    {
+      "id": "recruiting-by-condition",
+      "prompt": "Find me currently recruiting trials for type 2 diabetes, sorted by most recently updated — I want the NCT IDs and titles.",
+      "expected_output": "Triggers the ClinicalTrials.gov skill. Calls search_studies with condition='type 2 diabetes' and status='RECRUITING' (filter.overallStatus / query.cond) via API v2, sorting by LastUpdatePostDate:desc, and extracts nctId plus briefTitle from each study's protocolSection.identificationModule.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "RECRUITING" },
+        { "type": "behavior", "value": "Searches ClinicalTrials.gov API v2 by condition with a recruiting status filter and returns NCT IDs and titles." }
+      ]
+    },
+    {
+      "id": "trial-detail-by-nct",
+      "prompt": "Give me the eligibility criteria and recruitment status for trial NCT04852770.",
+      "expected_output": "Triggers the ClinicalTrials.gov skill. Calls get_study_details('NCT04852770') against the API v2 studies/{nctId} endpoint and reads eligibilityModule (minimumAge, maximumAge, sex, eligibilityCriteria) and statusModule.overallStatus. Treats NCT04852770 as a trial identifier.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "NCT04852770" },
+        { "type": "behavior", "value": "Retrieves a single trial by NCT ID and extracts eligibility and status from the protocolSection modules." }
+      ]
+    },
+    {
+      "id": "phase-intervention-geo-filter",
+      "prompt": "I'm looking for Phase 2 or 3 immunotherapy trials for lung cancer in California that are recruiting or not yet recruiting.",
+      "expected_output": "Triggers the ClinicalTrials.gov skill. Runs a combined search_studies with condition='lung cancer', intervention='immunotherapy' (query.intr), location='California' (query.locn), and status in [RECRUITING, NOT_YET_RECRUITING], then filters results on designModule.phases for PHASE2/PHASE3.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Combines condition, intervention, location, and status filters and post-filters by trial phase." }
+      ]
+    },
+    {
+      "id": "sponsor-portfolio",
+      "prompt": "List the trials sponsored by the National Cancer Institute and show their lead sponsor and collaborators.",
+      "expected_output": "Triggers the ClinicalTrials.gov skill. Calls search_studies with sponsor='National Cancer Institute' (query.spons) and reads sponsorCollaboratorsModule.leadSponsor.name and collaborators for each study.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Searches trials by sponsor organization and extracts lead sponsor and collaborator names." }
+      ]
+    },
+    {
+      "id": "near-miss-pubmed",
+      "prompt": "Find me published journal articles reporting the results of pembrolizumab trials in melanoma — I want the peer-reviewed papers with abstracts.",
+      "expected_output": "Should NOT trigger the ClinicalTrials.gov skill. The user wants published, peer-reviewed journal articles (results papers with abstracts), not registry trial records. This should defer to the pubmed database skill (alterlab-pubmed) for indexed literature.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "pubmed" }
+      ]
+    },
+    {
+      "id": "near-miss-drugbank",
+      "prompt": "What is the mechanism of action of pembrolizumab and which drugs does it interact with?",
+      "expected_output": "Should NOT trigger the ClinicalTrials.gov skill. This asks for drug pharmacology (mechanism of action) and drug-drug interactions, not clinical trial records. It should defer to the drugbank database skill (alterlab-drugbank) for mechanism and interaction data.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "drugbank" }
+      ]
+    }
+  ]
+}

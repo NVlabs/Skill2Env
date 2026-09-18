@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-gwas",
+  "evals": [
+    {
+      "id": "snp-trait-associations",
+      "prompt": "What traits is the SNP rs7903146 associated with in the GWAS Catalog? Give me the associated traits and their p-values.",
+      "expected_output": "Invokes alterlab-gwas to query the NHGRI-EBI GWAS Catalog REST API for the variant (e.g. /singleNucleotidePolymorphisms/rs7903146/associations with projection associationBySnp), returning each associated EFO trait and its p-value.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Looks up the rsID in the GWAS Catalog and returns its trait associations with p-values." }
+      ]
+    },
+    {
+      "id": "disease-trait-variants",
+      "prompt": "List the genome-wide significant variants associated with type 2 diabetes (EFO_0001360) from the GWAS Catalog, filtering to p below 5e-8.",
+      "expected_output": "Invokes alterlab-gwas to query the trait's associations endpoint (/efoTraits/EFO_0001360/associations) or the Summary Statistics API with a p_upper threshold, paginating results and filtering to genome-wide significant hits (p <= 5e-8), returning rsIDs, risk alleles, and effect sizes.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "5e-8" }
+      ]
+    },
+    {
+      "id": "gene-region-associations",
+      "prompt": "Find all GWAS Catalog variants in or near the TCF7L2 gene and the traits they're associated with.",
+      "expected_output": "Invokes alterlab-gwas for gene-centric analysis, querying variants by gene (findByGene with geneName, or a chromosomal-region query findByChromBpLocationRange around the gene) and reporting the associated traits across studies.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Performs a gene-centric GWAS Catalog query and returns variants near the gene with their associated traits." }
+      ]
+    },
+    {
+      "id": "summary-statistics-region",
+      "prompt": "I'm doing fine-mapping for a polygenic risk score. Pull the full GWAS summary statistics for type 2 diabetes across chromosome 10 from 114-115 Mb so I have every tested variant, not just the significant hits.",
+      "expected_output": "Invokes alterlab-gwas to use the Summary Statistics API (or FTP harmonised download) to retrieve all tested variants in the chromosomal region, returning effect sizes, allele frequencies, and p-values suitable for fine-mapping/PRS work rather than only genome-wide significant curated associations.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "summary statistics" }
+      ]
+    },
+    {
+      "id": "near-miss-opentargets",
+      "prompt": "I want to know whether TCF7L2 is a good drug target for type 2 diabetes. Give me the overall target-disease association score and the supporting evidence types from Open Targets.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-opentargets. The user wants integrated target-disease association scores and tractability/evidence for drug-target prioritization, which is Open Targets' domain, not raw SNP-trait association lookups in the GWAS Catalog.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-opentargets" }
+      ]
+    },
+    {
+      "id": "near-miss-clinvar",
+      "prompt": "Is the variant rs80357906 in BRCA1 pathogenic for hereditary breast cancer? I need its ClinVar clinical significance and star rating, not a trait association.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-clinvar. GWAS Catalog reports population-level SNP-trait associations and p-values, not germline ACMG/AMP clinical-pathogenicity classifications; the clinical call belongs to ClinVar.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-clinvar" }
+      ]
+    }
+  ]
+}

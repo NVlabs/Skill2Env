@@ -1,0 +1,52 @@
+{
+  "skill": "alterlab-qualitative-analysis",
+  "evals": [
+    {
+      "id": "two-coder-icr",
+      "prompt": "Two RAs coded 30 interviews with my codebook. Compute the intercoder reliability and tell me whether it's acceptable.",
+      "expected_output": "Invokes alterlab-qualitative-analysis: computes Krippendorff's alpha (with a 95% CI, e.g. via the bundled stdlib calculator or R irrCAC) and interprets it against the .80 / .667 thresholds; treats this as codebook/content-analytic coding where a coefficient applies.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Krippendorff" },
+        { "type": "behavior", "value": "Computes Krippendorff's alpha with a CI and applies the standard reliability thresholds." }
+      ]
+    },
+    {
+      "id": "llm-human-agreement",
+      "prompt": "I used an LLM to code my open-ended survey responses. How do I show it agrees with my human coding?",
+      "expected_output": "Invokes alterlab-qualitative-analysis: treats the LLM as a coder, computes Krippendorff's alpha between the LLM and a human gold standard with a CI to judge indistinguishability, and requires disclosing the model/prompt and % double-coded.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Benchmarks LLM coding against a human gold standard with alpha + CI rather than trusting it uncontrolled." }
+      ]
+    },
+    {
+      "id": "which-reliability-stats",
+      "prompt": "Which reliability statistics do I need to report for a content analysis, and are Cronbach's alpha or chi-square okay?",
+      "expected_output": "Invokes alterlab-qualitative-analysis: prescribes Krippendorff's alpha (or Cohen/Fleiss kappa) with the measure/coders/double-coded%/resolution checklist, and explicitly refuses chi-square, Cronbach's alpha, and Pearson's r as invalid ICR measures.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Cronbach" },
+        { "type": "behavior", "value": "Names the valid ICR coefficients and rejects chi-square/Cronbach/Pearson as invalid reliability measures." }
+      ]
+    },
+    {
+      "id": "reflexive-ta-branch",
+      "prompt": "I'm doing reflexive thematic analysis. What inter-coder reliability coefficient should I report?",
+      "expected_output": "Invokes alterlab-qualitative-analysis: BRANCHES — explains that in reflexive TA a coefficient is not the appropriate criterion; the standard is consensus and reflexivity, and routes trustworthiness to alterlab-ssci-reflexivity-gate rather than forcing a kappa/alpha.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Recognizes reflexive TA and declines to force a reliability coefficient, prescribing consensus/reflexivity instead." }
+      ]
+    },
+    {
+      "id": "near-miss-text-as-data",
+      "prompt": "Run BERTopic to find the main themes across 40,000 tweets.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-text-as-data. Computational topic modeling over a large corpus is not human-coding intercoder reliability.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-text-as-data" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "skill": "alterlab-teaching-design",
+  "evals": [
+    {
+      "id": "td-backward-design-syllabus",
+      "prompt": "I'm building a new undergraduate course on interactive media for next semester. Help me write measurable learning outcomes using backward design and draft a syllabus with an aligned assessment schedule.",
+      "expected_output": "Invokes alterlab-teaching-design: applies Wiggins & McTighe backward design (desired results -> evidence -> learning experiences), writes Bloom-aligned measurable outcomes using the ABCD framework, and produces a syllabus with an assessment-to-CLO alignment table.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "ABCD"
+        },
+        {
+          "type": "behavior",
+          "value": "Each learning outcome uses an observable, measurable Bloom's verb (not 'understand'/'know'/'appreciate') and is mapped to an assessment, and at least one outcome's cognitive level is named (e.g. Apply, Analyze, Evaluate, Create)."
+        }
+      ]
+    },
+    {
+      "id": "td-analytic-rubric",
+      "prompt": "Can you create an analytic rubric for grading my students' final research projects with criteria for argument, evidence use, analysis, and writing quality at four performance levels?",
+      "expected_output": "Invokes alterlab-teaching-design: produces an analytic rubric with weighted criteria and Exemplary/Proficient/Developing/Beginning performance-level descriptors as in the rubric design templates.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "behavior",
+          "value": "Produces a four-column analytic rubric with a row per criterion (argument, evidence use, analysis, writing quality), weighted criteria, and a distinct prose descriptor in each of the four performance-level cells (not just numeric labels)."
+        }
+      ]
+    },
+    {
+      "id": "td-constructive-alignment-audit",
+      "prompt": "My course outcome says students should be able to 'create' a design, but my only assessment is a multiple-choice exam. Can you check whether my activities and assessments are aligned and suggest fixes?",
+      "expected_output": "Invokes alterlab-teaching-design: runs a constructive-alignment (Biggs & Tang) audit, flags the create-vs-MCQ misalignment, and recommends a project-based assessment aligned to the cognitive level of the outcome.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "behavior",
+          "value": "Explicitly identifies the assessment as misaligned because a multiple-choice exam cannot evidence a 'create'-level outcome, and recommends replacing it with a production task (project/portfolio/design) at the Create level rather than just adding more MCQ items."
+        }
+      ]
+    },
+    {
+      "id": "td-hybrid-online-module",
+      "prompt": "I'm converting my face-to-face graduate seminar into a hybrid course. How should I structure the online modules and build student presence using the Community of Inquiry framework?",
+      "expected_output": "Invokes alterlab-teaching-design: provides hybrid/online module architecture, applies the Community of Inquiry framework (social, cognitive, teaching presence), and uses the online module design and accessibility checklist.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "behavior",
+          "value": "Names all three Community of Inquiry presences (social, cognitive, teaching) with at least one concrete module-design move for each, and includes accessibility provisions (e.g. captions/transcripts) in the online module structure."
+        }
+      ]
+    },
+    {
+      "id": "td-udl-inclusive-assessment",
+      "prompt": "How can I make my assessments more inclusive for students with diverse prior knowledge and disabilities using Universal Design for Learning?",
+      "expected_output": "Invokes alterlab-teaching-design: applies UDL's three principles (engagement, representation, action/expression), recommends inclusive assessment strategies such as assessment menus and exemplars, and addresses diverse prior knowledge.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "behavior",
+          "value": "Organizes recommendations under UDL's three principles (engagement/representation/action & expression) and gives at least two concrete inclusive-assessment moves such as an assessment menu, exemplars of strong/weak work, or revision-and-resubmit."
+        }
+      ]
+    },
+    {
+      "id": "td-not-thesis-chapter",
+      "prompt": "Help me structure the methodology chapter of my PhD student's dissertation and prepare them for the proposal defense.",
+      "expected_output": "defers to alterlab-thesis-supervisor / does not invoke this skill",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "td-not-paper-writing",
+      "prompt": "I need to write the IMRaD draft and abstract for a conference paper on virtual production and format it in LaTeX with APA 7 citations.",
+      "expected_output": "defers to alterlab-paper-writer / does not invoke this skill",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "td-not-conference-slides",
+      "prompt": "Can you build me a polished slide deck for my keynote presentation at the media studies conference?",
+      "expected_output": "defers to alterlab-pptx-posters / does not invoke this skill (course/lesson design is not requested)",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        }
+      ]
+    }
+  ]
+}

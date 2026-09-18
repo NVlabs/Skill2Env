@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-hmdb",
+  "evals": [
+    {
+      "id": "metabolite-id-lookup",
+      "prompt": "I have the identifier HMDB0000001. Look it up in the Human Metabolome Database and give me its chemical formula, molecular weight, SMILES, and which biofluids it's normally found in.",
+      "expected_output": "Invokes alterlab-hmdb: retrieves the HMDB entry for HMDB0000001 and reports chemical properties (formula, molecular weight, SMILES/InChI) plus specimen/biofluid occurrence from HMDB's metabolite fields.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "HMDB" }
+      ]
+    },
+    {
+      "id": "spectral-matching",
+      "prompt": "I have an unknown peak from an untargeted LC-MS metabolomics run. Help me match it against HMDB reference MS/MS spectra to identify the metabolite.",
+      "expected_output": "Invokes alterlab-hmdb: uses HMDB's spectral (LC-MS / MS-MS) search to match the experimental spectrum against reference spectra, then advises verifying candidates by molecular weight, retention time, and biological plausibility in the specimen.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Performs metabolite identification by matching experimental spectra to HMDB reference NMR/MS spectra, not a generic structure database." }
+      ]
+    },
+    {
+      "id": "biomarker-disease-association",
+      "prompt": "Which metabolites in HMDB are reported as biomarkers for type 2 diabetes, and what are their normal vs abnormal concentration ranges in serum?",
+      "expected_output": "Invokes alterlab-hmdb: searches HMDB by disease association to find metabolites flagged as biomarkers for the disease and reports normal/abnormal concentration ranges in the relevant biofluid (serum).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "biomarker" }
+      ]
+    },
+    {
+      "id": "structure-search",
+      "prompt": "I have a SMILES string for a compound around 180 Da. Run a structure/molecular-weight search in HMDB to see if it matches a known human metabolite.",
+      "expected_output": "Invokes alterlab-hmdb: uses HMDB ChemQuery structure/substructure search (SMILES/InChI) combined with a molecular-weight filter to find matching human metabolites.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses HMDB ChemQuery structure or molecular-weight search to identify a human metabolite from a SMILES/structure." }
+      ]
+    },
+    {
+      "id": "near-miss-pubchem",
+      "prompt": "I just need the canonical SMILES, InChIKey, and PubChem CID for caffeine as a general chemical compound.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pubchem. The user wants generic small-molecule chemical identifiers from PubChem, not human-metabolite-specific data (biomarker/biofluid/spectra) that defines HMDB's scope.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pubchem" }
+      ]
+    },
+    {
+      "id": "near-miss-metabolomics-wb",
+      "prompt": "Find raw untargeted metabolomics study datasets and their analytical study metadata that I can download and reanalyze.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-metabolomics-wb. The user wants primary metabolomics study datasets from the Metabolomics Workbench repository, not reference metabolite annotations from HMDB.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-metabolomics-wb" }
+      ]
+    }
+  ]
+}

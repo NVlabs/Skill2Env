@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-borzoi",
+  "evals": [
+    {
+      "id": "predict-tracks",
+      "prompt": "Predict the RNA-seq and ATAC coverage tracks for this genomic locus directly from its DNA sequence.",
+      "expected_output": "Invokes alterlab-borzoi: extracts the reference sequence window and runs the model to output multi-track predicted coverage (RNA-seq/CAGE/ATAC/ChIP). Notes GPU need and dispatch via alterlab-remote-compute.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "track" },
+        { "type": "behavior", "value": "Predicts functional coverage from sequence rather than looking up annotations." }
+      ]
+    },
+    {
+      "id": "noncoding-variant-effect",
+      "prompt": "I have a non-coding variant in a promoter. Predict whether it changes expression by scoring its effect from sequence.",
+      "expected_output": "Invokes alterlab-borzoi for variant effect scoring: builds reference and alternate sequences, predicts tracks for each, and quantifies the difference to estimate the regulatory effect — framing it as a prediction to corroborate with annotations.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "variant" }
+      ]
+    },
+    {
+      "id": "in-silico-mutagenesis",
+      "prompt": "Run in-silico mutagenesis across this enhancer to find which bases drive its activity.",
+      "expected_output": "Invokes alterlab-borzoi to systematically mutate bases and read predicted-track deltas, localizing functionally important positions in the regulatory element.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Performs in-silico mutagenesis using predicted-track changes." }
+      ]
+    },
+    {
+      "id": "near-miss-gnomad",
+      "prompt": "How common is this variant in the general population? I just need its allele frequency.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-gnomad, which reports population allele frequencies. Borzoi predicts a variant's functional effect from sequence; it does not look up observed frequencies.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-gnomad" }
+      ]
+    },
+    {
+      "id": "near-miss-clinvar",
+      "prompt": "Is this variant classified as pathogenic? I want its clinical significance from the curated database.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-clinvar for curated clinical significance. Borzoi offers a predicted regulatory effect, not a clinical classification lookup.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-clinvar" }
+      ]
+    }
+  ]
+}

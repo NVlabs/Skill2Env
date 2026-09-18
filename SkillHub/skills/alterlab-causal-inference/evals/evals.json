@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-causal-inference",
+  "evals": [
+    {
+      "id": "did-event-study",
+      "prompt": "A policy switched on in some states in 2019 and I have a state-by-year employment panel. Estimate the effect with difference-in-differences and handle the staggered rollout.",
+      "expected_output": "Invokes alterlab-causal-inference: names parallel trends as the identifying assumption, uses a staggered-adoption-safe estimator (Sun-Abraham sunab() or did2s in pyfixest, not naive two-way FE), inspects pre-trends, and reports the estimate with a clustered CI.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "parallel trends" },
+        { "type": "behavior", "value": "States parallel trends, uses a staggered-adoption-robust DiD estimator, and checks pre-trends before reporting." }
+      ]
+    },
+    {
+      "id": "iv-2sls",
+      "prompt": "I want to estimate the effect of education on wages using distance-to-college as an instrument. Run instrumental variables.",
+      "expected_output": "Invokes alterlab-causal-inference: uses IV2SLS (linearmodels), names the exclusion restriction and relevance as the identifying assumptions, and reports the first-stage F as a weak-instrument diagnostic.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "exclusion restriction" }
+      ]
+    },
+    {
+      "id": "rdd-cutoff",
+      "prompt": "Students above a test-score cutoff receive a scholarship. Estimate its effect on graduation with a regression discontinuity.",
+      "expected_output": "Invokes alterlab-causal-inference: uses rdrobust, names continuity at the cutoff (no manipulation) as the assumption, and runs a density/McCrary check plus bandwidth sensitivity.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Selects an RD estimator (rdrobust), states continuity at the cutoff, and checks for sorting/manipulation." }
+      ]
+    },
+    {
+      "id": "cate-heterogeneity",
+      "prompt": "I ran a field experiment and now want the heterogeneous treatment effect across income subgroups. Estimate CATE.",
+      "expected_output": "Invokes alterlab-causal-inference: uses EconML (CausalForestDML / LinearDML), fits with X as effect-modifiers and W as controls, and reports the distribution of CATE with an overlap check.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses a DML/causal-forest estimator for heterogeneous effects and reports the CATE distribution, not a single number." }
+      ]
+    },
+    {
+      "id": "near-miss-statistical-analysis",
+      "prompt": "Just run a plain OLS regression of test scores on study hours and give me the coefficient and R-squared. No causal claim.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-statistical-analysis (or alterlab-statsmodels). There is no treatment-effect identification problem — it is plain descriptive regression.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statistical-analysis" }
+      ]
+    },
+    {
+      "id": "near-miss-ssci-design-gate",
+      "prompt": "I haven't decided how to study this yet — what research design should I even use for my causal question?",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-ssci-design-gate. Choosing the design and pinning the identifying assumption precedes estimation.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-ssci-design-gate" }
+      ]
+    }
+  ]
+}

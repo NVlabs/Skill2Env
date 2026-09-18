@@ -1,0 +1,45 @@
+# EXAMPLE TEMPLATE - DO NOT DEPLOY
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: shared-l4-inference
+spec:
+  # Shared L4 GPU class for multi-tenant low-utilization inference (dev/staging, batch eval, small-model APIs). MPS sharing with up to 4 clients/GPU.
+  nodePoolAutoCreation:
+    enabled: true
+  priorityDefaults:
+    location:
+      zones: ['us-central1-a', 'us-central1-b', 'us-central1-c']
+  priorities:
+  # 1. On-Demand floor with sharing — preferred for latency-sensitive multi-tenancy
+  - gpu:
+      count: 1
+      type: nvidia-l4
+      driverVersion: default
+      gpuSharing:
+        sharingStrategy: MPS
+        maxSharedClientsPerGPU: 4
+    machineType: g2-standard-8
+    spot: false
+
+  # 2. Spot, single L4 with MPS — cost fallback
+  - gpu:
+      count: 1
+      type: nvidia-l4
+      driverVersion: default
+      gpuSharing:
+        sharingStrategy: MPS
+        maxSharedClientsPerGPU: 4
+    machineType: g2-standard-8
+    spot: true
+
+  # 3. Spot, 2× L4 — larger cost fallback (packs 8 clients/node)
+  - gpu:
+      count: 2
+      type: nvidia-l4
+      driverVersion: default
+      gpuSharing:
+        sharingStrategy: MPS
+        maxSharedClientsPerGPU: 4
+    machineType: g2-standard-24
+    spot: true

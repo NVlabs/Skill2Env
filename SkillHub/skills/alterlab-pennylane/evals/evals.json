@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-pennylane",
+  "evals": [
+    {
+      "id": "variational-classifier",
+      "prompt": "I want to build and train a variational quantum classifier on a 4-feature dataset using angle encoding and entangling layers, optimizing the weights with gradient descent. Can you scaffold this in PennyLane?",
+      "expected_output": "Invokes alterlab-pennylane: defines a QNode on default.qubit, encodes data with AngleEmbedding, applies StronglyEntanglingLayers as the variational ansatz, and trains the weights with a PennyLane optimizer (AdamOptimizer/GradientDescentOptimizer) via opt.step on a loss. Notes starting on simulators and small random init to avoid barren plateaus.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "QNode" }
+      ]
+    },
+    {
+      "id": "vqe-ground-state",
+      "prompt": "I need to compute the ground-state energy of the H2 molecule with a variational quantum eigensolver. Set up the Hamiltonian and the optimization loop.",
+      "expected_output": "Invokes alterlab-pennylane quantum chemistry/VQE: builds the molecular Hamiltonian with qchem.molecular_hamiltonian, prepares the Hartree-Fock state and a UCCSD ansatz in a QNode returning qml.expval(H), and optimizes parameters with AdamOptimizer via step_and_cost, reporting energy in Hartree per step.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "VQE" }
+      ]
+    },
+    {
+      "id": "hybrid-torch-qnn",
+      "prompt": "I want to embed a quantum circuit as a layer inside a PyTorch neural network and train the whole hybrid model end-to-end with backpropagation.",
+      "expected_output": "Invokes alterlab-pennylane quantum ML: wraps a QNode as a Torch-interface layer (e.g., qml.qnn.TorchLayer) inside an nn.Module, trains the hybrid quantum-classical model with backprop on a simulator, and notes that backpropagation differentiation only works on simulators while hardware needs parameter-shift.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Integrates a QNode into a PyTorch model and trains end-to-end, noting backprop works on simulators but hardware requires parameter-shift gradients." }
+      ]
+    },
+    {
+      "id": "run-on-ibm-hardware",
+      "prompt": "I've validated my circuit on a simulator. Now I want to run the same PennyLane circuit on real IBM quantum hardware. How do I switch the device?",
+      "expected_output": "Invokes alterlab-pennylane device management: installs/uses the pennylane-qiskit plugin, creates a qiskit.remote device backed by a QiskitRuntimeService backend, and runs the same QNode by swapping the device. Advises switching gradients to parameter-shift for hardware and validating on default.qubit first.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Swaps the PennyLane device to IBM hardware via the pennylane-qiskit plugin and notes parameter-shift gradients are needed off-simulator." }
+      ]
+    },
+    {
+      "id": "near-miss-qiskit",
+      "prompt": "I want to transpile my circuit for a specific IBM backend's coupling map, apply hardware-aware gate optimization, and inspect the resulting basis-gate count. I'm working directly in Qiskit.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-qiskit. Hardware-specific transpilation, coupling-map routing, and IBM backend gate-level optimization belong to the native IBM/Qiskit stack, whereas PennyLane is the hardware-agnostic differentiable-circuit framework. The SKILL itself directs hardware-specific IBM work to qiskit.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-qiskit" }
+      ]
+    },
+    {
+      "id": "near-miss-qutip",
+      "prompt": "I'm modeling a driven two-level system coupled to a thermal bath and need to solve its open-system dynamics with a Lindblad master equation, including decoherence and dissipation over time.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-qutip. Open quantum systems, Lindblad master-equation dynamics, and dissipative/decoherence simulation are QuTiP's domain; PennyLane is for training and differentiating variational circuits, not solving master equations. The SKILL itself directs open-quantum-systems work to qutip.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-qutip" }
+      ]
+    }
+  ]
+}

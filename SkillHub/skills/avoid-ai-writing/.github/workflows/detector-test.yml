@@ -1,0 +1,23 @@
+name: detector
+
+on:
+  push:
+    paths:
+      - "detector/**"
+      - "package.json"
+      - ".github/workflows/detector-test.yml"
+  pull_request:
+    paths:
+      - "detector/**"
+      - "package.json"
+      - ".github/workflows/detector-test.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+      - run: npm test

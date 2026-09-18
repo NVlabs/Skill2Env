@@ -1,0 +1,44 @@
+# EXAMPLE TEMPLATE - DO NOT DEPLOY
+# Dedicated ComputeClass for non-DaemonSet kube-system pods.
+#
+# Problem this solves: kube-system pods (metrics-server, coredns,
+# konnectivity-agent, custom operators in kube-system) often have no PDB and
+# may carry safe-to-evict: "false" defensively. They land on whichever node
+# the scheduler picks first — frequently a large/expensive GPU/TPU host —
+# and then pin that node forever. Visibility logs show
+# noScaleDown.nodes[].reason.messageId = "no.scale.down.node.pod.kube.system.unmovable".
+#
+# Fix: route non-DaemonSet system pods to a dedicated, cheap class. Expensive
+# nodes only host actual workloads, and consolidation can drain them freely.
+#
+# After kubectl apply, label the namespace (the -non-daemonset variant leaves
+# DaemonSets alone — they need to run everywhere anyway, and CA already
+# ignores DaemonSet-only nodes for scale-down):
+#
+#   kubectl label namespace kube-system \
+#     cloud.google.com/default-compute-class-non-daemonset=system-pool
+#
+# Existing system pods don't reschedule on their own — wait for natural
+# restarts or `kubectl rollout restart deployment -n kube-system <name>`.
+#
+# whenUnsatisfiable: ScaleUpAnyway is intentional — never let priority
+# exhaustion block a kube-system pod (would cascade into a wider outage).
+#
+# See gke-cluster-autoscaling-debug.md → "System pods blocking consolidation".
+
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: system-pool
+spec:
+  # Dedicated cheap class for non-DaemonSet kube-system pods. Prevents singleton system pods from pinning expensive GPU/TPU/large-shape nodes.
+  nodePoolAutoCreation:
+    enabled: true
+  whenUnsatisfiable: ScaleUpAnyway        # never block a kube-system pod
+  priorities:
+  - machineFamily: n4  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 4
+    spot: false
+    location:
+      zones: ['us-central1-a', 'us-central1-b', 'us-central1-c']
+      locationPolicy: BALANCED            # singleton system pods — even spread for HA

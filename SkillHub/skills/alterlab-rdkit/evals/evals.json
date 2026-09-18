@@ -1,0 +1,45 @@
+{
+  "skill": "alterlab-rdkit",
+  "evals": [
+    {
+      "id": "descriptors-from-smiles",
+      "prompt": "Parse this SMILES 'Cc1ccccc1O' with RDKit and compute the molecular weight, LogP, and TPSA.",
+      "expected_output": "Invokes alterlab-rdkit: parses the SMILES via Chem.MolFromSmiles, then computes descriptors (MolWt, MolLogP, TPSA) using rdkit.Chem.Descriptors, reporting the numeric values.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "TPSA" },
+        { "type": "behavior", "value": "Uses RDKit to parse SMILES and compute MW/LogP/TPSA descriptors." }
+      ]
+    },
+    {
+      "id": "substructure-search",
+      "prompt": "I have a set of molecules and want to filter for those containing a carboxylic acid substructure using a SMARTS pattern in RDKit.",
+      "expected_output": "Invokes alterlab-rdkit: builds a SMARTS query (e.g. via Chem.MolFromSmarts), runs HasSubstructMatch over the molecule set, and returns the matching molecules — fine-grained substructure filtering.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "substructure" },
+        { "type": "behavior", "value": "Performs SMARTS-based substructure matching with RDKit to filter molecules." }
+      ]
+    },
+    {
+      "id": "fingerprint-similarity",
+      "prompt": "Generate Morgan fingerprints for these compounds and compute pairwise Tanimoto similarity with RDKit so I can find the closest analogs.",
+      "expected_output": "Invokes alterlab-rdkit: generates Morgan/ECFP fingerprints via rdFingerprintGenerator (or MACCS keys), then computes Tanimoto similarities with DataStructs, ranking the closest analogs.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Tanimoto" },
+        { "type": "behavior", "value": "Builds RDKit fingerprints and computes Tanimoto similarity to rank analogs." }
+      ]
+    },
+    {
+      "id": "near-miss-datamol",
+      "prompt": "I just want a simple high-level wrapper to standardize a list of SMILES and compute common descriptors in a few lines — nothing low-level.",
+      "expected_output": "Does NOT invoke alterlab-rdkit; defers to datamol. The user explicitly wants a simpler high-level interface for a standard workflow, which is datamol's niche (a wrapper around RDKit). RDKit is for fine-grained control, custom sanitization, or specialized algorithms — not the lightest path for a standard standardize-plus-descriptors task.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "datamol" },
+        { "type": "behavior", "value": "Recognizes that a simple high-level standard workflow is datamol's job and defers, reserving RDKit for low-level control." }
+      ]
+    }
+  ]
+}

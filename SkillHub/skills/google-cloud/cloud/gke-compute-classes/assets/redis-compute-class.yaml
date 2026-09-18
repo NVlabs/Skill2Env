@@ -1,0 +1,48 @@
+# EXAMPLE TEMPLATE - DO NOT DEPLOY
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: redis-memory-optimized
+spec:
+  # Memory-tuned class for Redis. AMD c4d preferred, all-Gen-4 (Hyperdisk), On-Demand only, THP off.
+  # DATA PVs (e.g. AOF/RDB persistence): use the built-in `dynamic-rwo` StorageClass
+  # (GKE 1.35.3-gke.1290000+, use-allowed-disk-topology: "true") — see
+  # assets/dynamic-rwo-storageclass.yaml. The Cluster Autoscaler then scales up only
+  # disk-compatible nodes, so priorities[] can safely span machine families/generations.
+  # (bootDiskType below is the NODE boot disk, separate from the data PV StorageClass.)
+  nodePoolAutoCreation:
+    enabled: true
+  priorityDefaults:
+    location:
+      zones: ['us-central1-a', 'us-central1-b', 'us-central1-c']
+    nodeSystemConfig:
+      linuxNodeConfig:
+        sysctls:
+          net.core.somaxconn: 1024
+  priorities:
+  # 1. c4d — Gen 4 AMD Turin, strongest price/perf for Redis (memory-intensive)
+  - machineFamily: c4d  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 8
+    minMemoryGb: 64
+    spot: false
+    storage:
+      bootDiskType: hyperdisk-balanced
+      bootDiskSize: 50
+
+  # 2. n4d — Gen 4 AMD Turin fallback, strong price/perf
+  - machineFamily: n4d  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 8
+    minMemoryGb: 64
+    spot: false
+    storage:
+      bootDiskType: hyperdisk-balanced
+      bootDiskSize: 50
+
+  # 3. c4 — Gen 4 Intel fallback
+  - machineFamily: c4  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 8
+    minMemoryGb: 64
+    spot: false
+    storage:
+      bootDiskType: hyperdisk-balanced
+      bootDiskSize: 50

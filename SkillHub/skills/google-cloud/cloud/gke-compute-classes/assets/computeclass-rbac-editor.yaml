@@ -1,0 +1,34 @@
+# EXAMPLE TEMPLATE - DO NOT DEPLOY
+# CRUD safeguard: restrict who can create/modify ComputeClasses (RBAC).
+# ComputeClass is a CLUSTER-SCOPED CRD -> use ClusterRole/ClusterRoleBinding (NOT a namespaced Role).
+# apiGroup is cloud.google.com; resource is computeclasses.
+# This pairs with the consumption safeguard in restrict-computeclass-usage-vap.yaml
+# (RBAC governs the CC OBJECT; the VAP governs CONSUMPTION in workload specs).
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: computeclass-editor
+rules:
+- apiGroups: ["cloud.google.com"]
+  resources: ["computeclasses"]
+  # The tutorial grants create+update. For a FULL lockdown also add delete and patch,
+  # otherwise an editor who can't create can still patch/delete an existing CC.
+  verbs: ["create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: computeclass-editor-role-binding
+subjects:
+# Bind to a Google Group for centralized membership (preferred over per-user bindings).
+- kind: Group
+  name: computeclass-editors@<GROUP_DOMAIN>
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: computeclass-editor
+  apiGroup: rbac.authorization.k8s.io
+# Verify enforcement:
+#   kubectl auth can-i create computeclasses.cloud.google.com --as=<MEMBER_USER>
+#   kubectl auth can-i create computeclasses.cloud.google.com --as=<NON_MEMBER_USER>

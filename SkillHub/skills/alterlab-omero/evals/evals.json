@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-omero",
+  "evals": [
+    {
+      "id": "connect-and-list-datasets",
+      "prompt": "Connect to our OMERO server and list all my projects and the datasets under each one.",
+      "expected_output": "Invokes alterlab-omero. Connects with BlitzGateway(username, password, host, port) (ideally as a context manager), calls conn.connect(), navigates the Project -> Dataset hierarchy with listProjects / listChildren, and closes the connection.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "BlitzGateway" },
+        { "type": "behavior", "value": "Uses BlitzGateway to connect and walks the Project/Dataset hierarchy, closing the connection." }
+      ]
+    },
+    {
+      "id": "pixel-data-numpy-analysis",
+      "prompt": "I need to pull the raw pixel data for image 12345 from OMERO as a NumPy array so I can compute intensity statistics in Python.",
+      "expected_output": "Invokes alterlab-omero. Retrieves the image by ID via BlitzGateway, accesses raw pixel data as a NumPy array (image processing capability), and computes the requested statistics.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Retrieves the image by ID and returns pixel data as a NumPy array for analysis." }
+      ]
+    },
+    {
+      "id": "roi-intensity-measurement",
+      "prompt": "For a batch of OMERO images that already have ROIs, extract the pixel intensities within each ROI and store the measurements in an OMERO table.",
+      "expected_output": "Invokes alterlab-omero. Retrieves images with their existing ROI shapes (ROIs capability), extracts intensity statistics per ROI region, and stores the measurements in an OMERO table linked to the images/dataset.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ROI" }
+      ]
+    },
+    {
+      "id": "high-content-screening-plate",
+      "prompt": "Access the screening data on our OMERO server for a high-content screen and iterate the wells of a plate to retrieve their images.",
+      "expected_output": "Invokes alterlab-omero. Navigates the screening hierarchy (Screen -> Plate -> Well -> WellSample -> Image) via BlitzGateway to iterate wells and retrieve their images for high-content screening analysis.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Plate" }
+      ]
+    },
+    {
+      "id": "near-miss-opentrons",
+      "prompt": "Write an Opentrons protocol that uses the absorbance plate reader to read a 96-well plate at 450 and 650 nm.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-opentrons. The task is liquid-handling/plate-reading automation on an Opentrons robot, not managing or analyzing microscopy image data on an OMERO server.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-opentrons" }
+      ]
+    }
+  ]
+}

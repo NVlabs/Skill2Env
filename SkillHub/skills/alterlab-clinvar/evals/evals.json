@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-clinvar",
+  "evals": [
+    {
+      "id": "pathogenic-variant-lookup",
+      "prompt": "Is the BRCA1 variant NM_000059.3:c.1310_1313del classified as pathogenic in ClinVar? Tell me its clinical significance and the review status.",
+      "expected_output": "Invokes alterlab-clinvar to query ClinVar (web syntax like BRCA1[gene] or E-utilities esearch/esummary) for the variant, reporting its germline ACMG/AMP classification (Pathogenic/LP/VUS/LB/Benign) and its review-status star rating, advising the user to prefer 3- or 4-star ratings.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Returns a clinical significance classification and the review-status star rating, and notes that higher star ratings carry more confidence." }
+      ]
+    },
+    {
+      "id": "high-confidence-gene-variants",
+      "prompt": "Give me all pathogenic CFTR variants in ClinVar that have expert-panel or practice-guideline review, using the E-utilities API.",
+      "expected_output": "Invokes alterlab-clinvar to build an esearch query against db=clinvar using the correct ClinVar field tags, e.g. CFTR[gene] AND clinsig_pathogenic[Properties] AND (\"reviewed by expert panel\"[Review status] OR \"practice guideline\"[Review status]), returning the high-confidence (3-4 star) pathogenic variant set. Must NOT use the non-existent [CLNSIG]/[RVSTAT] tags, which silently fall back to [All Fields].",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "[Review status]" },
+        { "type": "behavior", "value": "Filters review status through the [Review status] field and pathogenicity through clinsig_*[Properties], not via [CLNSIG] or [RVSTAT]." }
+      ]
+    },
+    {
+      "id": "annotate-vcf",
+      "prompt": "I have a patient VCF on GRCh38. Annotate it with ClinVar clinical significance and then filter down to just the pathogenic variants.",
+      "expected_output": "Invokes alterlab-clinvar to download the matching-build ClinVar VCF (vcf_GRCh38/clinvar.vcf.gz) and use bcftools annotate to add INFO/CLNSIG (and CLNDN/CLNREVSTAT), then bcftools view to filter on CLNSIG matching Pathogenic. Should stress matching the genome build between the user's VCF and the ClinVar VCF.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses the build-matched ClinVar VCF with bcftools to annotate CLNSIG and filter pathogenic variants, and warns about genome-build (GRCh37 vs GRCh38) consistency." }
+      ]
+    },
+    {
+      "id": "conflicting-interpretations",
+      "prompt": "This TP53 variant shows conflicting interpretations of pathogenicity in ClinVar. How do I decide which classification to trust?",
+      "expected_output": "Invokes alterlab-clinvar to explain ClinVar's conflict-resolution strategy: compare review status (star ratings), examine each submitter's assertion criteria and submission dates, weigh population frequency context (e.g. gnomAD), prefer expert-panel classifications, and defer to a genetics professional for clinical use.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "review status" }
+      ]
+    },
+    {
+      "id": "near-miss-gnomad",
+      "prompt": "What is the population allele frequency of rs80357906 across non-Finnish European and East Asian populations? I want gnomAD frequencies, not a clinical call.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-gnomad. The user wants population allele-frequency data stratified by ancestry, which is gnomAD's domain, not ClinVar's clinical-significance archive.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-gnomad" }
+      ]
+    },
+    {
+      "id": "near-miss-cosmic",
+      "prompt": "I'm studying somatic mutations in melanoma tumor samples. Pull the somatic mutation frequency of BRAF V600E across cancer tissue types from COSMIC.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-cosmic. The user wants somatic cancer mutation data from COSMIC, whereas ClinVar focuses on germline variant-phenotype clinical classifications.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-cosmic" }
+      ]
+    }
+  ]
+}

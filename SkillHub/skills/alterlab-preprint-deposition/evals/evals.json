@@ -1,0 +1,62 @@
+{
+  "skill": "alterlab-preprint-deposition",
+  "evals": [
+    {
+      "id": "arxiv-server-category-license",
+      "prompt": "I just finished a computer science paper on a new attention variant and I want to post it as a preprint before I submit anywhere. Where should it go, which category do I pick, and what license should I choose if I might still publish it in a closed journal later?",
+      "expected_output": "Invokes alterlab-preprint-deposition: routes a CS manuscript to arXiv, has the author pick a primary arXiv category (e.g. cs.LG / cs.CL) with optional cross-lists, and presents arXiv's real license set (arXiv non-exclusive license 1.0, CC BY/BY-SA/BY-NC-SA/BY-NC-ND 4.0, CC0). Recommends the arXiv non-exclusive license as the lowest-friction choice for someone who may later publish in a closed journal, and notes that CC/CC0 licenses are irrevocable on posted versions. Notes that arXiv versions are immutable. Does not reimplement arXiv search (that is alterlab-arxiv).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "arXiv" },
+        { "type": "behavior", "value": "Routes to arXiv, names a real arXiv category and the actual license options, and flags that a permissive CC license cannot be revoked on already-posted versions while the arXiv non-exclusive license is the lowest-friction option for a future closed-journal submission." }
+      ]
+    },
+    {
+      "id": "biorxiv-vs-medrxiv-routing",
+      "prompt": "My lab has a manuscript reporting a randomized controlled trial of a smartphone intervention for type 2 diabetes patients. Should this go on bioRxiv or medRxiv as a preprint, and what do I need to have ready before posting?",
+      "expected_output": "Invokes alterlab-preprint-deposition: routes clinical/human-subjects RCT content to medRxiv (not bioRxiv), and lists medRxiv-specific submission requirements — trial registration number, ethics/IRB statement, no identifiable patient data, subject collection, manuscript PDF, ORCID, data/code availability. Notes medRxiv assigns a DOI on posting and accepts revised versions. Routes the data-repository question (if raised) to alterlab-open-science rather than handling it here.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "medRxiv" },
+        { "type": "behavior", "value": "Selects medRxiv over bioRxiv because the content is clinical/human-subjects, and lists the medRxiv-specific gating (trial registration, ethics statement, no identifiable patient data) before posting." }
+      ]
+    },
+    {
+      "id": "journal-preprint-policy-check",
+      "prompt": "Before I post my accepted manuscript as a preprint, can you check whether the journal I'm submitting to actually allows preprints? It's a Springer journal with ISSN 1476-4687.",
+      "expected_output": "Invokes alterlab-preprint-deposition: runs scripts/journal_policy.py against the Sherpa Romeo v2 API (https://v2.sherpa.ac.uk/cgi/retrieve, item-type=publication, requires a free api-key) for the ISSN, and reports the journal's prearchiving (preprint/submitted-version) permission plus any conditions (embargo, version allowed, required notice, DOI link). If no api-key is available it falls back to reading the publisher's policy page via WebFetch and says so explicitly, never asserting the policy from memory. Distinguishes the submitted (preprint) version from the accepted version.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Sherpa Romeo" },
+        { "type": "behavior", "value": "Checks the specific journal's preprint policy via Sherpa Romeo (or a live publisher page) rather than asserting it from memory, and separates the submitted/preprint version permission from the accepted-version permission." }
+      ]
+    },
+    {
+      "id": "link-published-doi-to-preprint",
+      "prompt": "My bioRxiv preprint just got published in a journal. How do I link the published DOI back to the preprint so people find the final version, and can you confirm the preprint DOI 10.1101/2020.08.05.238071 is detected as published yet?",
+      "expected_output": "Invokes alterlab-preprint-deposition: explains post-publication linking (set the 'published in' / publisher field on the preprint record) and runs scripts/preprint_link_check.py against the keyless api.biorxiv.org /details/ and /pubs/ endpoints to confirm the preprint DOI resolves and surface any detected preprint-to-published-article link. Notes that an absent link does not mean the paper is unpublished and that the author should add the link manually on publication.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Explains linking the published DOI back to the preprint and uses the keyless api.biorxiv.org pubs/details endpoints to check for the published-article link, rather than searching for the preprint as a literature-review hit." }
+      ]
+    },
+    {
+      "id": "near-miss-biorxiv-search",
+      "prompt": "I'm doing a literature review on CRISPR base editing. Can you search bioRxiv and pull the most recent preprints on this topic with their abstracts and DOIs?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-biorxiv. The user wants to search and fetch existing bioRxiv preprints for a literature review (read-side discovery), not deposit or prepare a new preprint submission. alterlab-preprint-deposition only handles the write/deposit side; finding and retrieving existing preprints is alterlab-biorxiv's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-biorxiv" }
+      ]
+    },
+    {
+      "id": "near-miss-data-repository",
+      "prompt": "I need to deposit the datasets and analysis code behind my paper somewhere with a DOI, and write the data management plan for my ERC grant. Which repository should I use — Zenodo, Dryad, or Figshare?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-open-science. The user wants to choose a data/code repository (Zenodo/Dryad/Figshare) and write a grant data management plan — that is data deposition and DMP territory, not manuscript preprinting. alterlab-preprint-deposition deposits the manuscript as a preprint on arXiv/bioRxiv/medRxiv/SSRN/OSF; repository choice and DMPs are alterlab-open-science's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-open-science" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "PLUGIN-NAME",
+  "version": "0.1.0",
+  "description": "Brief description of what this plugin does",
+  "author": {
+    "name": "Your Name",
+    "email": "you@example.com",
+    "url": "https://github.com/your-username"
+  },
+  "homepage": "https://github.com/your-org/your-repo",
+  "repository": "https://github.com/your-org/your-repo",
+  "license": "MIT",
+  "keywords": ["keyword1", "keyword2"]
+}

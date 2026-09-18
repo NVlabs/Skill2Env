@@ -1,0 +1,96 @@
+{
+  "skill": "alterlab-stable-baselines3",
+  "evals": [
+    {
+      "id": "train-ppo-cartpole",
+      "prompt": "Train a PPO agent on the CartPole-v1 Gymnasium environment for 10k timesteps, then save the model and evaluate it over 10 episodes reporting mean and std reward.",
+      "expected_output": "Invokes alterlab-stable-baselines3: creates the env with gym.make('CartPole-v1'), instantiates PPO('MlpPolicy', env), calls model.learn(total_timesteps=10000), saves with model.save, and evaluates using evaluate_policy(model, env, n_eval_episodes=10, deterministic=True) reporting mean_reward, std_reward.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "evaluate_policy"
+        },
+        {
+          "type": "behavior",
+          "value": "Uses the SB3 PPO class with MlpPolicy and model.learn, and evaluates with stable_baselines3.common.evaluation.evaluate_policy rather than a hand-rolled rollout loop."
+        }
+      ]
+    },
+    {
+      "id": "sac-continuous-control-callbacks",
+      "prompt": "I'm doing continuous control on a custom robot reaching task. Use a sample-efficient off-policy algorithm, evaluate periodically and save the best model, and stop early once it hits a reward threshold.",
+      "expected_output": "Invokes alterlab-stable-baselines3: recommends SAC (or TD3) for sample-efficient continuous off-policy control, sets up an EvalCallback that saves the best model, and chains a StopTrainingOnRewardThreshold callback via CallbackList passed to model.learn.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "evalcallback"
+        },
+        {
+          "type": "behavior",
+          "value": "Chooses an off-policy algorithm (SAC or TD3) for continuous control and wires EvalCallback plus StopTrainingOnRewardThreshold through CallbackList."
+        }
+      ]
+    },
+    {
+      "id": "custom-env-check-and-train",
+      "prompt": "I wrote a custom Gymnasium environment for an inventory-management problem. Validate that it conforms to the API before training, then train an agent on it.",
+      "expected_output": "Invokes alterlab-stable-baselines3: runs check_env(env, warn=True) from stable_baselines3.common.env_checker to validate the gymnasium.Env (reset/step signatures, spaces), then trains an SB3 agent (e.g. PPO) on the validated environment.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "check_env"
+        },
+        {
+          "type": "behavior",
+          "value": "Validates the custom environment with check_env before training and only then instantiates and trains an SB3 algorithm."
+        }
+      ]
+    },
+    {
+      "id": "vectorized-env-speedup",
+      "prompt": "My training is slow. Spin up several CartPole environments in parallel processes to speed up PPO training and bump the timesteps to 25k.",
+      "expected_output": "Invokes alterlab-stable-baselines3: uses make_vec_env('CartPole-v1', n_envs=4, vec_env_cls=SubprocVecEnv) to parallelize across processes, then trains PPO on the vectorized env with model.learn(total_timesteps=25000). Notes SubprocVecEnv suits compute-heavy/parallel work.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "subprocvecenv"
+        },
+        {
+          "type": "behavior",
+          "value": "Parallelizes with make_vec_env and SubprocVecEnv rather than a single env, and trains PPO on the vectorized environment."
+        }
+      ]
+    },
+    {
+      "id": "near-miss-pufferlib",
+      "prompt": "I need massively parallel, high-throughput RL training across thousands of vectorized environment instances for a multi-agent setup - throughput is the priority.",
+      "expected_output": "Does NOT invoke alterlab-stable-baselines3. High-performance massively-parallel and multi-agent RL training is explicitly out of SB3's scope; SB3 itself recommends pufferlib for this. Should defer to alterlab-pufferlib.",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        },
+        {
+          "type": "output_contains",
+          "value": "pufferlib"
+        }
+      ]
+    }
+  ]
+}

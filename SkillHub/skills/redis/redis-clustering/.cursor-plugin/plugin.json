@@ -1,0 +1,13 @@
+{
+  "name": "redis-clustering",
+  "version": "1.0.0",
+  "description": "Redis Cluster and replication — hash tags for multi-key operations, avoiding CROSSSLOT, reading from replicas.",
+  "author": {
+    "name": "Redis",
+    "email": "support@redis.com"
+  },
+  "homepage": "https://redis.io",
+  "repository": "https://github.com/redis/agent-skills",
+  "license": "MIT",
+  "keywords": ["redis", "cluster", "replication", "hash-tags", "sharding"]
+}

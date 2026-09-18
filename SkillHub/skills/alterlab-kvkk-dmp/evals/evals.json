@@ -1,0 +1,71 @@
+{
+  "skill": "alterlab-kvkk-dmp",
+  "evals": [
+    {
+      "id": "kvkk-dmp-turkish",
+      "prompt": "İzmir Ekonomi Üniversitesi'nde yürüteceğimiz anket ve sağlık ölçümü içeren çalışma için KVKK uyumlu bir veri yönetim planı hazırlar mısın? Veriler Türkiye'deki sunucuda tutulacak, sonradan anonimleştirip açık veri olarak paylaşmak istiyoruz.",
+      "expected_output": "Invokes alterlab-kvkk-dmp. Builds a KVKK (Law 6698) data management plan covering the six decisions: lawful basis (açık rıza / explicit consent as the default under Art. 5, with Art. 6 adequate measures for the special-category health/sağlık data), the Art. 28(1)(b) anonymization exemption as the primary lever for the open dataset, Art. 7 retention/destruction at purpose-end, the Art. 13 thirty-day response window, Art. 9 cross-border status (Türkiye-only host = no Art. 9 issue), and Art. 16 VERBIS status. Notes that KVKK has no standalone research basis. May run scripts/kvkk_dmp_scaffold.py to emit a TR+EN skeleton.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Art. 28" },
+        { "type": "behavior", "value": "Treats anonymization (Art. 28(1)(b)) as the compliance lever for the open dataset, states explicit consent (açık rıza) as the default basis, and flags health data as special-category under Art. 6 — without inventing a 'scientific research' lawful basis." }
+      ]
+    },
+    {
+      "id": "anonymize-dataset-exemption",
+      "prompt": "I have a participant-level research dataset with names, ages, and home districts. How do I anonymize it under Turkish law so it falls outside KVKK and I can release it openly?",
+      "expected_output": "Invokes alterlab-kvkk-dmp. Explains the Art. 28(1)(b) anonymization exemption and what genuinely qualifies: remove direct identifiers, generalize quasi-identifiers (age bands, province instead of district), apply k-anonymity-style grouping, and run a re-identification-risk assessment ('even by matching with other data'). Warns that pseudonymization is NOT anonymization and that re-identifiable data does not qualify for the exemption and stays fully in scope. May reference references/anonymization_methods.md.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Distinguishes true anonymization from pseudonymization, ties the exemption to Art. 28(1)(b), and warns that re-identifiable data does not qualify." }
+      ]
+    },
+    {
+      "id": "fix-eu-dmp-for-turkey",
+      "prompt": "I'm running a Horizon Europe project with a partner site in Türkiye and I already have our EU GDPR data management plan written. What do I need to change to make it compliant with Turkish data-protection law?",
+      "expected_output": "Invokes alterlab-kvkk-dmp in audit mode. Walks the KVKK↔GDPR crosswalk and fixes the four divergences: (1) drop the GDPR Art. 89 'scientific research' basis (KVKK Art. 5 has no standalone research basis — use açık rıza or an enumerated alternative, or anonymize), (2) foreground the Art. 28(1)(b) anonymization exemption, (3) add a VERBIS (Art. 16) registration section absent from EU plans, (4) rewrite cross-border transfers for the Art. 9 regime as amended by Law 7499 (published in the Official Gazette 12 Mar 2024; KVKK provisions effective 1 Jun 2024). References references/kvkk_vs_gdpr.md.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "VERBIS" },
+        { "type": "behavior", "value": "Identifies that GDPR's research basis does not exist in KVKK and that VERBIS plus the 2024 Art. 9 transfer regime must be added, rather than copying the EU plan unchanged." }
+      ]
+    },
+    {
+      "id": "verbis-registration-check",
+      "prompt": "Veri sorumlusu olarak işleme başlamadan önce VERBIS'e kayıt olmam gerekiyor mu, yoksa muafiyet var mı?",
+      "expected_output": "Invokes alterlab-kvkk-dmp. Explains Art. 16: controllers must register with VERBIS (Veri Sorumluları Sicili) before processing, but the Board exempts categories of controllers by objective criteria (e.g. employee count, annual balance sheet, activity type). Advises recording the VERBIS status (registered / exempt-by-criterion / pending) in the DMP and checking the current Board exemption criteria, without asserting a specific exemption applies.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Art. 16" },
+        { "type": "behavior", "value": "Ties the duty to Art. 16 (register before processing), notes the Board's objective-criterion exemptions, and advises recording status + checking current criteria rather than asserting a specific exemption applies." }
+      ]
+    },
+    {
+      "id": "near-miss-research-ethics-gdpr",
+      "prompt": "My study only has participants in Germany and the UK. Can you help me write the GDPR lawful-basis and data-protection section of my data management plan?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-research-ethics. The processing is purely GDPR (Germany/UK), with no Türkiye nexus, so KVKK does not apply. alterlab-kvkk-dmp is KVKK-only; international GDPR/HIPAA data-protection planning is alterlab-research-ethics's territory.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-research-ethics" }
+      ]
+    },
+    {
+      "id": "near-miss-tr-research-ethics-etik-kurul",
+      "prompt": "Anket ve görüşme içeren çalışmam için hangi etik kurula başvurmam gerektiğini ve başvuru formunu hazırlamama yardım eder misin?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-tr-research-ethics. The user wants Turkish ethics-committee (etik kurul) routing and an application form for a survey/interview study — ethics review, not data-protection compliance. alterlab-kvkk-dmp covers KVKK data management (lawful basis, anonymization, VERBIS, retention), not the etik kurul submission, which alterlab-tr-research-ethics scaffolds.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-tr-research-ethics" }
+      ]
+    },
+    {
+      "id": "near-miss-aperta-vyp-deposit",
+      "prompt": "I need to deposit my accepted manuscript and dataset in Aperta and prepare the TÜBİTAK open-science VYP for my project's final report. Can you set that up?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-aperta. The user wants the TÜBİTAK open-science deposit in Aperta and the funder-facing veri yönetim planı (VYP) for the final report. alterlab-kvkk-dmp only produces the KVKK data-protection plan and supplies the Principle-6 'why data is closed' justification; the Aperta deposit and funder VYP are alterlab-aperta's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-aperta" }
+      ]
+    }
+  ]
+}

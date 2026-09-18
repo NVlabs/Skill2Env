@@ -1,0 +1,153 @@
+Source files: org/eclipse/xtend2/lib/DefaultLineDelimiter.java, org/eclipse/xtend2/lib/WhitespaceMatcher.java, org/eclipse/xtext/xbase/lib/HardcodedInInterpreterException.java, org/eclipse/xtext/xbase/lib/ReassignFirstArgument.java, org/eclipse/xtext/xbase/lib/internal/KeyComparator.java
+
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+
+Source files: org/eclipse/xtend2/lib/StringConcatenation.java, org/eclipse/xtext/xbase/lib/InputOutput.java
+
+/*******************************************************************************
+ * Copyright (c) 2011, 2016 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+
+Source files: org/eclipse/xtend2/lib/StringConcatenationClient.java, org/eclipse/xtext/xbase/lib/ArrayLiterals.java, org/eclipse/xtext/xbase/lib/Extension.java
+
+/*******************************************************************************
+ * Copyright (c) 2013 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+
+Source files: org/eclipse/xtext/xbase/lib/ArrayExtensions.java
+
+/*******************************************************************************
+ * Copyright (c) 2013, 2020 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+
+Source files: org/eclipse/xtext/xbase/lib/BigDecimalExtensions.java, org/eclipse/xtext/xbase/lib/BigIntegerExtensions.java, org/eclipse/xtext/xbase/lib/BooleanExtensions.java, org/eclipse/xtext/xbase/lib/ComparableExtensions.java, org/eclipse/xtext/xbase/lib/DoubleExtensions.java, org/eclipse/xtext/xbase/lib/Exceptions.java, org/eclipse/xtext/xbase/lib/FunctionExtensions.java, org/eclipse/xtext/xbase/lib/IntegerExtensions.java, org/eclipse/xtext/xbase/lib/ListExtensions.java, org/eclipse/xtext/xbase/lib/MapExtensions.java, org/eclipse/xtext/xbase/lib/ObjectExtensions.java, org/eclipse/xtext/xbase/lib/Pair.java, org/eclipse/xtext/xbase/lib/ProcedureExtensions.java, org/eclipse/xtext/xbase/lib/StringExtensions.java, org/eclipse/xtext/xbase/lib/internal/BooleanFunctionDelegate.java, org/eclipse/xtext/xbase/lib/internal/FunctionDelegate.java
+
+/*******************************************************************************
+ * Copyright (c) 2011 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+
+Source files: org/eclipse/xtext/xbase/lib/ByteExtensions.java, org/eclipse/xtext/xbase/lib/CharacterExtensions.java, org/eclipse/xtext/xbase/lib/ExclusiveRange.java, org/eclipse/xtext/xbase/lib/FloatExtensions.java, org/eclipse/xtext/xbase/lib/Inline.java, org/eclipse/xtext/xbase/lib/LongExtensions.java, org/eclipse/xtext/xbase/lib/Pure.java, org/eclipse/xtext/xbase/lib/ShortExtensions.java, org/eclipse/xtext/xbase/lib/util/ReflectExtensions.java, org/eclipse/xtext/xbase/lib/internal/ToStringHelper.java, org/eclipse/xtext/xbase/lib/util/ToStringHelper.java
+
+/*******************************************************************************
+ * Copyright (c) 2012 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+
+Source files: org/eclipse/xtext/xbase/lib/CollectionExtensions.java
+
+/*******************************************************************************
+ * Copyright (c) 2011, 2021 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+
+Source files: org/eclipse/xtext/xbase/lib/CollectionLiterals.java, org/eclipse/xtext/xbase/lib/IterableExtensions.java
+
+/*******************************************************************************
+ * Copyright (c) 2011, 2017 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+
+Source files: org/eclipse/xtext/xbase/lib/Conversions.java
+
+/*******************************************************************************
+ * Copyright (c) 2010, 2016 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+
+Source files: org/eclipse/xtext/xbase/lib/Functions.java, org/eclipse/xtext/xbase/lib/Procedures.java
+
+/*******************************************************************************
+ * Copyright (c) 2010 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+
+Source files: org/eclipse/xtext/xbase/lib/IntegerRange.java
+
+/*******************************************************************************
+ * Copyright (c) 2012, 2016 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+
+Source files: org/eclipse/xtext/xbase/lib/IteratorExtensions.java
+
+/*******************************************************************************
+ * Copyright (c) 2011, 2020 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+
+Source files: org/eclipse/xtext/xbase/lib/internal/UnmodifiableMergingMapView.java
+
+/*******************************************************************************
+ * Copyright (c) 2017 Universite de Technologie de Belfort-Montbeliard (http://www.utbm.fr) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+
+Source files: org/eclipse/xtext/xbase/lib/util/ToStringBuilder.java, org/eclipse/xtext/xbase/lib/util/ToStringContext.java
+
+/**
+ * Copyright (c) 2014, 2018 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */

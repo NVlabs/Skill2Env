@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dead-End Pages Audit, Design Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!--
+  ══════════════════════════════════════════════════════════════════════
+  DESIGN REFERENCE, Dead-End Pages / No Outgoing Internal Links Audit Report
+  ══════════════════════════════════════════════════════════════════════
+  This file is the single source of truth for every report generated
+  by the no-outlinks-audit skill.
+
+  HOW TO USE THIS FILE
+  ────────────────────
+  1. Copy CSS variables from :root, never substitute different values.
+  2. Copy component HTML patterns from the annotated examples below.
+  3. Copy JavaScript patterns (filterAll, sidebar, toggle) verbatim.
+  4. Replace placeholder content with real audit data.
+  5. Do not add new CSS classes or modify existing values.
+
+  SECTIONS IN THIS FILE
+  ─────────────────────
+  A. CSS Design Tokens (:root variables)
+  B. Full Stylesheet (all component styles)
+  C. Component Catalogue (annotated HTML examples of every component)
+     C1. Header
+     C2. Controls Bar
+     C3. Layout (sidebar + content)
+     C4. Sidebar Link
+     C5. Cluster Section Header
+     C6. Blog Card, Collapsed
+     C7. Blog Card, Expanded (Suggestions Panel)
+     C8. Cluster Tags
+     C9. Footer
+     C10. No-Results State
+  D. JavaScript Reference (filterAll, sidebar build, toggle)
+  ══════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+/* ══════════════════════════════════════════════════════
+   A. DESIGN TOKENS, copy :root verbatim into every report
+   ══════════════════════════════════════════════════════ */
+:root {
+  --bg:        #0a0a0b;
+  --surface:   #111113;
+  --surface2:  #18181c;
+  --tag-bg:    #1e1e28;
+  --border:    #27272e;
+  --border2:   #35353f;
+  --text:      #e8e8f0;
+  --text2:     #9090a8;
+  --text3:     #5a5a72;
+  --pass:        #22c55e;
+  --pass-bg:     #0d2b1a;
+  --pass-border: #14532d;
+  --warn:        #f59e0b;
+  --warn-bg:     #2b1f06;
+  --warn-border: #78350f;
+  --fail:        #ef4444;
+  --fail-bg:     #2b0a0a;
+  --fail-border: #7f1d1d;
+  --accent:  #6366f1;
+  --accent2: #818cf8;
+}
+
+/* ══════════════════════════════════════════════════════
+   B. FULL STYLESHEET
+   ══════════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.6;min-height:100vh}
+
+/* HEADER */
+.header{border-bottom:1px solid var(--border);padding:48px 64px 40px;background:linear-gradient(180deg,#0f0f18 0%,var(--bg) 100%);position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-60px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(99,102,241,.12) 0%,transparent 70%);pointer-events:none}
+.header-meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+.header h1{font-size:32px;font-weight:600;letter-spacing:-.02em;color:var(--text);margin-bottom:8px}
+.header-url{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text2);background:var(--surface2);border:1px solid var(--border);display:inline-block;padding:6px 14px;border-radius:4px;margin-bottom:32px}
+.header-stats{display:flex;gap:32px;flex-wrap:wrap}
+.hstat{display:flex;flex-direction:column;gap:4px}
+.hstat-val{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:600;line-height:1}
+.hstat-val.total{color:var(--text)}.hstat-val.fail{color:var(--fail)}.hstat-val.pass{color:var(--pass)}.hstat-val.warn{color:var(--warn)}.hstat-val.accent{color:var(--accent2)}
+.hstat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em}
+.stat-divider{width:1px;background:var(--border);align-self:stretch;margin:4px 0}
+.fix-tag{margin-top:20px;display:inline-flex;align-items:center;gap:8px;background:var(--warn-bg);border:1px solid var(--warn-border);padding:6px 14px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--warn)}
+
+/* CONTROLS BAR */
+.controls{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 64px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+.search-wrap{position:relative;flex:1;min-width:220px}
+.search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.4}
+input[type=text]{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:8px 11px 8px 34px;border-radius:4px;outline:none;transition:border-color .15s}
+input[type=text]:focus{border-color:var(--accent)}
+input[type=text]::placeholder{color:var(--text3)}
+select{background:var(--bg);border:1px solid var(--border);color:var(--text2);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:8px 12px;border-radius:4px;outline:none;cursor:pointer}
+.result-count{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3)}
+.result-count strong{color:var(--fail)}
+
+/* LAYOUT */
+.main{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 220px)}
+
+/* SIDEBAR */
+.sidebar{border-right:1px solid var(--border);padding:24px 0;position:sticky;top:57px;height:calc(100vh - 57px);overflow-y:auto}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.sidebar-heading{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.15em;padding:8px 20px 4px}
+.sidebar-link{display:flex;align-items:center;justify-content:space-between;padding:7px 20px;color:var(--text2);text-decoration:none;font-size:12px;cursor:pointer;transition:all .15s;border-left:2px solid transparent}
+.sidebar-link:hover{background:var(--surface2);color:var(--text);border-left-color:var(--border2)}
+.sidebar-link.active{background:var(--surface2);color:var(--text);border-left-color:var(--accent)}
+.sc{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)}
+
+/* CONTENT */
+.content{padding:40px 56px;max-width:1200px}
+
+/* CLUSTER SECTION */
+.cluster-section{margin-bottom:64px;scroll-margin-top:70px}
+.cluster-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.cluster-title{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.cluster-badge{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--border2);color:var(--text3)}
+.section-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent2);text-transform:uppercase;letter-spacing:.15em;margin-bottom:14px}
+
+/* BLOG CARD */
+.blog-card{border:1px solid var(--border);border-radius:6px;margin-bottom:10px;overflow:hidden;transition:border-color .15s}
+.blog-card:hover{border-color:var(--border2)}
+.blog-card.hidden{display:none}
+.blog-header{display:flex;align-items:stretch;background:var(--surface);cursor:pointer;user-select:none}
+.blog-header:hover{background:var(--surface2)}
+.blog-title-col{padding:14px 18px;flex:1;min-width:0}
+.blog-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;line-height:1.35}
+.blog-url{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent2);text-decoration:none;opacity:.8}
+.blog-url:hover{opacity:1;text-decoration:underline}
+.blog-kw-col{padding:14px 16px;border-left:1px solid var(--border);min-width:170px;display:flex;flex-direction:column;gap:4px;justify-content:center}
+.kw-pill{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text2);background:var(--tag-bg);border:1px solid var(--border2);padding:2px 8px;border-radius:3px;display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+.kw-traffic{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)}
+.kw-traffic.hot{color:var(--pass)}
+.blog-cluster-col{padding:14px;border-left:1px solid var(--border);display:flex;align-items:center;justify-content:center;min-width:130px}
+.chevron{color:var(--text3);font-size:9px;transition:transform .2s;padding:14px;display:flex;align-items:center;border-left:1px solid var(--border)}
+.blog-card.open .chevron{transform:rotate(180deg)}
+
+/* SUGGESTIONS PANEL */
+.blog-body{display:none;border-top:1px solid var(--border);background:var(--bg)}
+.blog-card.open .blog-body{display:block}
+.sug-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+.sug-cell{background:var(--bg);padding:16px 18px}
+.sug-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.1em}
+.sug-from-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px;line-height:1.35}
+.sug-from-url{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent2);text-decoration:none;opacity:.75;display:inline-block;margin-bottom:10px;word-break:break-all}
+.sug-from-url:hover{opacity:1;text-decoration:underline}
+.sug-divider{height:1px;background:var(--border);margin:8px 0}
+.sug-anchor-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.sug-anchor{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--pass);background:var(--pass-bg);border:1px solid var(--pass-border);padding:3px 8px;border-radius:3px;display:inline-block;margin-bottom:10px}
+.sug-place-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.sug-place{font-size:12px;color:var(--text2);line-height:1.5}
+.sug-copy-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-top:10px;margin-bottom:4px}
+.sug-copy{font-size:12px;color:var(--text2);line-height:1.6;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;word-break:break-word}
+.sug-copy a{color:var(--accent2);text-decoration:underline;word-break:break-all}
+
+/* CLUSTER TAGS */
+.ctag{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 9px;border-radius:3px;border:1px solid;white-space:nowrap;letter-spacing:.03em}
+.c-reddit   {color:#fb923c;border-color:rgba(251,146,60,.3);background:rgba(251,146,60,.07)}
+.c-devmkt   {color:#60a5fa;border-color:rgba(96,165,250,.3);background:rgba(96,165,250,.07)}
+.c-content  {color:#a78bfa;border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.07)}
+.c-seo      {color:#f472b6;border-color:rgba(244,114,182,.3);background:rgba(244,114,182,.07)}
+.c-docs     {color:#34d399;border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.07)}
+.c-llm      {color:#fbbf24;border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.07)}
+.c-gtm      {color:#fb7185;border-color:rgba(251,113,133,.3);background:rgba(251,113,133,.07)}
+.c-devrel   {color:#2dd4bf;border-color:rgba(45,212,191,.3);background:rgba(45,212,191,.07)}
+.c-techwrite{color:#67e8f9;border-color:rgba(103,232,249,.3);background:rgba(103,232,249,.07)}
+.c-product  {color:#fda4af;border-color:rgba(253,164,175,.3);background:rgba(253,164,175,.07)}
+.c-other    {color:#94a3b8;border-color:rgba(148,163,184,.3);background:rgba(148,163,184,.07)}
+
+/* NO RESULTS */
+.no-results{text-align:center;padding:80px;color:var(--text3);font-family:'IBM Plex Mono',monospace;display:none}
+.no-results strong{color:var(--text2);display:block;font-size:16px;margin-bottom:8px}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:20px 64px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .main{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .header,.controls,.content{padding-left:20px;padding-right:20px}
+  .sug-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!--
+  ══════════════════════════════════════════════════════════════════════
+  C. COMPONENT CATALOGUE
+  Each section shows the exact HTML pattern to copy into a real report.
+  Replace all placeholder text/values with real audit data.
+  ══════════════════════════════════════════════════════════════════════
+-->
+
+<!-- C1. HEADER ─────────────────────────────────────── -->
+<div class="header">
+  <div class="header-meta">Internal Linking Audit Report · example.com</div>
+  <h1>Dead-End Blog Post Audit</h1>
+  <div class="header-url">https://www.example.com/blog/</div>
+  <div class="header-stats">
+    <!-- Stat order: Total · divider · Fail · Pass · divider · Warn · Accent -->
+    <div class="hstat"><span class="hstat-val total">136</span><span class="hstat-label">Total Blogs</span></div>
+    <div class="stat-divider"></div>
+    <div class="hstat"><span class="hstat-val fail">84</span><span class="hstat-label">No Outgoing Links</span></div>
+    <div class="hstat"><span class="hstat-val pass">52</span><span class="hstat-label">Have Outlinks</span></div>
+    <div class="stat-divider"></div>
+    <div class="hstat"><span class="hstat-val warn">62%</span><span class="hstat-label">Gap Rate</span></div>
+    <div class="hstat"><span class="hstat-val accent">252</span><span class="hstat-label">Suggestions</span></div>
+  </div>
+  <!-- Method/version note, always include below stats -->
+  <div class="fix-tag">⚑ RSC payload detection (Next.js) · YYYY-MM-DD</div>
+</div>
+
+<!-- C2. CONTROLS BAR ───────────────────────────────── -->
+<div class="controls">
+  <div class="search-wrap">
+    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Search title, URL or keyword…" oninput="filterAll()">
+  </div>
+  <select id="clusterFilter" onchange="filterAll()">
+    <option value="">All Clusters</option>
+    <option>Reddit Marketing</option>
+    <option>Developer Marketing</option>
+    <option>Content Marketing</option>
+    <option>SEO</option>
+    <option>Documentation</option>
+    <option>LLM / AI Visibility</option>
+    <option>GTM Strategy</option>
+    <option>DevRel</option>
+    <option>Technical Writing</option>
+    <option>Product</option>
+    <option>Other</option>
+  </select>
+  <span class="result-count">Showing <strong id="vc">1</strong> of 1</span>
+</div>
+
+<!-- C3. LAYOUT ─────────────────────────────────────── -->
+<div class="main">
+
+  <!-- C4. SIDEBAR, shell; JS builds links inside -->
+  <nav class="sidebar" id="sidebar">
+    <!--
+      JS inserts:
+        <div class="sidebar-heading">Clusters</div>
+        <div class="sidebar-link active">
+          <span>All Clusters</span><span class="sc">84</span>
+        </div>
+        <div class="sidebar-link">
+          <span>Reddit Marketing</span><span class="sc">12</span>
+        </div>
+        … one per cluster
+    -->
+  </nav>
+
+  <div class="content" id="content">
+
+    <!-- C10. NO RESULTS STATE -->
+    <div class="no-results" id="noResults">
+      <strong>No results found</strong>
+      Try a different search or cluster filter
+    </div>
+
+    <!-- C5. CLUSTER SECTION HEADER
+         id = "sec-" + cluster name kebab-cased
+         e.g. "Reddit Marketing" → id="sec-Reddit-Marketing" -->
+    <div class="cluster-section" id="sec-Reddit-Marketing">
+      <div class="cluster-header">
+        <div class="cluster-title">Reddit Marketing</div>
+        <span class="cluster-badge">12 blogs</span>
+      </div>
+
+      <!-- C6. BLOG CARD, COLLAPSED
+           data-title, data-url, data-kw, data-cluster drive search/filter -->
+      <div class="blog-card"
+           data-title="karma farming vs credibility on reddit"
+           data-url="reddit-karma-farming-vs-credibility"
+           data-kw="reddit karma farming"
+           data-cluster="Reddit Marketing">
+
+        <div class="blog-header" onclick="this.closest('.blog-card').classList.toggle('open')">
+
+          <!-- Column 1: title + URL -->
+          <div class="blog-title-col">
+            <div class="blog-name">Karma Farming vs Credibility on Reddit</div>
+            <a class="blog-url"
+               href="https://www.example.com/blog/reddit-karma-farming-vs-credibility"
+               target="_blank"
+               onclick="event.stopPropagation()">
+              example.com/blog/reddit-karma-farming-vs-credibility
+            </a>
+          </div>
+
+          <!-- Column 2: keyword + traffic
+               Rules:
+                 null         → <span class="kw-traffic">, </span>
+                 ≥10 /mo      → <span class="kw-traffic hot">▲ N visits/mo</span>
+                 1-9 /mo      → <span class="kw-traffic">▲ N visits/mo</span>
+                 0 traffic    → <span class="kw-traffic">ranking · 0 traffic</span>
+          -->
+          <div class="blog-kw-col">
+            <span class="kw-pill">reddit karma farming</span>
+            <span class="kw-traffic">, </span>
+          </div>
+
+          <!-- Column 3: cluster tag -->
+          <div class="blog-cluster-col">
+            <span class="ctag c-reddit">Reddit Marketing</span>
+          </div>
+
+          <!-- Column 4: chevron -->
+          <div class="chevron">▼</div>
+        </div>
+
+        <!-- C7. SUGGESTIONS PANEL, EXPANDED
+             Always exactly 3 .sug-cell columns.
+             Both target URL (blog-url) and all "link to" URLs (sug-from-url)
+             must be clickable <a href> links opening target="_blank". -->
+        <div class="blog-body">
+          <div class="sug-grid">
+
+            <div class="sug-cell">
+              <div class="sug-num">Suggestion 1</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Link To</div>
+              <div class="sug-from-title">Dos and Don'ts of Reddit Marketing</div>
+              <a class="sug-from-url" href="https://www.example.com/blog/reddit-marketing" target="_blank">example.com/blog/reddit-marketing</a>
+              <div class="sug-divider"></div>
+              <div class="sug-anchor-label">Anchor Text</div>
+              <div class="sug-anchor">"karma farming on Reddit"</div>
+              <div class="sug-place-label">Where to Place</div>
+              <div class="sug-place">In the 'What to Avoid' section when listing bad Reddit practices</div>
+              <div class="sug-copy-label">Context Copy</div>
+              <div class="sug-copy">When building Reddit presence, understand the risks of <a href="https://www.example.com/blog/reddit-karma-farming-vs-credibility">karma farming vs building real credibility</a>, the difference determines whether your account earns trust or gets flagged.</div>
+            </div>
+
+            <div class="sug-cell">
+              <div class="sug-num">Suggestion 2</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Link To</div>
+              <div class="sug-from-title">Best Subreddits to Join for B2B SaaS Startups</div>
+              <a class="sug-from-url" href="https://www.example.com/blog/best-subreddits" target="_blank">example.com/blog/best-subreddits</a>
+              <div class="sug-divider"></div>
+              <div class="sug-anchor-label">Anchor Text</div>
+              <div class="sug-anchor">"karma vs credibility debate"</div>
+              <div class="sug-place-label">Where to Place</div>
+              <div class="sug-place">In the intro when explaining why genuine participation matters</div>
+            </div>
+
+            <div class="sug-cell">
+              <div class="sug-num">Suggestion 3</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Link To</div>
+              <div class="sug-from-title">How Do You Get Karma on Reddit</div>
+              <a class="sug-from-url" href="https://www.example.com/blog/how-do-you-get-karma-on-reddit" target="_blank">example.com/blog/how-do-you-get-karma-on-reddit</a>
+              <div class="sug-divider"></div>
+              <div class="sug-anchor-label">Anchor Text</div>
+              <div class="sug-anchor">"karma farming vs building real credibility"</div>
+              <div class="sug-place-label">Where to Place</div>
+              <div class="sug-place">After the section on karma-earning tactics, as a cautionary contrast</div>
+            </div>
+
+          </div>
+        </div>
+      </div><!-- /.blog-card -->
+
+      <!-- C8. ALL CLUSTER TAG VARIANTS
+           Use .ctag base + one colour modifier.
+           Map cluster name → class via CC{} in JS. -->
+      <div style="padding:16px 0 4px;display:flex;flex-wrap:wrap;gap:8px;border-top:1px solid var(--border);margin-top:16px">
+        <div style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">C8 · All cluster tag variants</div>
+        <span class="ctag c-reddit">Reddit Marketing</span>
+        <span class="ctag c-devmkt">Developer Marketing</span>
+        <span class="ctag c-content">Content Marketing</span>
+        <span class="ctag c-seo">SEO</span>
+        <span class="ctag c-docs">Documentation</span>
+        <span class="ctag c-llm">LLM / AI Visibility</span>
+        <span class="ctag c-gtm">GTM Strategy</span>
+        <span class="ctag c-devrel">DevRel</span>
+        <span class="ctag c-techwrite">Technical Writing</span>
+        <span class="ctag c-product">Product</span>
+        <span class="ctag c-other">Other</span>
+      </div>
+
+    </div><!-- /.cluster-section -->
+  </div><!-- /#content -->
+</div><!-- /.main -->
+
+<!-- C9. FOOTER -->
+<footer>
+  <span>example.com · Dead-End Pages Audit · YYYY-MM-DD</span>
+  <span>Source: RSC payload detection + Ahrefs top-pages</span>
+</footer>
+
+<!--
+  ══════════════════════════════════════════════════════════════════════
+  D. JAVASCRIPT REFERENCE
+  Copy D1–D4 verbatim. Replace CC{} cluster map and D[] data array
+  with real audit data. Do not modify filterAll() logic.
+  ══════════════════════════════════════════════════════════════════════
+-->
+<script>
+// D1. CLUSTER → CSS CLASS MAP
+// Add/remove entries to match actual clusters in the audit.
+const CC = {
+  "Reddit Marketing":    "c-reddit",
+  "Developer Marketing": "c-devmkt",
+  "Content Marketing":   "c-content",
+  "SEO":                 "c-seo",
+  "Documentation":       "c-docs",
+  "LLM / AI Visibility": "c-llm",
+  "GTM Strategy":        "c-gtm",
+  "DevRel":              "c-devrel",
+  "Technical Writing":   "c-techwrite",
+  "Product":             "c-product",
+  "Other":               "c-other"
+};
+
+// D2. DATA ARRAY
+// Each object = one dead-end page.
+// url     , full URL of dead-end page
+// title   , display title
+// kw      , top keyword string (or "")
+// tr      , monthly traffic integer, or null
+// cluster , must match a key in CC
+// s       , exactly 3 suggestion objects:
+//   from    , source page title
+//   fromUrl , source page full URL
+//   anchor  , anchor text (no quotes; JS adds them)
+//   place   , placement guidance
+const D = [
+  {
+    url: "https://www.example.com/blog/reddit-karma-farming-vs-credibility",
+    title: "Karma Farming vs Credibility on Reddit",
+    kw: "reddit karma farming",
+    tr: null,
+    cluster: "Reddit Marketing",
+    s: [
+      { from: "Dos and Don'ts of Reddit Marketing", fromUrl: "https://www.example.com/blog/reddit-marketing", anchor: "karma farming on Reddit", place: "In the 'What to Avoid' section when listing bad Reddit practices", copy: "When building Reddit presence, understand the risks of <a href='https://www.example.com/blog/reddit-karma-farming-vs-credibility'>karma farming vs building real credibility</a>, the difference determines whether your account earns trust or gets flagged." },
+      { from: "Best Subreddits to Join for B2B SaaS Startups", fromUrl: "https://www.example.com/blog/best-subreddits", anchor: "karma vs credibility debate", place: "In the intro when explaining why genuine participation matters" },
+      { from: "How Do You Get Karma on Reddit", fromUrl: "https://www.example.com/blog/how-do-you-get-karma-on-reddit", anchor: "karma farming vs building real credibility", place: "After the section on karma-earning tactics, as a cautionary contrast" }
+    ]
+  }
+  // … all other dead-end objects
+];
+
+// D3. SIDEBAR + SECTION BUILDER, copy verbatim
+const clusters = [...new Set(D.map(b => b.cluster))];
+const sidebar  = document.getElementById('sidebar');
+const content  = document.getElementById('content');
+
+clusters.forEach(cl => {
+  const items = D.filter(b => b.cluster === cl);
+  const link = document.createElement('div');
+  link.className = 'sidebar-link';
+  link.dataset.cluster = cl;
+  link.innerHTML = `<span>${cl}</span><span class="sc">${items.length}</span>`;
+  link.onclick = () => {
+    document.getElementById('clusterFilter').value = cl;
+    filterAll();
+    document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+    document.getElementById('sec-' + cl.replace(/\s+\//g,'-').replace(/\s+/g,'-'))?.scrollIntoView({behavior:'smooth',block:'start'});
+  };
+  sidebar.appendChild(link);
+
+  const sec = document.createElement('div');
+  sec.className = 'cluster-section';
+  sec.id = 'sec-' + cl.replace(/\s+\//g,'-').replace(/\s+/g,'-');
+  sec.innerHTML = `<div class="cluster-header"><div class="cluster-title">${cl}</div><span class="cluster-badge">${items.length} blogs</span></div>`;
+
+  items.forEach(b => {
+    const domain = new URL(b.url).hostname.replace('www.','');
+    const slug   = new URL(b.url).pathname.replace(/^\//, '');
+    const cc     = CC[b.cluster] || 'c-other';
+    let trHtml;
+    if (b.tr===null||b.tr===undefined) trHtml='<span class="kw-traffic">, </span>';
+    else if (b.tr>=10) trHtml=`<span class="kw-traffic hot">▲ ${b.tr} visits/mo</span>`;
+    else if (b.tr>0)   trHtml=`<span class="kw-traffic">▲ ${b.tr} visits/mo</span>`;
+    else               trHtml='<span class="kw-traffic">ranking · 0 traffic</span>';
+
+    const sugsHtml = b.s.map((s,i) => {
+      const sDomain = new URL(s.fromUrl).hostname.replace('www.','');
+      const sSlug   = new URL(s.fromUrl).pathname.replace(/^\//, '');
+      return `<div class="sug-cell">
+        <div class="sug-num">Suggestion ${i+1}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Link To</div>
+        <div class="sug-from-title">${s.from}</div>
+        <a class="sug-from-url" href="${s.fromUrl}" target="_blank">${sDomain}/${sSlug}</a>
+        <div class="sug-divider"></div>
+        <div class="sug-anchor-label">Anchor Text</div>
+        <div class="sug-anchor">"${s.anchor}"</div>
+        <div class="sug-place-label">Where to Place</div>
+        <div class="sug-place">${s.place}</div>
+        <div class="sug-copy-label">Context Copy</div>
+        <div class="sug-copy">${s.copy||""}</div>
+      </div>`;
+    }).join('');
+
+    const card = document.createElement('div');
+    card.className = 'blog-card';
+    card.dataset.title   = b.title.toLowerCase();
+    card.dataset.url     = slug.toLowerCase();
+    card.dataset.kw      = (b.kw||'').toLowerCase();
+    card.dataset.cluster = b.cluster;
+    card.innerHTML = `
+      <div class="blog-header" onclick="this.closest('.blog-card').classList.toggle('open')">
+        <div class="blog-title-col">
+          <div class="blog-name">${b.title}</div>
+          <a class="blog-url" href="${b.url}" target="_blank" onclick="event.stopPropagation()">${domain}/${slug}</a>
+        </div>
+        <div class="blog-kw-col">
+          <span class="kw-pill">${b.kw||', '}</span>
+          ${trHtml}
+        </div>
+        <div class="blog-cluster-col"><span class="ctag ${cc}">${b.cluster}</span></div>
+        <div class="chevron">▼</div>
+      </div>
+      <div class="blog-body"><div class="sug-grid">${sugsHtml}</div></div>`;
+    sec.appendChild(card);
+  });
+  content.appendChild(sec);
+});
+
+const allLink = document.createElement('div');
+allLink.className = 'sidebar-link active';
+allLink.innerHTML = `<span>All Clusters</span><span class="sc">${D.length}</span>`;
+allLink.onclick = () => {
+  document.getElementById('clusterFilter').value = '';
+  filterAll();
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  allLink.classList.add('active');
+};
+sidebar.insertBefore(allLink, sidebar.firstChild);
+sidebar.insertBefore(Object.assign(document.createElement('div'),{className:'sidebar-heading',textContent:'Clusters'}), allLink.nextSibling);
+
+// D4. FILTER FUNCTION, copy verbatim, do not modify
+function filterAll() {
+  const q  = document.getElementById('searchInput').value.toLowerCase();
+  const cf = document.getElementById('clusterFilter').value;
+  let visible = 0;
+  document.querySelectorAll('.blog-card').forEach(card => {
+    const mq = !q  || card.dataset.title.includes(q) || card.dataset.url.includes(q) || card.dataset.kw.includes(q);
+    const mc = !cf || card.dataset.cluster === cf;
+    if (mq && mc) { card.classList.remove('hidden'); visible++; }
+    else            card.classList.add('hidden');
+  });
+  document.getElementById('vc').textContent = visible;
+  document.getElementById('noResults').style.display = visible===0 ? 'block' : 'none';
+  document.querySelectorAll('.cluster-section').forEach(sec => {
+    const hasVisible = [...sec.querySelectorAll('.blog-card')].some(c => !c.classList.contains('hidden'));
+    sec.style.display = hasVisible ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

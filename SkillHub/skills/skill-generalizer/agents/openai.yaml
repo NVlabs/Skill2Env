@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Generalizer"
+  short_description: "Prepare personal skills for public release."
+  default_prompt: "Turn this local personal skill into a public GitHub-ready skill."

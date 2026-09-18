@@ -1,0 +1,61 @@
+{
+  "skill": "alterlab-pdb",
+  "evals": [
+    {
+      "id": "fetch-structure-by-id",
+      "prompt": "Download the coordinate file for PDB 4HHB in mmCIF format and tell me its resolution and the experimental method.",
+      "expected_output": "Triggers the PDB skill. Downloads 4HHB.cif from files.rcsb.org and uses rcsbapi.data DataQuery (input_type='entries') to fetch rcsb_entry_info.resolution_combined and exptl.method, reporting the resolution in Angstroms and the experimental method. Treats 4HHB as a PDB ID.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "4HHB" },
+        { "type": "behavior", "value": "Downloads a structure by PDB ID in mmCIF format and retrieves its resolution and experimental method." }
+      ]
+    },
+    {
+      "id": "sequence-similarity-search",
+      "prompt": "Here's a protein sequence (the KRAS G-domain). Find me experimentally determined structures with similar sequence at 90% identity and an e-value cutoff of 0.1.",
+      "expected_output": "Triggers the PDB skill. Uses rcsbapi.search SeqSimilarityQuery with the provided sequence, identity_cutoff=0.9, evalue_cutoff=0.1, sequence_type='protein', and returns the list of matching PDB entries.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Runs a sequence similarity search against the PDB with identity and e-value cutoffs." }
+      ]
+    },
+    {
+      "id": "attribute-search-high-res-human",
+      "prompt": "Find high-resolution human protein structures — Homo sapiens, resolution better than 2.0 Angstrom.",
+      "expected_output": "Triggers the PDB skill. Builds an attribute search combining rcsb_entity_source_organism.scientific_name == 'Homo sapiens' AND rcsb_entry_info.resolution_combined < 2.0 (idiomatic attrs form or AttributeQuery), then runs the combined query and returns matching entries.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Homo sapiens" },
+        { "type": "behavior", "value": "Combines organism and resolution attribute queries with a logical AND to find high-resolution human structures." }
+      ]
+    },
+    {
+      "id": "structure-similarity-search",
+      "prompt": "Find structures with 3D geometry similar to hemoglobin entry 4HHB.",
+      "expected_output": "Triggers the PDB skill. Uses rcsbapi.search StructSimilarityQuery with structure_search_type='entry' and entry_id='4HHB' to find structurally similar entries by 3D geometry, returning the result list.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Runs a structure (3D geometry) similarity search seeded by a PDB entry ID." }
+      ]
+    },
+    {
+      "id": "near-miss-uniprot",
+      "prompt": "Give me the canonical amino acid sequence, function annotation, and GO terms for human hemoglobin subunit beta — the reviewed UniProt entry.",
+      "expected_output": "Should NOT trigger the PDB skill. The request is for sequence-level and functional annotation (canonical sequence, function, GO terms) from a reviewed protein record, which is UniProt's domain, not experimental 3D structure retrieval. It should defer to the uniprot database skill (alterlab-uniprot).",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "uniprot" }
+      ]
+    },
+    {
+      "id": "near-miss-alphafold-db",
+      "prompt": "I need the predicted structure and per-residue pLDDT confidence for a human protein that has no experimental structure in the PDB.",
+      "expected_output": "Should NOT trigger the PDB skill. The user explicitly wants a predicted model with pLDDT confidence for a protein lacking an experimental structure, which is the AlphaFold DB's domain rather than RCSB's experimental structures. It should defer to the alphafold database skill (alterlab-alphafold-db).",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alphafold" }
+      ]
+    }
+  ]
+}

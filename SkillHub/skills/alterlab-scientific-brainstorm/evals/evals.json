@@ -1,0 +1,52 @@
+{
+  "skill": "alterlab-scientific-brainstorm",
+  "evals": [
+    {
+      "id": "open-ended-ideation",
+      "prompt": "I'm a marine biologist and I feel stuck — I want to brainstorm completely new research directions for studying coral reef resilience but I have no specific hypothesis yet. Can we just think out loud together?",
+      "expected_output": "Engages as a collaborative, conversational ideation partner rather than an instructor. Starts by understanding the context with open-ended questions, then moves into divergent exploration encouraging quantity and wild ideas without judgment. Maintains a natural back-and-forth where the scientist does at least half the talking.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "behavior", "value": "Acts as a conversational thought partner, asks understanding questions first, then opens divergent ideation without prematurely judging ideas."}
+      ]
+    },
+    {
+      "id": "cross-domain-analogies",
+      "prompt": "I study urban traffic congestion. Help me find unexpected connections from other scientific fields that might give me fresh angles on the problem.",
+      "expected_output": "Uses cross-domain analogy and interdisciplinary fusion techniques, drawing parallels from fields like biology (blood flow, ant colonies, slime mold networks), physics (fluid dynamics, phase transitions), or ecology, and proposes how those mechanisms map onto traffic. Encourages exploring 'what if' connections and combining methodologies across disciplines.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "behavior", "value": "Surfaces concrete cross-disciplinary analogies and interdisciplinary connections to reframe the problem."}
+      ]
+    },
+    {
+      "id": "challenge-assumptions",
+      "prompt": "My whole research program assumes that more student feedback improves teaching quality. Push back on me — what assumptions am I making that I should question?",
+      "expected_output": "Applies assumption reversal: identifies the core assumptions embedded in the premise, respectfully flips them ('what if the opposite were true?'), and probes unexamined angles. Challenges creatively without being dismissive, and may use constraint removal/addition or devil's advocate framing to expose hidden premises.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "assumption"},
+        {"type": "behavior", "value": "Identifies and respectfully reverses the user's core assumptions to open new angles."}
+      ]
+    },
+    {
+      "id": "identify-research-gaps",
+      "prompt": "I've been reading broadly about microplastics and human health but I can't tell where the actual open opportunities are. Help me spot research gaps worth pursuing.",
+      "expected_output": "Helps identify research gaps and opportunities through divergent exploration and connection-making, looking for under-explored angles, scale shifts, or unexamined intersections, then crystallizes the most promising directions and suggests concrete next steps (literature search, pilot experiment, collaborators). Keeps the tone exploratory and collaborative.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "behavior", "value": "Surfaces candidate research gaps and converges on promising directions with concrete next steps."}
+      ]
+    },
+    {
+      "id": "near-miss-hypothesis-generation",
+      "prompt": "I already have a dataset showing that sleep duration correlates with exam scores. Help me formulate specific, testable hypotheses I can actually run statistical tests on.",
+      "expected_output": "This is formulating testable hypotheses from an existing dataset/observation, which the skill's description explicitly routes elsewhere ('For formulating testable hypotheses from observations or data use hypothesis-gen'). Defers to the hypothesis-gen skill rather than running an open-ended brainstorming session, since there is already a specific observation rather than a blank-slate ideation need.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "hypothesis-gen"},
+        {"type": "behavior", "value": "Recognizes that formulating testable hypotheses from a dataset belongs to the hypothesis-gen skill and defers there rather than starting free-form brainstorming."}
+      ]
+    }
+  ]
+}

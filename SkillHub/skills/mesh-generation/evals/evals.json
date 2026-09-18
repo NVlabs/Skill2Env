@@ -1,0 +1,204 @@
+{
+  "skill_name": "mesh-generation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to mesh a 1mm x 1mm domain for a phase-field simulation with interface width of 10 micrometers. How many grid points do I need?",
+      "expected_output": "Recommends at least 500 points per dimension (dx=2um) for 5 points across the 10um interface.",
+      "assertions": [
+        "Uses grid_sizing.py with --length 0.001 and appropriate resolution",
+        "Recommends at least 5 points across the 10um interface width",
+        "Computes required dx <= 2um, giving counts >= 500 per dimension (resolution=500 yields counts of exactly 500)",
+        "Notes that fewer than 5 points per interface may cause numerical artifacts"
+      ],
+      "script_checks": [
+        {
+          "description": "1mm domain at resolution 500 -> dx=2um, counts of exactly 500 per dimension (5 points across 10um interface)",
+          "cmd": [
+            "scripts/grid_sizing.py",
+            "--length",
+            "0.001",
+            "--resolution",
+            "500",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.dx",
+              "op": "approx",
+              "value": 2e-06,
+              "rel_tol": 1e-09
+            },
+            {
+              "path": "results.counts.0",
+              "op": "eq",
+              "value": 500
+            },
+            {
+              "path": "results.counts.1",
+              "op": "eq",
+              "value": 500
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Check the quality of my mesh cells. They have dx=1.0mm, dy=0.1mm, dz=0.1mm. Is the aspect ratio acceptable?",
+      "expected_output": "Aspect ratio of 10:1 exceeds typical threshold; mesh quality is poor.",
+      "assertions": [
+        "Uses mesh_quality.py with --dx 1.0 --dy 0.1 --dz 0.1",
+        "Reports aspect ratio of 10:1",
+        "Flags aspect ratio as exceeding the 5:1 quality threshold",
+        "Reports skewness of 0 (orthogonal cell) and does NOT flag high_skewness",
+        "Recommends reducing dx or increasing dy/dz to improve aspect ratio"
+      ],
+      "script_checks": [
+        {
+          "description": "Anisotropic cell: aspect=10, skewness=0 (orthogonal)",
+          "cmd": [
+            "scripts/mesh_quality.py",
+            "--dx",
+            "1.0",
+            "--dy",
+            "0.1",
+            "--dz",
+            "0.1",
+            "--json"
+          ],
+          "assert": [
+            {
+              "path": "results.aspect_ratio",
+              "op": "approx",
+              "value": 10.0,
+              "rel_tol": 1e-06
+            },
+            {
+              "path": "results.skewness",
+              "op": "eq",
+              "value": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I'm setting up a 2D thermal boundary layer simulation. The layer thickness is about 0.5mm and my domain is 10cm x 5cm. What grid resolution do I need near the wall?",
+      "expected_output": "Needs 10-20 points across the 0.5mm boundary layer, so dx near wall should be 25-50um.",
+      "assertions": [
+        "Uses grid_sizing.py to estimate resolution based on boundary layer thickness",
+        "Recommends 10-20 points across the 0.5mm boundary layer",
+        "Computes wall-normal spacing of approximately 25-50 micrometers",
+        "Suggests graded or hybrid mesh with finer resolution near the wall"
+      ],
+      "script_checks": [
+        {
+          "description": "Coarse bound: 10 points across the 0.5mm boundary layer -> dx=50um (5e-5 m)",
+          "cmd": [
+            "scripts/grid_sizing.py",
+            "--length",
+            "0.0005",
+            "--resolution",
+            "10",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.dx",
+              "op": "approx",
+              "value": 5e-05,
+              "rel_tol": 1e-09
+            },
+            {
+              "path": "results.counts.0",
+              "op": "eq",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "description": "Fine bound: 20 points across the 0.5mm boundary layer -> dx=25um (2.5e-5 m)",
+          "cmd": [
+            "scripts/grid_sizing.py",
+            "--length",
+            "0.0005",
+            "--resolution",
+            "20",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.dx",
+              "op": "approx",
+              "value": 2.5e-05,
+              "rel_tol": 1e-09
+            },
+            {
+              "path": "results.counts.0",
+              "op": "eq",
+              "value": 20
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "my solver keeps crashing and i suspect it's the mesh. cells are dx=0.5, dy=0.5. anything obviously wrong?",
+      "expected_output": "Mesh quality check shows good aspect ratio (1:1); problem is likely elsewhere.",
+      "assertions": [
+        "Uses mesh_quality.py with --dx 0.5 --dy 0.5 (dz omitted, treated as a 2D cell)",
+        "Reports aspect ratio of 1:1, which is excellent",
+        "Reports skewness of 0 for the uniform orthogonal cell",
+        "Concludes mesh quality is not the issue and suggests checking other factors like stability or boundary conditions"
+      ],
+      "script_checks": [
+        {
+          "description": "Uniform 2D cell dx=dy=0.5 -> aspect=1.0, skewness=0, no quality flags",
+          "cmd": [
+            "scripts/mesh_quality.py",
+            "--dx",
+            "0.5",
+            "--dy",
+            "0.5",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.aspect_ratio",
+              "op": "approx",
+              "value": 1.0,
+              "rel_tol": 1e-09
+            },
+            {
+              "path": "results.skewness",
+              "op": "eq",
+              "value": 0.0
+            },
+            {
+              "path": "results.size_anisotropy",
+              "op": "eq",
+              "value": 0.0
+            },
+            {
+              "path": "results.dims",
+              "op": "eq",
+              "value": 2
+            },
+            {
+              "path": "results.quality_flags",
+              "op": "eq",
+              "value": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

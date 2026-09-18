@@ -1,0 +1,62 @@
+{
+  "skill": "alterlab-openalex",
+  "evals": [
+    {
+      "id": "search-recent-highly-cited",
+      "prompt": "Find the most highly cited papers on quantum computing published since 2020. I want the top influential works, sorted by citations.",
+      "expected_output": "Triggers the OpenAlex skill. Initializes OpenAlexClient (a free api_key raises the daily budget but keyless also works) and uses client.search_works (or find_highly_cited_recent_papers) with search='quantum computing', filter publication_year:>2020, sort='cited_by_count:desc', per_page up to 200. Returns a ranked list.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "openalex" },
+        { "type": "behavior", "value": "Filters by publication_year:>2020 and sorts by cited_by_count:desc to surface highly cited recent works." }
+      ]
+    },
+    {
+      "id": "works-by-author-two-step",
+      "prompt": "Get me all the publications by Jennifer Doudna from OpenAlex.",
+      "expected_output": "Triggers OpenAlex. Uses the mandatory two-step entity pattern: first search /authors for 'Jennifer Doudna' to get the author ID, then filter works by authorships.author.id (via find_author_works or manual two-step). Explicitly avoids filtering works by author name directly, which does not work in OpenAlex.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Resolves the author name to an OpenAlex author ID first, then filters works by authorships.author.id (two-step pattern), not by name directly." }
+      ]
+    },
+    {
+      "id": "institution-oa-analysis",
+      "prompt": "Analyze MIT's research output since 2020 — total works, what percentage is open access, and the top research topics.",
+      "expected_output": "Triggers OpenAlex. Resolves MIT to its institution ID and uses analyze_research_output (entity_type='institution', entity_name='MIT', years='>2020') or equivalent group_by queries on topics.id and is_oa, returning total works, open-access percentage, and top topics. Uses two-step entity resolution and group_by for topic counts.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "open access" },
+        { "type": "behavior", "value": "Returns total works, open-access percentage, and top topics for the institution, resolving the institution to an ID first." }
+      ]
+    },
+    {
+      "id": "batch-doi-lookup",
+      "prompt": "I have a list of about 40 DOIs from my reference manager. Look them all up in OpenAlex efficiently and give me their citation counts and OA status.",
+      "expected_output": "Triggers OpenAlex. Uses client.batch_lookup(entity_type='works', ids=doi_list, id_field='doi') to resolve up to 50 DOIs in a single batched request rather than 40 individual get_entity calls, returning cited_by_count and open_access.oa_status per work. Reflects the batch-over-loop best practice.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "batch_lookup" },
+        { "type": "behavior", "value": "Uses batch_lookup for the DOI list instead of one request per DOI." }
+      ]
+    },
+    {
+      "id": "near-miss-pubmed",
+      "prompt": "Search PubMed for randomized controlled trials on statins and cardiovascular mortality, and pull the MeSH terms and abstracts for the top hits.",
+      "expected_output": "Should NOT trigger OpenAlex. This explicitly targets PubMed with biomedical-specific features (MeSH term indexing, RCT publication-type filters, abstracts from the MEDLINE corpus) served by the NCBI E-utilities / PubMed skill. OpenAlex is a general cross-disciplinary catalog without MeSH indexing. Defers to alterlab-pubmed.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "pubmed" }
+      ]
+    },
+    {
+      "id": "near-miss-arxiv",
+      "prompt": "Grab the latest preprints posted to arXiv this week in cs.LG on diffusion models, with their arXiv IDs and PDF links.",
+      "expected_output": "Should NOT trigger OpenAlex. This requests fresh arXiv preprints by category (cs.LG) with arXiv IDs and PDF links from the arXiv API. OpenAlex catalogs published and indexed scholarly works across sources but is not the arXiv listing/feed; same-week category listings belong to the arXiv skill. Defers to alterlab-arxiv.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "arxiv" }
+      ]
+    }
+  ]
+}

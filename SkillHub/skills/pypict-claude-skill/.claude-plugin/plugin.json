@@ -1,0 +1,21 @@
+{
+  "name": "pict-test-designer",
+  "description": "Design comprehensive test cases using PICT (Pairwise Independent Combinatorial Testing) for any piece of requirements or code. Analyzes inputs, generates PICT models with parameters, values, and constraints for valid scenarios using pairwise testing. Outputs the PICT model, markdown table of test cases, and expected results.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Omar Kamal Hosney",
+    "email": "omar.wasat@gmail.com"
+  },
+  "homepage": "https://github.com/omkamal/pypict-claude-skill",
+  "repository": "https://github.com/omkamal/pypict-claude-skill.git",
+  "license": "MIT",
+  "keywords": [
+    "testing",
+    "pict",
+    "pairwise",
+    "combinatorial",
+    "test-design",
+    "test-cases",
+    "quality-assurance"
+  ]
+}

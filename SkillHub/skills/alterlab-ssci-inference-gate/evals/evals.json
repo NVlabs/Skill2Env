@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-ssci-inference-gate",
+  "evals": [
+    {
+      "id": "observational-causal-claim",
+      "prompt": "My regression on survey data shows a significant positive coefficient for remote work on job satisfaction. Can I write that remote work increases satisfaction?",
+      "expected_output": "Invokes alterlab-ssci-inference-gate: because the design is observational with no defended identifying assumption, refuses the causal verb and downgrades the claim to associational (is associated with / predicts), noting a significant coefficient is not a causal license.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Blocks causal language for an observational design lacking a defended identifying assumption and rewrites to an associational claim." }
+      ]
+    },
+    {
+      "id": "nonsignificance-no-effect",
+      "prompt": "My p-value was 0.20, so I'm going to conclude there is no effect. Is that correct?",
+      "expected_output": "Invokes alterlab-ssci-inference-gate: corrects the absence-of-evidence fallacy — non-significance is not proof of no effect. Asks for the confidence interval and, if a null is intended, an equivalence test, rather than declaring no effect.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Explains that failing to reject is not evidence of no effect and requires the CI (or an equivalence test) instead of a null conclusion." }
+      ]
+    },
+    {
+      "id": "ci-misinterpretation",
+      "prompt": "Does my 95% confidence interval mean there's a 95% probability the true mean is inside it?",
+      "expected_output": "Invokes alterlab-ssci-inference-gate: corrects the interpretation — the parameter is fixed and 95% refers to the long-run coverage of the procedure, not a probability the true value lies in this particular interval.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "coverage" }
+      ]
+    },
+    {
+      "id": "multiple-comparisons",
+      "prompt": "I ran 30 correlations and 3 came out significant at p < 0.05. Can I report those three as findings?",
+      "expected_output": "Invokes alterlab-ssci-inference-gate: flags uncorrected multiplicity — about 1.5 false positives are expected by chance at 30 tests — and requires multiple-comparison correction (FDR/Bonferroni) or pre-specification, plus disclosure of the full family and an exploratory label.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Identifies the multiple-comparison / false-discovery problem and requires correction or pre-registration, not cherry-picking the significant tests." }
+      ]
+    },
+    {
+      "id": "near-miss-test-selection-guard",
+      "prompt": "I have a continuous outcome and two independent groups. Which statistical test should I run?",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-test-selection-guard. Choosing the test happens before interpreting the result; there is no claim to audit yet.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-test-selection-guard" }
+      ]
+    },
+    {
+      "id": "near-miss-statistical-analysis",
+      "prompt": "Please compute the regression coefficient and its standard error from my dataset.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-statistical-analysis for the computation. Estimating the number is execution, not auditing the inferential claim built on it.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statistical-analysis" }
+      ]
+    }
+  ]
+}

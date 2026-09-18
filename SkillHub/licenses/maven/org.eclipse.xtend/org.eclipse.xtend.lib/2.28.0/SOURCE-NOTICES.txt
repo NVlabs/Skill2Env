@@ -1,0 +1,54 @@
+Source files: org/eclipse/xtend/lib/annotations/Accessors.java, org/eclipse/xtend/lib/annotations/AccessorType.java, org/eclipse/xtend/lib/annotations/AccessorsDeprecationPolicy.java, org/eclipse/xtend/lib/annotations/AccessorsProcessor.java
+
+/**
+ * Copyright (c) 2013 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
+Source files: org/eclipse/xtend/lib/annotations/Data.java, org/eclipse/xtend/lib/annotations/DataProcessor.java, org/eclipse/xtend/lib/annotations/EqualsHashCode.java, org/eclipse/xtend/lib/annotations/EqualsHashCodeProcessor.java, org/eclipse/xtend/lib/annotations/ToString.java, org/eclipse/xtend/lib/annotations/ToStringConfiguration.java, org/eclipse/xtend/lib/annotations/ToStringProcessor.java
+
+/**
+ * Copyright (c) 2014, 2018 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
+Source files: org/eclipse/xtend/lib/annotations/Delegate.java, org/eclipse/xtend/lib/annotations/DelegateProcessor.java
+
+/**
+ * Copyright (c) 2014, 2019 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
+Source files: org/eclipse/xtend/lib/annotations/FinalFieldsConstructor.java, org/eclipse/xtend/lib/annotations/FinalFieldsConstructorProcessor.java
+
+/**
+ * Copyright (c) 2014, 2016 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
+Source files: org/eclipse/xtend/lib/Data.java, org/eclipse/xtend/lib/DataProcessor.java, org/eclipse/xtend/lib/Property.java, org/eclipse/xtend/lib/PropertyProcessor.java
+
+/**
+ * Copyright (c) 2018 itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
+ */

@@ -1,0 +1,53 @@
+{
+  "skill": "alterlab-pylabrobot",
+  "evals": [
+    {
+      "id": "hamilton-star-transfer",
+      "prompt": "Program a liquid transfer on our Hamilton STAR using PyLabRobot: pick up tips, transfer 100 uL from a source 96-well plate to a destination plate, and drop tips.",
+      "expected_output": "Invokes alterlab-pylabrobot. Uses PyLabRobot's LiquidHandler with the STAR backend and a STARLetDeck, assigns resources, and runs the async protocol (await lh.setup(), pick_up_tips, transfer/aspirate+dispense, drop_tips).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "LiquidHandler" },
+        { "type": "behavior", "value": "Uses the STAR backend with a deck and awaits the async liquid-handling calls." }
+      ]
+    },
+    {
+      "id": "cross-vendor-plate-reader-integration",
+      "prompt": "I need one protocol that runs liquid handling and then reads absorbance on a BMG CLARIOstar plate reader, all from the same Python script.",
+      "expected_output": "Invokes alterlab-pylabrobot. Integrates analytical equipment: uses a PlateReader with the CLARIOstarBackend (await pr.setup, read_absorbance) alongside the LiquidHandler in one script, leveraging PyLabRobot's unified cross-device interface.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "CLARIOstar" },
+        { "type": "behavior", "value": "Drives a PlateReader (CLARIOstarBackend, read_absorbance) and a LiquidHandler from the same async script." }
+      ]
+    },
+    {
+      "id": "simulation-before-hardware",
+      "prompt": "Before I run anything on the real robot I want to simulate my PyLabRobot protocol and watch the deck state. How do I do that?",
+      "expected_output": "Invokes alterlab-pylabrobot. Routes to visualization/simulation: swap in the LiquidHandlerChatterboxBackend and attach a Visualizer (Visualizer(resource=lh); await vis.setup()) to watch tip presence and liquid volumes without physical hardware.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Visualizer" },
+        { "type": "behavior", "value": "Uses a no-hardware simulation backend (LiquidHandlerChatterboxBackend) and starts the Visualizer to inspect deck state before running on hardware." }
+      ]
+    },
+    {
+      "id": "multi-device-material-handling",
+      "prompt": "Coordinate a workflow that uses a Hamilton heater-shaker and an Inheco incubator alongside the liquid handler, all controlled from one PyLabRobot script.",
+      "expected_output": "Invokes alterlab-pylabrobot. Routes to material handling: controls the heater-shaker and incubator (temperature/shaking) together with the liquid handler through PyLabRobot's unified multi-device interface and backend abstraction.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Coordinates multiple device types (heater-shaker, incubator, liquid handler) through PyLabRobot's unified interface." }
+      ]
+    },
+    {
+      "id": "near-miss-opentrons",
+      "prompt": "Write me a standard Opentrons OT-2 protocol with the official Protocol API v2 to do a PCR setup on the thermocycler module.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-opentrons. The user explicitly wants an Opentrons-only protocol using the official Opentrons Protocol API v2, which the dedicated Opentrons skill handles more simply than PyLabRobot's vendor-agnostic layer.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-opentrons" }
+      ]
+    }
+  ]
+}

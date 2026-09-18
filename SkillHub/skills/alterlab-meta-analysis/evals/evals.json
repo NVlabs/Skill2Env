@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-meta-analysis",
+  "evals": [
+    {
+      "id": "pool-effect-sizes",
+      "prompt": "I have 18 studies reporting means, SDs, and sample sizes for a treatment vs control. Pool them into an overall effect.",
+      "expected_output": "Invokes alterlab-meta-analysis: computes Hedges' g per study, pools under a random-effects model (statsmodels combine_effects or R metafor rma), and reports the pooled estimate with I2/tau2 and a forest plot.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "random-effects" },
+        { "type": "behavior", "value": "Computes standardized effect sizes and pools with a random-effects model, reporting heterogeneity." }
+      ]
+    },
+    {
+      "id": "heterogeneity",
+      "prompt": "My meta-analysis studies look very different from each other. How do I quantify heterogeneity and decide if pooling even makes sense?",
+      "expected_output": "Invokes alterlab-meta-analysis: reports I-squared, tau-squared, and Cochran's Q, warns that a high value means the mean summarizes a distribution (prediction interval), and suggests meta-regression / subgroups.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "I" }
+      ]
+    },
+    {
+      "id": "publication-bias",
+      "prompt": "How do I check whether my meta-analysis suffers from publication bias?",
+      "expected_output": "Invokes alterlab-meta-analysis: draws a funnel plot and runs Egger's regression test plus trim-and-fill as a sensitivity analysis, noting no single test is definitive.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "funnel" }
+      ]
+    },
+    {
+      "id": "near-miss-deep-research",
+      "prompt": "Help me search the literature and screen papers for my systematic review's inclusion criteria.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-deep-research. Searching and screening the literature is upstream discovery, not the quantitative pooling of effect sizes.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-deep-research" }
+      ]
+    },
+    {
+      "id": "near-miss-statistical-analysis",
+      "prompt": "Give me the mean and confidence interval for the outcome in my single dataset.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-statistical-analysis. A single study's statistics are not a cross-study meta-analytic synthesis.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statistical-analysis" }
+      ]
+    }
+  ]
+}

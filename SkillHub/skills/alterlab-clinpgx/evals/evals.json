@@ -1,0 +1,58 @@
+{
+  "skill": "alterlab-clinpgx",
+  "evals": [
+    {
+      "id": "cpic-clopidogrel-dosing",
+      "prompt": "My patient is CYP2C19 *1/*2 (intermediate metabolizer) and we're considering clopidogrel. What does the CPIC guideline say about dosing or alternative therapy?",
+      "expected_output": "Invokes alterlab-clinpgx. Queries the ClinPGx guidelineAnnotation endpoint for clopidogrel (relatedChemicals.name), surfaces the CPIC recommendation (alternative antiplatelet therapy for intermediate/poor metabolizers), and notes evidence level. May reference checking the drug label endpoint too.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "CPIC" }
+      ]
+    },
+    {
+      "id": "pharmacogene-resolve",
+      "prompt": "Pull the ClinPGx record for CYP2D6 and tell me which drugs have actionable pharmacogenomic guidelines tied to it.",
+      "expected_output": "Invokes alterlab-clinpgx. Resolves the CYP2D6 gene symbol via the /data/gene collection endpoint (accession PA128), then derives gene-drug relationships from guidelineAnnotation queries filtered by relatedGenes.symbol. Respects the 2 req/sec rate limit.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Resolves CYP2D6 to a ClinPGx accession and lists drugs with guideline annotations." }
+      ]
+    },
+    {
+      "id": "hla-abacavir-safety",
+      "prompt": "Before starting a patient on abacavir, what pharmacogenomic screening does ClinPGx flag, and what's the recommendation if they test positive?",
+      "expected_output": "Invokes alterlab-clinpgx. Queries guideline annotations and/or labels for abacavir, surfacing the HLA-B*57:01 association: avoid abacavir if HLA-B*57:01 positive. Frames it as a drug-safety / adverse-reaction risk assessment.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "abacavir" }
+      ]
+    },
+    {
+      "id": "gene-panel-review",
+      "prompt": "I have a preemptive PGx panel covering CYP2C19, CYP2D6, CYP2C9, TPMT, DPYD, and SLCO1B1. For each gene, give me the clinically actionable gene-drug pairs and dosing implications.",
+      "expected_output": "Invokes alterlab-clinpgx. Iterates the panel genes, querying guidelineAnnotation by relatedGenes.symbol for each, and compiles actionable gene-drug pairs (e.g., TPMT-azathioprine, DPYD-fluoropyrimidines) with phenotype-based dosing recommendations and evidence levels.",
+      "assertions": [
+        { "type": "should_trigger", "value": true }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-clinvar",
+      "prompt": "Is the variant rs121913529 in KRAS classified as pathogenic? I want the ClinVar clinical significance, review status, and submitter assertions for this disease-causing variant.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-clinvar. The user wants germline/somatic variant pathogenicity classification and review status for disease causation, which is ClinVar's domain, not ClinPGx's pharmacogenomic gene-drug response data.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-clinvar" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-pubmed",
+      "prompt": "Find me the original CPIC clopidogrel guideline publication and a few recent review papers on CYP2C19 and antiplatelet therapy, with full citations and abstracts.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pubmed. The user wants a literature search with citations and abstracts, which is PubMed's territory. ClinPGx surfaces PMIDs within annotations but the actual reference retrieval and literature search belongs to alterlab-pubmed.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pubmed" }
+      ]
+    }
+  ]
+}

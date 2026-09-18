@@ -1,0 +1,52 @@
+# EXAMPLE TEMPLATE - DO NOT DEPLOY
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: web-tier-tiebreak
+spec:
+  # Stateless web tier where multiple families are interchangeable; let GKE pick by cost/availability via priorityScore. Top tier groups three Gen-4 options, mid tier groups two Gen-2 fallbacks, bottom is an e2 floor. Requires GKE 1.35.2-gke.1842000+.
+  nodePoolAutoCreation:
+    enabled: true
+  priorityDefaults:
+    location:
+      zones: ['us-central1-a', 'us-central1-b', 'us-central1-c']
+      locationPolicy: ANY
+  # priorityScore: 1-1000, higher = preferred. Max 3 rules per score.
+  # If priorityScore is set on any rule, ALL priorities must have one.
+  # Same-score rules are evaluated together, not strictly sequentially —
+  # tie-break is by lowest unit cost.
+  priorities:
+  # Score 100 — top tier: three equivalent Gen-4 On-Demand families
+  - machineFamily: c4d  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 8
+    spot: false
+    priorityScore: 100
+  - machineFamily: c4  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 8
+    spot: false
+    priorityScore: 100
+  - machineFamily: n4  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 8
+    spot: false
+    priorityScore: 100
+
+  # Score 50 — fallback tier: two Gen-2 alternatives with broader availability
+  - machineFamily: n2  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 8
+    spot: false
+    priorityScore: 50
+  - machineFamily: n2d  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 8
+    spot: false
+    priorityScore: 50
+
+  # Score 10 — floor: e2 with widest zone net, guarantees execution
+  - machineFamily: e2  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    minCores: 8
+    spot: false
+    location:
+      zones: ['us-central1-a', 'us-central1-b', 'us-central1-c', 'us-central1-f']
+      locationPolicy: ANY
+    priorityScore: 10
+
+  whenUnsatisfiable: ScaleUpAnyway

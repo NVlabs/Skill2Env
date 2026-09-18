@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-esm",
+  "evals": [
+    {
+      "id": "sequence-completion-esm3",
+      "prompt": "I have a partial protein sequence MPRT___KEND with masked positions and I want ESM3 to fill in the masked residues. Can you write the generation code?",
+      "expected_output": "Invokes alterlab-esm. Loads an ESM3 model (e.g. ESM3.from_pretrained('esm3-sm-open-v1')), builds an ESMProtein with '_' masked positions, and calls model.generate(protein, GenerationConfig(track='sequence', num_steps=...)). Sequence in-filling with the ESM3 generative model is a core capability.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ESM3" }
+      ]
+    },
+    {
+      "id": "inverse-folding-from-pdb",
+      "prompt": "I have a target backbone structure in target_structure.pdb. Design a new amino-acid sequence that should fold into that structure using inverse folding.",
+      "expected_output": "Invokes alterlab-esm. Loads structure via ESMProtein.from_pdb('target_structure.pdb'), removes the sequence (sequence=None), then runs model.generate with GenerationConfig(track='sequence', temperature=...) to design a sequence for the fixed structure. Inverse folding (sequence-from-structure) on the ESM3 structure track is in scope.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "inverse folding" }
+      ]
+    },
+    {
+      "id": "esmc-embeddings-batch",
+      "prompt": "I need fixed-length representation embeddings for a few thousand protein sequences to feed into a downstream classifier. What's the efficient way to do this with ESM?",
+      "expected_output": "Invokes alterlab-esm. Recommends the ESM C model family (e.g. ESMC.from_pretrained('esmc_300m')) for efficient embeddings, encoding each ESMProtein and extracting representations via model.logits(tensor, LogitsConfig(return_embeddings=True)).embeddings (NOT model.forward), with batch looping and caching for throughput. Generating protein embeddings for downstream ML is an explicit ESM C use case.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ESM C" }
+      ]
+    },
+    {
+      "id": "function-conditioned-design",
+      "prompt": "Design a 200-residue protein conditioned on a fluorescent-protein function annotation between residues 50 and 150 using ESM3's function track.",
+      "expected_output": "Invokes alterlab-esm. Builds an ESMProtein with a FunctionAnnotation(label='fluorescent_protein', start=50, end=150) and generates with GenerationConfig(track='sequence', ...), optionally using chain-of-thought refinement across structure/function tracks. Function-conditioned generation is a documented ESM3 capability.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "FunctionAnnotation" }
+      ]
+    },
+    {
+      "id": "near-miss-scvi-tools",
+      "prompt": "I have a single-cell RNA-seq AnnData object and I want a low-dimensional latent embedding of the cells with batch correction across donors.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scvi-tools. The ask is single-cell transcriptomic latent embeddings with batch correction (scVI on AnnData), not protein-sequence/structure embeddings. ESM's embeddings are for protein sequences, not cell-level scRNA-seq.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scvi-tools" }
+      ]
+    },
+    {
+      "id": "near-miss-biopython",
+      "prompt": "Read this multi-FASTA of protein sequences, compute each sequence's molecular weight and isoelectric point, and write the results to a CSV.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-biopython. The ask is deterministic sequence parsing and physico-chemical property calculation (ProtParam-style), with no protein language model, generation, or learned embeddings. ESM is for generative design and neural representations, not basic sequence bookkeeping.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-biopython" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "cmso": {
+    "name": "Computational Material Sample Ontology",
+    "acronym": "CMSO",
+    "version": "0.0.1",
+    "source_url": "https://raw.githubusercontent.com/OCDO/cmso/main/cmso.owl",
+    "documentation_url": "https://ocdo.github.io/cmso/",
+    "summary_file": "cmso_summary.json",
+    "guide_file": "cmso_guide.md",
+    "mappings_file": "cmso_mappings.json",
+    "ecosystem": "OCDO",
+    "related": ["asmo", "cdco", "podo", "pldo", "ldo"]
+  },
+  "asmo": {
+    "name": "Atomistic Simulation Methods Ontology",
+    "acronym": "ASMO",
+    "version": "1.0.0",
+    "source_url": "https://raw.githubusercontent.com/OCDO/asmo/main/asmo.owl",
+    "documentation_url": "https://ocdo.github.io/asmo/",
+    "summary_file": "asmo_summary.json",
+    "guide_file": "asmo_guide.md",
+    "mappings_file": "asmo_mappings.json",
+    "ecosystem": "OCDO",
+    "related": ["cmso", "cdco", "podo", "pldo", "ldo"]
+  }
+}

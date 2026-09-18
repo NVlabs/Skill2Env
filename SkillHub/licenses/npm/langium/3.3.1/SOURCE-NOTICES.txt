@@ -1,0 +1,57 @@
+Source files: lib/index.js
+
+/******************************************************************************
+ * Copyright 2021 TypeFox GmbH
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License, which is available in the project root.
+ *
+ * @module langium
+ */
+
+Source files: lib/validation/index.js, lib/references/index.js, lib/utils/index.js, lib/languages/index.js, lib/serializer/index.js, lib/workspace/index.js, lib/parser/index.js, lib/documentation/index.js, lib/documentation/documentation-provider.js, lib/documentation/comment-provider.js, lib/documentation/jsdoc.js, lib/parser/async-parser.js, lib/workspace/workspace-lock.js, lib/utils/caching.js, lib/utils/grammar-loader.js, lib/references/scope.js
+
+/******************************************************************************
+ * Copyright 2023 TypeFox GmbH
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License, which is available in the project root.
+ ******************************************************************************/
+
+Source files: lib/service-registry.js, lib/dependency-injection.js, lib/syntax-tree.js, lib/services.js, lib/validation/document-validator.js, lib/validation/validation-registry.js, lib/parser/langium-parser-builder.js, lib/parser/token-builder.js, lib/parser/value-converter.js, lib/parser/parser-config.js, lib/parser/langium-parser.js, lib/parser/cst-node-builder.js, lib/workspace/ast-node-locator.js, lib/workspace/index-manager.js, lib/workspace/documents.js, lib/workspace/ast-descriptions.js, lib/workspace/document-builder.js, lib/languages/grammar-config.js, lib/languages/language-meta-data.js, lib/serializer/json-serializer.js, lib/references/references.js, lib/references/linker.js, lib/references/name-provider.js, lib/utils/disposable.js, lib/utils/errors.js, lib/utils/stream.js, lib/utils/ast-utils.js, lib/utils/collections.js, lib/utils/regexp-utils.js, lib/utils/cst-utils.js, lib/utils/promise-utils.js
+
+/******************************************************************************
+ * Copyright 2021 TypeFox GmbH
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License, which is available in the project root.
+ ******************************************************************************/
+
+Source files: lib/default-module.js
+
+/******************************************************************************
+ * Copyright 2021 TypeFox GmbH
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License, which is available in the project root.
+******************************************************************************/
+
+Source files: lib/parser/parser-builder-base.js, lib/parser/lexer.js, lib/parser/completion-parser-builder.js, lib/workspace/configuration.js, lib/workspace/file-system-provider.js, lib/workspace/workspace-manager.js, lib/utils/uri-utils.js
+
+/******************************************************************************
+ * Copyright 2022 TypeFox GmbH
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License, which is available in the project root.
+ ******************************************************************************/
+
+Source files: lib/parser/indentation-aware.js, lib/serializer/hydrator.js, lib/utils/event.js, lib/utils/cancellation.js
+
+/******************************************************************************
+ * Copyright 2024 TypeFox GmbH
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License, which is available in the project root.
+ ******************************************************************************/
+
+Source files: lib/references/scope-computation.js, lib/references/scope-provider.js, lib/utils/grammar-utils.js
+
+/******************************************************************************
+ * Copyright 2021-2022 TypeFox GmbH
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License, which is available in the project root.
+ ******************************************************************************/

@@ -1,0 +1,61 @@
+{
+  "skill": "alterlab-arboreto",
+  "evals": [
+    {
+      "id": "grnboost2-basic-inference",
+      "prompt": "I have a bulk RNA-seq TPM matrix with genes as columns and samples as rows. I want to infer which transcription factors regulate which target genes. How do I run GRNBoost2 on this?",
+      "expected_output": "Invokes alterlab-arboreto. Loads the expression matrix into a pandas DataFrame, calls grnboost2(expression_data=...) from arboreto.algo inside an if __name__ == '__main__' guard (Dask spawns processes), and writes the resulting TF / target / importance network to a TSV. Sets a seed for reproducibility.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "grnboost2" },
+        { "type": "behavior", "value": "Mentions the if __name__ == '__main__' guard and returns a TF/target/importance adjacency network." }
+      ]
+    },
+    {
+      "id": "tf-restricted-genie3",
+      "prompt": "I have a human TF list in tfs.txt and a single-cell count matrix. I want to restrict regulators to those TFs and compare GRNBoost2 against the GENIE3 random-forest method to validate my network.",
+      "expected_output": "Invokes alterlab-arboreto. Loads TF names with load_tf_names, passes tf_names to both grnboost2 and genie3 from arboreto.algo, explains GRNBoost2 (gradient boosting, fast, default) vs GENIE3 (Random Forest, classic, for comparison/validation), and sets a seed for each run.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "genie3" },
+        { "type": "behavior", "value": "Restricts regulators via tf_names/load_tf_names and contrasts GRNBoost2 with GENIE3." }
+      ]
+    },
+    {
+      "id": "distributed-large-dataset",
+      "prompt": "My single-cell expression matrix has 200k cells and GRN inference keeps running out of memory on my laptop. How do I scale arboreto across multiple cores or a Dask cluster?",
+      "expected_output": "Invokes alterlab-arboreto. Recommends a Dask distributed setup: a LocalCluster/Client with controlled n_workers and memory_limit, or connecting to a remote scheduler via Client('tcp://...'), passing client_or_address to grnboost2. Also suggests filtering low-variance genes and preferring GRNBoost2 over GENIE3 for speed.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses a Dask LocalCluster/Client or remote scheduler and passes client_or_address to grnboost2." }
+      ]
+    },
+    {
+      "id": "scenic-grn-step",
+      "prompt": "I'm building a SCENIC pipeline for my scRNA-seq data and need the GRN-inference step that produces the TF-target adjacencies before regulon scoring with pySCENIC.",
+      "expected_output": "Invokes alterlab-arboreto. Runs grnboost2 with the TF list to produce the adjacency network (the SCENIC step 1 output), and notes that downstream regulon identification and AUCell activity scoring are handled by pySCENIC.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "grnboost2" }
+      ]
+    },
+    {
+      "id": "near-miss-pydeseq2",
+      "prompt": "I have raw bulk RNA-seq counts for treated vs control samples. I want to find the differentially expressed genes between the two conditions with proper FDR correction.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pydeseq2. The user wants differential expression testing (size-factor normalization, Wald tests, Benjamini-Hochberg padj) between two conditions, not transcription-factor-to-target regulatory network inference.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pydeseq2" }
+      ]
+    },
+    {
+      "id": "near-miss-scvi-tools",
+      "prompt": "I want to train a deep generative model on my scRNA-seq counts to get a batch-corrected latent representation for clustering.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scvi-tools. The user wants a deep-learning latent embedding / batch integration, not gene regulatory network inference from expression.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scvi-tools" }
+      ]
+    }
+  ]
+}

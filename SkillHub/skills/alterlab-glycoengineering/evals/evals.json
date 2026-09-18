@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-glycoengineering",
+  "evals": [
+    {
+      "id": "scan-n-glyc-sequons",
+      "prompt": "Here is the IgG1 Fc sequence. Scan it for all canonical N-glycosylation sequons and tell me their positions and whether each is an N-X-S or N-X-T site.",
+      "expected_output": "Invokes alterlab-glycoengineering. Scans for the N-X-[S/T] sequon where X != Proline (e.g. find_n_glycosylation_sequons), reports 1-based positions, the motif triplet, surrounding context, and classifies each as NXS vs NXT. Identifying the canonical N297 sequon in the Fc is expected.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "N-X-" }
+      ]
+    },
+    {
+      "id": "knock-out-fc-glycosite",
+      "prompt": "I want to remove the Fc N-glycosylation on my IgG1 by mutating the Asn at position 297 to a conservative non-glycosylated residue. What's the standard mutation and how do I apply it to the sequence?",
+      "expected_output": "Invokes alterlab-glycoengineering. Recommends the standard aglycosyl mutations (N297A/N297Q/N297D, or T299A to break the sequon) and applies an Asn -> Gln/Ala substitution (e.g. eliminate_glycosite) at the 1-based position, citing the antibody-engineering rationale (removing Fc glycosylation). Knocking out a glycosite is an in-scope strategy.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "N297" }
+      ]
+    },
+    {
+      "id": "o-glyc-hotspots",
+      "prompt": "I have a serine/threonine-rich mucin-like region and I want to predict likely O-glycosylation hotspots before sending it for NetOGlyc analysis. Can you give me a fast heuristic and point me at the proper tool?",
+      "expected_output": "Invokes alterlab-glycoengineering. Runs a heuristic O-GalNAc hotspot scorer based on local S/T density in a sliding window (avoiding S/T immediately followed by Pro), then points to NetOGlyc 4.0 at the DTU Health Tech server for high-accuracy prediction. O-glycosylation hotspot prediction and external tool routing are in scope.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "NetOGlyc" }
+      ]
+    },
+    {
+      "id": "adcc-defucosylation-strategy",
+      "prompt": "We want to boost the ADCC of our therapeutic antibody. What glycoengineering strategy should we use at the Fc, and what's the expected effect on FcgammaRIIIa binding?",
+      "expected_output": "Invokes alterlab-glycoengineering. Recommends defucosylation (afucosylation) of the Asn297 N-glycan to enhance ADCC, noting afucosylated IgG1 has roughly 50x better FcgammaRIIIa binding, and may mention enabling mutations (e.g. F243L) and sialylation/half-life trade-offs. Therapeutic-antibody glyco-optimization is a primary use case.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ADCC" }
+      ]
+    },
+    {
+      "id": "near-miss-esm",
+      "prompt": "Design a completely novel 180-residue protein scaffold from scratch with ESM3 that folds into a stable alpha/beta topology.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-esm. The ask is de novo generative protein design over sequence/structure, not glycosylation-site analysis or glycoform engineering. Glycoengineering edits glycan attachment sites on an existing protein; it does not design backbones from scratch.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-esm" }
+      ]
+    },
+    {
+      "id": "near-miss-bioservices",
+      "prompt": "Map UniProt P00533 to its KEGG and Reactome pathway entries and pull the cross-referenced database IDs.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-bioservices. The ask is multi-database identifier mapping and pathway cross-referencing, not glycosylation analysis. Although glycoengineering can query GlyConnect for a protein, generic cross-database ID mapping across KEGG/Reactome belongs to bioservices.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-bioservices" }
+      ]
+    }
+  ]
+}

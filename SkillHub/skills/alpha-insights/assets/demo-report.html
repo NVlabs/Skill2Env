@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>China EV Charging Industry — Competitive Landscape Analysis</title>
+  <style>
+    :root {
+      --color-primary: #1A365D;
+      --color-secondary: #2D5B8C;
+      --color-accent: #667EEA;
+      --color-highlight: #DD6B20;
+      --color-success: #10B981;
+      --color-danger: #EF4444;
+      --color-warning: #F59E0B;
+      --text-primary: #2D3748;
+      --text-secondary: #718096;
+      --bg-light: #F7FAFC;
+      --bg-card: #FFFFFF;
+      --border-color: #E2E8F0;
+      --page-bg: #C9CED1;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 14px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; line-height: 1.6; color: var(--text-primary); background: var(--page-bg); }
+    .page { max-width: 900px; margin: 0 auto 20px; background: var(--page-bg); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+
+    /* Cover */
+    .cover-page { min-height: 100vh; background: linear-gradient(135deg, #0F2942 0%, #1A365D 40%, #2D5B8C 100%); color: white; position: relative; display: flex; align-items: center; padding: 0; overflow: hidden; }
+    .cover-page::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(ellipse at 30% 50%, rgba(102,126,234,0.15) 0%, transparent 60%), radial-gradient(circle at 70% 80%, rgba(255,255,255,0.05) 0%, transparent 40%); pointer-events: none; }
+    .cover-left { flex: 0 0 35%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 1; }
+    .cover-number { font-size: 280px; font-weight: 800; color: rgba(255,255,255,0.08); line-height: 1; letter-spacing: -10px; position: absolute; left: -30px; }
+    .cover-right { flex: 1; padding: 60px 80px 60px 40px; position: relative; z-index: 1; }
+    .cover-badge { display: inline-block; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 10px 24px; border-radius: 20px; font-size: 12px; letter-spacing: 2px; margin-bottom: 40px; border: 1px solid rgba(255,255,255,0.15); text-transform: uppercase; }
+    .cover-title { font-size: 42px; font-weight: 700; letter-spacing: 4px; margin-bottom: 20px; line-height: 1.3; }
+    .cover-subtitle { font-size: 20px; opacity: 0.9; margin-bottom: 50px; letter-spacing: 2px; font-weight: 400; }
+    .cover-divider { width: 60px; height: 3px; background: linear-gradient(90deg, #DD6B20 0%, #F6AD55 100%); border-radius: 2px; margin-bottom: 40px; }
+    .cover-meta { font-size: 16px; opacity: 0.85; letter-spacing: 2px; }
+    .cover-date { font-size: 16px; opacity: 0.75; letter-spacing: 2px; margin-top: 15px; }
+    .cover-footer { position: absolute; bottom: 40px; left: 80px; right: 80px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.15); display: flex; justify-content: space-between; font-size: 12px; opacity: 0.6; letter-spacing: 1px; }
+
+    /* TOC */
+    .toc-page { padding: 80px; min-height: 100vh; background: linear-gradient(180deg, #FFFFFF 0%, var(--page-bg) 100%); }
+    .toc-header { margin-bottom: 50px; padding-bottom: 20px; border-bottom: 3px solid var(--color-primary); }
+    .toc-title { font-size: 28px; font-weight: 700; color: var(--color-primary); letter-spacing: 8px; }
+    .toc-item { display: flex; padding: 18px 0; border-bottom: 1px dashed var(--border-color); align-items: center; }
+    .toc-number { width: 50px; height: 50px; background: linear-gradient(135deg, #1A365D 0%, #2D5B8C 100%); color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; margin-right: 25px; box-shadow: 0 4px 12px rgba(26,54,93,0.3); }
+    .toc-text { flex: 1; font-size: 16px; font-weight: 500; }
+    .toc-conclusion { background: linear-gradient(135deg, #FFF5F5 0%, #FFF 100%); border-left: 4px solid var(--color-highlight); padding: 25px 30px; border-radius: 0 8px 8px 0; margin-top: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .toc-conclusion-title { font-size: 14px; font-weight: 600; color: var(--color-highlight); margin-bottom: 12px; }
+
+    /* Chapter */
+    .chapter-section { background: var(--page-bg); }
+    .chapter-header { background: linear-gradient(135deg, #1A365D 0%, #2D5B8C 100%); color: white; padding: 40px 50px; display: flex; align-items: center; position: relative; overflow: hidden; }
+    .chapter-header::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 200px; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 100%); }
+    .chapter-num { font-size: 60px; font-weight: 700; opacity: 0.3; margin-right: 25px; }
+    .chapter-name { font-size: 26px; font-weight: 600; letter-spacing: 2px; }
+    .chapter-body { padding: 40px 50px; background: linear-gradient(180deg, #FFFFFF 0%, var(--page-bg) 100%); }
+
+    /* Typography */
+    h2 { font-size: 18px; font-weight: 600; color: var(--color-primary); margin: 30px 0 15px; padding-left: 15px; border-left: 4px solid var(--color-accent); }
+    h3 { font-size: 15px; font-weight: 600; margin: 20px 0 12px; color: var(--text-primary); }
+    p { margin-bottom: 12px; color: var(--text-secondary); text-align: justify; }
+    ul, ol { margin: 12px 0 12px 24px; }
+    li { margin-bottom: 6px; color: var(--text-secondary); }
+    strong { color: var(--text-primary); }
+
+    /* Highlight box */
+    .highlight-box { background: linear-gradient(135deg, #EFF6FF 0%, #FFF 100%); border-left: 4px solid var(--color-accent); padding: 20px 25px; border-radius: 0 8px 8px 0; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .highlight-box.yellow { background: linear-gradient(135deg, #FFFBEB 0%, #FFF 100%); border-left-color: #F59E0B; }
+    .highlight-box.red { background: linear-gradient(135deg, #FEF2F2 0%, #FFF 100%); border-left-color: var(--color-highlight); }
+    .highlight-box.green { background: linear-gradient(135deg, #F0FDF4 0%, #FFF 100%); border-left-color: var(--color-success); }
+    .highlight-text { font-size: 14px; color: var(--text-primary); }
+
+    /* Stats grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 25px 0; }
+    .stats-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .stat-card { background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%); border-radius: 12px; padding: 24px 16px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid var(--border-color); }
+    .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 24px; }
+    .stat-icon.blue { background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%); }
+    .stat-icon.green { background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); }
+    .stat-icon.purple { background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%); }
+    .stat-icon.red { background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%); }
+    .stat-value { font-size: 28px; font-weight: 700; color: var(--color-primary); margin-bottom: 4px; }
+    .stat-value.green { color: var(--color-success); }
+    .stat-value.red { color: var(--color-highlight); }
+    .stat-label { font-size: 12px; color: var(--text-secondary); }
+    .stat-trend { font-size: 11px; margin-top: 8px; padding: 3px 8px; border-radius: 12px; display: inline-block; }
+    .stat-trend.up { background: #D1FAE5; color: #059669; }
+    .stat-trend.down { background: #FEE2E2; color: #DC2626; }
+
+    /* Table */
+    .data-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .data-table th { background: linear-gradient(180deg, #1A365D 0%, #2D5B8C 100%); color: white; padding: 14px 16px; text-align: left; font-weight: 600; }
+    .data-table td { padding: 14px 16px; border-bottom: 1px solid var(--border-color); color: var(--text-secondary); background: white; }
+    .data-table tr:nth-child(even) td { background: var(--bg-light); }
+
+    /* Strategy card */
+    .strategy-card { display: flex; padding: 22px; border-radius: 12px; margin-bottom: 16px; align-items: flex-start; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .strategy-card.blue { background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); }
+    .strategy-card.green { background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); }
+    .strategy-card.yellow { background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); }
+    .strategy-card.red { background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%); }
+    .strategy-num { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; margin-right: 20px; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .strategy-card.blue .strategy-num { background: linear-gradient(135deg, #2D5B8C 0%, #1A365D 100%); }
+    .strategy-card.green .strategy-num { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
+    .strategy-card.yellow .strategy-num { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+    .strategy-card.red .strategy-num { background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); }
+    .strategy-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    .strategy-card.blue .strategy-title { color: var(--color-secondary); }
+    .strategy-card.green .strategy-title { color: #059669; }
+    .strategy-card.yellow .strategy-title { color: #D97706; }
+    .strategy-card.red .strategy-title { color: #DC2626; }
+    .strategy-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* Insight card */
+    .insight-card { background: var(--bg-card); border-radius: 12px; padding: 24px; margin: 20px 0; border: 1px solid var(--border-color); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .insight-card h4 { margin-top: 0; color: var(--color-primary); font-size: 16px; margin-bottom: 12px; }
+
+    /* Badges */
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 6px; vertical-align: middle; }
+    .badge-a { background: #D1FAE5; color: #059669; border: 1px solid #A7F3D0; }
+    .badge-b { background: #DBEAFE; color: #2563EB; border: 1px solid #BFDBFE; }
+    .badge-c { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
+
+    /* Footer page */
+    .footer-page { background: linear-gradient(135deg, #0F2942 0%, #1A365D 40%, #2D5B8C 100%); min-height: 50vh; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 80px 60px; position: relative; overflow: hidden; }
+    .footer-page::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(ellipse at 50% 30%, rgba(102,126,234,0.2) 0%, transparent 50%); pointer-events: none; }
+    .footer-content { position: relative; z-index: 1; }
+    .footer-icon { font-size: 48px; margin-bottom: 30px; opacity: 0.9; }
+    .footer-title { font-size: 28px; font-weight: 600; margin-bottom: 25px; letter-spacing: 8px; }
+    .footer-divider { width: 60px; height: 3px; background: linear-gradient(90deg, #DD6B20 0%, #F6AD55 100%); border-radius: 2px; margin: 0 auto 30px; }
+    .footer-text { font-size: 15px; opacity: 0.85; margin-bottom: 10px; letter-spacing: 1px; }
+    .footer-date { font-size: 13px; opacity: 0.6; margin-top: 25px; letter-spacing: 1px; }
+
+    /* Page number */
+    .page-number { text-align: center; font-size: 11px; color: var(--text-secondary); padding-top: 20px; margin-top: 30px; border-top: 1px solid var(--border-color); }
+
+    /* Chart container */
+    .chart-container { background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%); border-radius: 12px; padding: 24px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
+    .chart-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #E2E8F0; }
+
+    blockquote { margin: 20px 0; padding: 16px 24px; background: linear-gradient(135deg, #EFF6FF 0%, #FFF 100%); border-left: 4px solid var(--color-accent); border-radius: 0 8px 8px 0; color: var(--text-secondary); font-style: italic; }
+
+    @media (max-width: 768px) {
+      .cover-page { flex-direction: column; }
+      .cover-left { display: none; }
+      .cover-right { padding: 40px 24px; }
+      .cover-title { font-size: 28px; letter-spacing: 2px; }
+      .toc-page { padding: 40px 24px; }
+      .chapter-body { padding: 24px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+</head>
+<body>
+
+  <!-- ===== COVER PAGE ===== -->
+  <div class="page cover-page">
+    <div class="cover-left">
+      <div class="cover-number">AI</div>
+    </div>
+    <div class="cover-right">
+      <div class="cover-badge">Alpha Insights &mdash; Compact Public Demo</div>
+      <h1 class="cover-title">China EV Charging Industry</h1>
+      <p class="cover-subtitle">Competitive Landscape Analysis 2026</p>
+      <div class="cover-divider"></div>
+      <p class="cover-meta">Alpha Insights &times; Claude</p>
+      <p class="cover-date">April 2026</p>
+    </div>
+    <div class="cover-footer">
+      <span>PUBLIC DEMO</span>
+      <span>Tier 2 &mdash; Topic Brief Demo</span>
+    </div>
+  </div>
+
+  <!-- ===== TABLE OF CONTENTS ===== -->
+  <div class="page toc-page">
+    <div class="toc-header">
+      <div class="toc-title">CONTENTS</div>
+    </div>
+    <div class="toc-item"><div class="toc-number">1</div><span class="toc-text">Executive Summary</span></div>
+    <div class="toc-item"><div class="toc-number">2</div><span class="toc-text">Industry Overview &amp; Market Sizing</span></div>
+    <div class="toc-item"><div class="toc-number">3</div><span class="toc-text">Porter's Five Forces Analysis</span></div>
+    <div class="toc-item"><div class="toc-number">4</div><span class="toc-text">Competitive Landscape &amp; Key Players</span></div>
+    <div class="toc-item"><div class="toc-number">5</div><span class="toc-text">Strategic Recommendations</span></div>
+    <div class="toc-item"><div class="toc-number">6</div><span class="toc-text">Appendix &amp; Source Grading</span></div>
+
+    <div class="toc-conclusion">
+      <div class="toc-conclusion-title">KEY TAKEAWAY</div>
+      <div class="toc-conclusion-text">China's EV charging market is projected to reach <strong>$42B by 2028</strong>, but profitability remains concentrated among the top 3 operators. New entrants should target <strong>destination charging</strong> and <strong>battery-swap</strong> segments where competitive moats are still forming.</div>
+    </div>
+  </div>
+
+  <!-- ===== CHAPTER 1: EXECUTIVE SUMMARY ===== -->
+  <div class="page chapter-section">
+    <div class="chapter-header">
+      <div class="chapter-num">01</div>
+      <div class="chapter-name">Executive Summary</div>
+    </div>
+    <div class="chapter-body">
+
+      <div class="highlight-box red">
+        <div class="highlight-text"><strong>Core Judgment:</strong> China's EV charging market is a <strong>$28B industry growing at 31% YoY</strong>, but profitability is structurally concentrated — only 2 of the top 5 operators are profitable. The strategic window for new entrants lies in <strong>destination charging</strong> (20-35% margins vs. 8-12% industry average) and <strong>SaaS platform layers</strong> (35-50% margins), not in the scale war for public roadside infrastructure.</div>
+      </div>
+
+      <p style="font-size:12px;color:#718096;"><strong>Demo boundary:</strong> This is a public-data-based demonstration, not private client work. Headline figures are illustrative estimates and should be traced to the appendix and refreshed before real investment or operating decisions.</p>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">&#9889;</div>
+          <div class="stat-value">11.3M</div>
+          <div class="stat-label">Public Charging Piles</div>
+          <div class="stat-trend up">+38% YoY</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">&#128176;</div>
+          <div class="stat-value green">$28B</div>
+          <div class="stat-label">Market Size (2025)</div>
+          <div class="stat-trend up">+31% YoY</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">&#128663;</div>
+          <div class="stat-value">3.2:1</div>
+          <div class="stat-label">EV-to-Pile Ratio</div>
+          <div class="stat-trend up">Improving</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red">&#127919;</div>
+          <div class="stat-value red">$42B</div>
+          <div class="stat-label">Projected 2028</div>
+          <div class="stat-trend up">CAGR 14.5%</div>
+        </div>
+      </div>
+
+      <h2>Key Findings</h2>
+
+      <div class="highlight-box">
+        <div class="highlight-text"><strong>Finding #1:</strong> The top 5 operators (TELD, Star Charge, State Grid, YunKuaiChong, XPeng) control 72% of public charging infrastructure, but only TELD and Star Charge have achieved consistent profitability.</div>
+      </div>
+
+      <div class="highlight-box yellow">
+        <div class="highlight-text"><strong>Finding #2:</strong> Ultra-fast charging (480kW+) is emerging as the next battleground. Automakers like Xpeng and NIO are vertically integrating charging networks, creating a two-tier market structure.</div>
+      </div>
+
+      <div class="highlight-box green">
+        <div class="highlight-text"><strong>Finding #3:</strong> Destination charging (hotels, malls, office parks) remains underpenetrated at 15% of total infrastructure, representing the highest-margin opportunity for new entrants.</div>
+      </div>
+
+      <h2>Frameworks Applied</h2>
+      <p>This analysis leverages <strong>Porter's Five Forces</strong> for industry structure assessment, <strong>Competitive Positioning Matrix</strong> for player mapping, and the <strong>3A-8 Steps Strategy</strong> framework for strategic recommendations.</p>
+
+      <h2>Data Quality Summary</h2>
+      <table class="data-table">
+        <tr><th>Source Category</th><th>Sources</th><th>Grade</th><th>Confidence</th></tr>
+        <tr><td>Industry Reports (CAAM, IEA, BNEF)</td><td>6</td><td><span class="badge badge-a">A</span></td><td>High &mdash; cross-validated</td></tr>
+        <tr><td>Company Filings &amp; Earnings</td><td>8</td><td><span class="badge badge-a">A</span></td><td>High &mdash; primary sources</td></tr>
+        <tr><td>Expert Interviews</td><td>3</td><td><span class="badge badge-b">B</span></td><td>Reliable &mdash; corroborated</td></tr>
+        <tr><td>News &amp; Media Analysis</td><td>12</td><td><span class="badge badge-b">B</span></td><td>Reliable &mdash; triangulated</td></tr>
+        <tr><td>Social Media Sentiment (RedNote)</td><td>450+ posts</td><td><span class="badge badge-c">C</span></td><td>Supplementary</td></tr>
+      </table>
+
+      <div class="page-number">&mdash; 1 &mdash;</div>
+    </div>
+  </div>
+
+  <!-- ===== CHAPTER 2: MARKET OVERVIEW ===== -->
+  <div class="page chapter-section">
+    <div class="chapter-header">
+      <div class="chapter-num">02</div>
+      <div class="chapter-name">Industry Overview &amp; Market Sizing</div>
+    </div>
+    <div class="chapter-body">
+
+      <h2>Market Size &amp; Growth Trajectory</h2>
+      <p>China's EV charging infrastructure market has grown at a <strong>34% CAGR</strong> over 2021-2025, driven by rapid EV adoption (NEV penetration reached 48% of new car sales in Q1 2026) and supportive government policy.</p>
+
+      <div class="chart-container" data-claim-id="CLAIM-001" data-source-id="SRC-001">
+        <div class="chart-title">Market Size &amp; Growth Rate (2021-2028E)</div>
+        <div id="chart-market-size" style="width:100%;height:350px;"></div>
+      </div>
+
+      <h2>Value Chain Analysis</h2>
+      <table class="data-table">
+        <tr><th>Value Chain Segment</th><th>Key Players</th><th>Gross Margin</th><th>Competitive Intensity</th></tr>
+        <tr><td>Equipment Manufacturing</td><td>TELD, Star Charge, XJ Electric</td><td>18-25%</td><td>High</td></tr>
+        <tr><td>Network Operation</td><td>TELD, Star Charge, State Grid</td><td>8-15%</td><td>Very High</td></tr>
+        <tr><td>Platform &amp; SaaS</td><td>KuaiDian, Xpeng, NIO Power</td><td>35-50%</td><td>Medium</td></tr>
+        <tr><td>Battery Swap</td><td>NIO, Aulton, CATL (EVOGO)</td><td>5-12%</td><td>Growing</td></tr>
+        <tr><td>Destination Charging</td><td>Emerging &mdash; fragmented</td><td>20-35%</td><td>Low</td></tr>
+      </table>
+
+      <h2>TAM / SAM / SOM</h2>
+      <div class="stats-grid stats-grid-3">
+        <div class="stat-card">
+          <div class="stat-icon blue">&#127758;</div>
+          <div class="stat-value">$42B</div>
+          <div class="stat-label">TAM (Total Addressable)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">&#127919;</div>
+          <div class="stat-value green">$18B</div>
+          <div class="stat-label">SAM (Serviceable)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">&#9889;</div>
+          <div class="stat-value">$3.2B</div>
+          <div class="stat-label">SOM (Obtainable)</div>
+        </div>
+      </div>
+
+      <div class="page-number">&mdash; 2 &mdash;</div>
+    </div>
+  </div>
+
+  <!-- ===== CHAPTER 3: PORTER'S FIVE FORCES ===== -->
+  <div class="page chapter-section">
+    <div class="chapter-header">
+      <div class="chapter-num">03</div>
+      <div class="chapter-name">Porter's Five Forces Analysis</div>
+    </div>
+    <div class="chapter-body">
+
+      <h2>Forces Assessment Overview</h2>
+      <div class="chart-container" data-claim-id="CLAIM-002" data-source-id="SRC-002">
+        <div class="chart-title">Porter's Five Forces &mdash; China EV Charging Industry</div>
+        <div id="chart-porters" style="width:100%;height:380px;"></div>
+      </div>
+
+      <div class="insight-card">
+        <h4>Threat of New Entrants: MEDIUM-HIGH</h4>
+        <p><strong>Finding:</strong> Capital requirements have dropped 40% since 2022 due to equipment commoditization, but network effects and location lock-in create meaningful barriers for late entrants.</p>
+        <p><strong>Implication:</strong> Pure hardware plays are vulnerable; the moat is shifting to software, data, and location strategy.</p>
+        <p><strong>Confidence:</strong> <span class="badge badge-a">A</span> Cross-validated across 4 industry reports</p>
+      </div>
+
+      <div class="insight-card">
+        <h4>Bargaining Power of Buyers: HIGH</h4>
+        <p><strong>Finding:</strong> EV drivers show near-zero switching costs between charging networks. App aggregators (Gaode Maps, AutoNavi) further commoditize the charging experience.</p>
+        <p><strong>Implication:</strong> Operators must compete on location convenience and charging speed, not brand loyalty.</p>
+        <p><strong>Confidence:</strong> <span class="badge badge-b">B</span> Validated by consumer survey + RedNote sentiment</p>
+      </div>
+
+      <div class="insight-card">
+        <h4>Competitive Rivalry: VERY HIGH</h4>
+        <p><strong>Finding:</strong> Price wars have compressed operator margins to 8-12%. The market is consolidating but the top 5 still engage in aggressive expansion.</p>
+        <p><strong>Implication:</strong> Sustainable profitability requires either scale dominance or niche positioning (destination, ultra-fast, fleet).</p>
+        <p><strong>Confidence:</strong> <span class="badge badge-a">A</span> Company filings + expert interviews</p>
+      </div>
+
+      <div class="insight-card">
+        <h4>Bargaining Power of Suppliers: LOW-MEDIUM</h4>
+        <p><strong>Finding:</strong> Charging equipment has commoditized rapidly — module costs dropped 35% since 2023. Core components (power modules, connectors) have 10+ qualified suppliers. The exception is high-power 800V liquid-cooled modules where 3 suppliers control 70% share.</p>
+        <p><strong>Implication:</strong> Supplier power is not a strategic concern for standard equipment, but could become a bottleneck for ultra-fast charging deployments in 2026-2027.</p>
+        <p><strong>Confidence:</strong> <span class="badge badge-b">B</span> Industry reports + supply chain interviews</p>
+      </div>
+
+      <div class="insight-card">
+        <h4>Threat of Substitutes: LOW (but rising)</h4>
+        <p><strong>Finding:</strong> Battery swap (NIO, Aulton, CATL EVOGO) serves &lt;5% of charging demand today, but is growing at 120% YoY. Home charging covers ~60% of daily needs for car owners with private parking, limiting public charging frequency.</p>
+        <p><strong>Implication:</strong> Battery swap is a substitute for public fast-charging in specific use cases (taxis, ride-hailing). Operators should monitor swap station density in their target cities as a leading indicator of demand diversion.</p>
+        <p><strong>Confidence:</strong> <span class="badge badge-b">B</span> NIO/CATL filings + market data</p>
+      </div>
+
+      <div class="highlight-box yellow">
+        <div class="highlight-text"><strong>So What — Five Forces Synthesis:</strong> The EV charging industry's structural attractiveness is <strong>moderate</strong>. Intense rivalry and high buyer power compress margins, while low supplier power and limited substitutes provide a floor. The key strategic implication: <strong>competing on cost alone is a losing game</strong> — differentiation through location strategy, technology (ultra-fast), or business model (SaaS/platform) is required to earn above-average returns.</div>
+      </div>
+
+      <div class="page-number">&mdash; 3 &mdash;</div>
+    </div>
+  </div>
+
+  <!-- ===== CHAPTER 4: COMPETITIVE LANDSCAPE ===== -->
+  <div class="page chapter-section">
+    <div class="chapter-header">
+      <div class="chapter-num">04</div>
+      <div class="chapter-name">Competitive Landscape &amp; Key Players</div>
+    </div>
+    <div class="chapter-body">
+
+      <h2>Market Share Distribution</h2>
+      <div class="chart-container" data-claim-id="CLAIM-003" data-source-id="SRC-003">
+        <div class="chart-title">Public Charging Network Market Share (2025)</div>
+        <div id="chart-market-share" style="width:100%;height:350px;"></div>
+      </div>
+
+      <h2>Key Player Profiles</h2>
+      <table class="data-table">
+        <tr><th>Company</th><th>Piles Deployed</th><th>Revenue (2025)</th><th>Strategy</th><th>Profitability</th></tr>
+        <tr><td><strong>TELD (Special Electric)</strong></td><td>1.2M+</td><td>$4.8B</td><td>Scale + vertical integration</td><td>Profitable since 2023</td></tr>
+        <tr><td><strong>Star Charge</strong></td><td>980K+</td><td>$3.2B</td><td>Equipment + operation hybrid</td><td>Profitable since 2024</td></tr>
+        <tr><td><strong>State Grid</strong></td><td>850K+</td><td>N/A (subsidiary)</td><td>Highway corridor dominance</td><td>Policy-driven</td></tr>
+        <tr><td><strong>YunKuaiChong</strong></td><td>420K+</td><td>$1.1B</td><td>City cluster + fleet focus</td><td>Breakeven</td></tr>
+        <tr><td><strong>NIO Power</strong></td><td>3,200 swap stations</td><td>$890M</td><td>Battery swap ecosystem</td><td>Unit economics improving</td></tr>
+      </table>
+
+      <h2>Competitive Positioning Matrix</h2>
+      <div class="chart-container" data-claim-id="CLAIM-004" data-source-id="SRC-004">
+        <div class="chart-title">Strategic Positioning: Scale vs. Profitability</div>
+        <div id="chart-positioning" style="width:100%;height:380px;"></div>
+      </div>
+
+      <div class="highlight-box">
+        <div class="highlight-text"><strong>So What — Competitive Positioning:</strong> The scatter plot reveals a <strong>clear bifurcation</strong>: TELD and Star Charge occupy the "scale + profitable" quadrant with no realistic challengers. State Grid has scale but policy-dependent margins. The <strong>strategic white space</strong> is the upper-left quadrant — high profitability at moderate scale — currently occupied only by emerging destination players. This is the entry point for new competitors: build profitability first through premium locations, then expand selectively.</div>
+      </div>
+
+      <div class="page-number">&mdash; 4 &mdash;</div>
+    </div>
+  </div>
+
+  <!-- ===== CHAPTER 5: STRATEGIC RECOMMENDATIONS ===== -->
+  <div class="page chapter-section">
+    <div class="chapter-header">
+      <div class="chapter-num">05</div>
+      <div class="chapter-name">Strategic Recommendations</div>
+    </div>
+    <div class="chapter-body">
+
+      <h2>Recommended Strategy: "Destination-First + Technology Differentiation"</h2>
+
+      <div class="strategy-card blue">
+        <div class="strategy-num">1</div>
+        <div>
+          <div class="strategy-title">Target Destination Charging First</div>
+          <div class="strategy-desc">Focus on premium locations (Grade-A office parks, luxury hotels, shopping malls) where utilization rates are 2.3x higher than roadside stations and margins are 20-35% vs. industry average of 8-12%. Avoid the scale war with TELD/Star Charge on public roadside infrastructure.</div>
+          <div class="strategy-desc" style="margin-top:8px;font-size:12px;"><strong>Timeline:</strong> 0-12 months &nbsp;|&nbsp; <strong>Investment:</strong> $2-5M per city cluster &nbsp;|&nbsp; <strong>Expected ROI:</strong> Breakeven at 18 months, 22-28% IRR by Year 3</div>
+        </div>
+      </div>
+
+      <div class="strategy-card green">
+        <div class="strategy-num">2</div>
+        <div>
+          <div class="strategy-title">Build a SaaS Platform Layer</div>
+          <div class="strategy-desc">Develop a charging management SaaS for property owners and fleet operators. Software margins (35-50%) subsidize hardware deployment costs. This creates recurring revenue and data moats that pure hardware players cannot replicate.</div>
+          <div class="strategy-desc" style="margin-top:8px;font-size:12px;"><strong>Timeline:</strong> 6-18 months &nbsp;|&nbsp; <strong>Investment:</strong> $1-3M (dev team + pilot) &nbsp;|&nbsp; <strong>Expected ROI:</strong> 40-60% gross margin at 500+ managed piles</div>
+        </div>
+      </div>
+
+      <div class="strategy-card yellow">
+        <div class="strategy-num">3</div>
+        <div>
+          <div class="strategy-title">Partner for Ultra-Fast Charging</div>
+          <div class="strategy-desc">Co-invest with automakers (Xpeng, Li Auto) on 800V ultra-fast charging corridors. The 480kW+ segment is growing at 85% YoY and will become table stakes by 2028. Partnership reduces capex burden while securing premium locations.</div>
+          <div class="strategy-desc" style="margin-top:8px;font-size:12px;"><strong>Timeline:</strong> 12-24 months &nbsp;|&nbsp; <strong>Investment:</strong> $5-10M (shared with OEM partner) &nbsp;|&nbsp; <strong>Expected ROI:</strong> 15-20% IRR, strategic positioning value exceeds financial return</div>
+        </div>
+      </div>
+
+      <div class="strategy-card red">
+        <div class="strategy-num">4</div>
+        <div>
+          <div class="strategy-title">Avoid: Undifferentiated Scale Play</div>
+          <div class="strategy-desc">Do not compete head-to-head with TELD and Star Charge on public roadside piles. Their cost advantages from vertical integration (manufacturing + operation) and 5+ year location lock-in agreements create an unassailable position in this segment.</div>
+        </div>
+      </div>
+
+      <div class="highlight-box red">
+        <div class="highlight-text"><strong>Risk Warning:</strong> Policy risk remains the #1 external factor. Subsidy reduction (expected -30% by 2027) will accelerate consolidation. Operators without sustainable unit economics by 2027 face existential pressure.</div>
+      </div>
+
+      <div class="page-number">&mdash; 5 &mdash;</div>
+    </div>
+  </div>
+
+  <!-- ===== CHAPTER 6: APPENDIX ===== -->
+  <div class="page chapter-section">
+    <div class="chapter-header">
+      <div class="chapter-num">06</div>
+      <div class="chapter-name">Appendix &amp; Source Grading</div>
+    </div>
+    <div class="chapter-body">
+
+      <h2>Methodology Note</h2>
+      <p>This report was produced using the <strong>Alpha Insights</strong> SKILL for Claude Code-compatible runtimes and Codex Desktop. The analysis followed a <strong>7-stage structured workflow</strong>: Scenario Identification → Framework Selection → Multi-track Data Collection → Analysis & Synthesis → Judgment & Insight Generation → Report Generation → Delivery.</p>
+      <p>Quality was enforced via <strong>7-stage + Stage 3.5 gate validators</strong> (harness engineering), chart-level evidence metadata, and an <strong>Independent Quality Review (IQR)</strong> process covering deliverable-specific review dimensions across Stage 2, Stage 4, and Stage 6.</p>
+
+      <h2>Source List &amp; Confidence Grading</h2>
+      <table class="data-table">
+        <tr><th>#</th><th>Source</th><th>Type</th><th>Grade</th></tr>
+        <tr><td>1</td><td>CAAM — China EV Market Report 2025</td><td>Industry Report</td><td><span class="badge badge-a">A</span></td></tr>
+        <tr><td>2</td><td>IEA — Global EV Outlook 2025</td><td>Industry Report</td><td><span class="badge badge-a">A</span></td></tr>
+        <tr><td>3</td><td>TELD Annual Report 2025</td><td>Company Filing</td><td><span class="badge badge-a">A</span></td></tr>
+        <tr><td>4</td><td>Star Charge IPO Prospectus</td><td>Company Filing</td><td><span class="badge badge-a">A</span></td></tr>
+        <tr><td>5</td><td>BloombergNEF — China Charging Infra Outlook</td><td>Analyst Report</td><td><span class="badge badge-a">A</span></td></tr>
+        <tr><td>6</td><td>NIO Power Annual Review 2025</td><td>Company Filing</td><td><span class="badge badge-a">A</span></td></tr>
+        <tr><td>7</td><td>Expert Interview — Former VP, Star Charge</td><td>Primary</td><td><span class="badge badge-b">B</span></td></tr>
+        <tr><td>8</td><td>Expert Interview — EV Charging Fund Manager</td><td>Primary</td><td><span class="badge badge-b">B</span></td></tr>
+        <tr><td>9</td><td>36Kr, CnEVPost, Gasgoo — News aggregation (12 articles)</td><td>Media</td><td><span class="badge badge-b">B</span></td></tr>
+        <tr><td>10</td><td>Xiaohongshu (RedNote) — 450+ posts on EV charging UX</td><td>Social Media</td><td><span class="badge badge-c">C</span></td></tr>
+      </table>
+
+      <h2>Frameworks Used</h2>
+      <div class="stats-grid stats-grid-3">
+        <div class="stat-card">
+          <div class="stat-icon blue">&#128200;</div>
+          <div class="stat-value" style="font-size:16px;">Porter's Five Forces</div>
+          <div class="stat-label">Industry Structure</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">&#127919;</div>
+          <div class="stat-value" style="font-size:16px;">Competitive Positioning</div>
+          <div class="stat-label">Player Mapping</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">&#128161;</div>
+          <div class="stat-value" style="font-size:16px;">3A-8 Steps Strategy</div>
+          <div class="stat-label">Strategic Recommendation</div>
+        </div>
+      </div>
+
+      <h2>Known Blind Spots</h2>
+      <p>This compact demo intentionally omits a full primary-source trail, refreshed live data pulls, full sensitivity modeling, and a complete Tier 3 chapter expansion. Treat it as a format and workflow sample, not as a current investment memo.</p>
+
+      <h2>Disclaimer</h2>
+      <p style="font-size:12px;">This compact public demo is generated for demonstration purposes and is not based on private client work. It is a Tier 2 topic-brief sample, not a full V4.1 Tier 3 deep report. Data points are based on publicly available information and illustrative estimates; they may not reflect the most current figures. All projections should be refreshed and independently verified before investment or operating decisions. The confidence grading system reflects the triangulation quality of sources, not absolute accuracy.</p>
+
+      <div class="page-number">&mdash; 6 &mdash;</div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER PAGE ===== -->
+  <div class="page footer-page">
+    <div class="footer-content">
+      <div class="footer-icon">&#128202;</div>
+      <div class="footer-title">THANK YOU</div>
+      <div class="footer-divider"></div>
+      <div class="footer-text">Generated by Alpha Insights &mdash; BizAdvisor</div>
+      <div class="footer-text">PUBLIC DEMO &middot; Illustrative Estimates</div>
+      <div class="footer-date">April 2026</div>
+    </div>
+  </div>
+
+  <!-- ===== ECHARTS INITIALIZATION (dk workaround) ===== -->
+  <script>
+    var dk = {};
+    dk.years = ['2021', '2022', '2023', '2024', '2025', '2026E', '2027E', '2028E'];
+    dk.marketSize = [8.2, 11.5, 16.1, 21.3, 28.0, 32.5, 37.2, 42.0];
+    dk.growthRate = [42, 40, 40, 32, 31, 16, 14.5, 13];
+    dk.radarValues = [3.5, 2.5, 4.2, 2.0, 4.8];
+    dk.pieItems = [
+      { value: 24, name: 'TELD', itemStyle: { color: '#1A365D' } },
+      { value: 19, name: 'Star Charge', itemStyle: { color: '#2D5B8C' } },
+      { value: 15, name: 'State Grid', itemStyle: { color: '#667EEA' } },
+      { value: 8, name: 'YunKuaiChong', itemStyle: { color: '#DD6B20' } },
+      { value: 6, name: 'NIO Power', itemStyle: { color: '#10B981' } },
+      { value: 28, name: 'Others', itemStyle: { color: '#CBD5E0' } }
+    ];
+    dk.scatterItems = [
+      [1200, 75, 50, 'TELD'],
+      [980, 65, 45, 'Star Charge'],
+      [850, 45, 40, 'State Grid'],
+      [420, 40, 30, 'YunKuaiChong'],
+      [180, 55, 35, 'NIO Power'],
+      [150, 70, 28, 'Destination Players'],
+      [90, 30, 22, 'Regional Operators']
+    ];
+    dk.scatterColors = ['#1A365D','#2D5B8C','#667EEA','#DD6B20','#10B981','#F59E0B','#A0AEC0'];
+
+    function showChartFallback() {
+      document.querySelectorAll('.chart-container [id^="chart-"]').forEach(function(el) {
+        el.innerHTML = '<div style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;text-align:center;color:#718096;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:8px;padding:18px;">Chart could not render. Please refresh with network access to the ECharts CDN.</div>';
+      });
+    }
+
+    if (!window.echarts) {
+      showChartFallback();
+    } else {
+
+    // Chart 1: Market Size Bar + Line
+    var opt1 = {
+      tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
+      legend: { top: 5 },
+      xAxis: { type: 'category', data: dk.years },
+      yAxis: [
+        { type: 'value', name: 'Market Size ($B)', position: 'left' },
+        { type: 'value', name: 'Growth Rate (%)', position: 'right', axisLabel: { formatter: '{value}%' } }
+      ],
+      series: [
+        { name: 'Market Size ($B)', type: 'bar', data: dk.marketSize, itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#667EEA' }, { offset: 1, color: '#1A365D' }]) }, barWidth: '45%' },
+        { name: 'Growth Rate (%)', type: 'line', data: dk.growthRate, yAxisIndex: 1, smooth: true, lineStyle: { color: '#DD6B20', width: 3 }, itemStyle: { color: '#DD6B20' }, symbol: 'circle', symbolSize: 8 }
+      ]
+    };
+    var chart1 = echarts.init(document.getElementById('chart-market-size'));
+    chart1.setOption(opt1);
+
+    // Chart 2: Porter's Five Forces Radar
+    var opt2 = {
+      radar: {
+        indicator: [
+          { name: 'Threat of\nNew Entrants', max: 5 },
+          { name: 'Bargaining Power\nof Suppliers', max: 5 },
+          { name: 'Bargaining Power\nof Buyers', max: 5 },
+          { name: 'Threat of\nSubstitutes', max: 5 },
+          { name: 'Competitive\nRivalry', max: 5 }
+        ],
+        shape: 'polygon',
+        splitNumber: 5,
+        axisName: { color: '#2D3748', fontSize: 12 },
+        splitArea: { areaStyle: { color: ['#F7FAFC', '#EDF2F7', '#E2E8F0', '#CBD5E0', '#A0AEC0'] } }
+      },
+      series: [{ type: 'radar', data: [{
+      value: dk.radarValues,
+      name: 'Force Intensity',
+      areaStyle: { color: 'rgba(102,126,234,0.25)' },
+      lineStyle: { color: '#667EEA', width: 2 },
+      itemStyle: { color: '#667EEA' }
+    }] }]
+    };
+    var chart2 = echarts.init(document.getElementById('chart-porters'));
+    chart2.setOption(opt2);
+
+    // Chart 3: Market Share Pie
+    var opt3 = {
+      tooltip: { trigger: 'item', formatter: '{b}: {d}%' },
+      series: [{
+        type: 'pie',
+        data: dk.pieItems,
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: true,
+        itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 3 },
+        label: { show: true, formatter: '{b}\n{d}%', fontSize: 12 }
+      }]
+    };
+    var chart3 = echarts.init(document.getElementById('chart-market-share'));
+    chart3.setOption(opt3);
+
+    // Chart 4: Competitive Positioning Scatter
+    var opt4 = {
+      tooltip: { formatter: function(p) { var d = p['data']; return d[3] + '<br>Scale: ' + d[0] + '<br>Profitability: ' + d[1]; } },
+      xAxis: { name: 'Network Scale (K piles)', nameLocation: 'middle', nameGap: 30, min: 0, max: 1400 },
+      yAxis: { name: 'Profitability Score', nameLocation: 'middle', nameGap: 40, min: 0, max: 100 },
+      series: [{
+        type: 'scatter',
+        data: dk.scatterItems,
+        symbolSize: function(val) { return val[2]; },
+        label: { show: true, formatter: function(p) { return p['data'][3]; }, position: 'top', fontSize: 11, color: '#2D3748' },
+        itemStyle: { color: function(p) { return dk.scatterColors[p.dataIndex]; } }
+      }]
+    };
+    var chart4 = echarts.init(document.getElementById('chart-positioning'));
+    chart4.setOption(opt4);
+
+    window.addEventListener('resize', function() {
+      chart1.resize(); chart2.resize(); chart3.resize(); chart4.resize();
+    });
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+{
+  "inputs": {
+    "log_file": "simulation.log",
+    "pattern": "default"
+  },
+  "results": {
+    "phases": [
+      {
+        "name": "assembly",
+        "total_time": 12.5,
+        "count": 1,
+        "mean_time": 12.5,
+        "min_time": 12.5,
+        "max_time": 12.5,
+        "percentage": 11.363636363636363
+      },
+      {
+        "name": "solver",
+        "total_time": 85.0,
+        "count": 1,
+        "mean_time": 85.0,
+        "min_time": 85.0,
+        "max_time": 85.0,
+        "percentage": 77.27272727272727
+      },
+      {
+        "name": "I/O",
+        "total_time": 8.0,
+        "count": 1,
+        "mean_time": 8.0,
+        "min_time": 8.0,
+        "max_time": 8.0,
+        "percentage": 7.2727272727272725
+      },
+      {
+        "name": "postprocessing",
+        "total_time": 4.5,
+        "count": 1,
+        "mean_time": 4.5,
+        "min_time": 4.5,
+        "max_time": 4.5,
+        "percentage": 4.090909090909091
+      }
+    ],
+    "total_time": 110.0,
+    "slowest_phase": "solver"
+  }
+}

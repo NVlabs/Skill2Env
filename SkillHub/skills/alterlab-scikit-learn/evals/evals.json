@@ -1,0 +1,62 @@
+{
+  "skill": "alterlab-scikit-learn",
+  "evals": [
+    {
+      "id": "classification-pipeline-mixed-data",
+      "prompt": "I have a tabular dataset with both numeric columns (age, income) and categorical columns (gender, occupation) plus some missing values, and a binary target. Build me a leakage-free classification workflow with proper preprocessing and evaluation.",
+      "expected_output": "Invokes alterlab-scikit-learn to build a Pipeline with a ColumnTransformer: numeric branch (SimpleImputer median + StandardScaler), categorical branch (SimpleImputer most_frequent + OneHotEncoder handle_unknown='ignore'), then a classifier (e.g. RandomForest/GradientBoosting). Uses train_test_split with stratify=y and random_state, fits only on train, and reports classification_report. Emphasizes that preprocessing inside the Pipeline prevents data leakage.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ColumnTransformer" },
+        { "type": "behavior", "value": "Wraps preprocessing and the estimator in a Pipeline (with ColumnTransformer for mixed types) to prevent leakage, and uses stratified splitting." }
+      ]
+    },
+    {
+      "id": "hyperparameter-tuning-cv",
+      "prompt": "My RandomForest is overfitting and I want to find better settings for n_estimators and max_depth using cross-validation rather than eyeballing it. How do I tune this properly?",
+      "expected_output": "Invokes alterlab-scikit-learn to tune hyperparameters with GridSearchCV (or RandomizedSearchCV / HalvingGridSearchCV) over a param_grid using the classifier__ prefix on a Pipeline, with cv folds (StratifiedKFold for classification), selects best_estimator_, and evaluates on the held-out test set. Mentions cross-validation and regularization/simpler models as overfitting remedies.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "GridSearchCV" },
+        { "type": "behavior", "value": "Recommends cross-validated hyperparameter search (GridSearchCV/RandomizedSearchCV) and evaluating the best model on a separate test set." }
+      ]
+    },
+    {
+      "id": "clustering-optimal-k",
+      "prompt": "I have unlabeled customer data and want to segment it into clusters, but I don't know how many clusters to use. How do I pick the number and check the clustering is any good?",
+      "expected_output": "Invokes alterlab-scikit-learn for unsupervised clustering: scales features with StandardScaler, sweeps k with KMeans evaluating silhouette_score (and/or elbow method, Calinski-Harabasz, Davies-Bouldin) to choose k, may compare DBSCAN/Agglomerative/GaussianMixture, and visualizes the result via a 2D PCA projection. Evaluates quality without ground-truth labels.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "silhouette" },
+        { "type": "behavior", "value": "Selects cluster count using silhouette/elbow analysis and evaluates clustering quality without labels." }
+      ]
+    },
+    {
+      "id": "regression-model-comparison",
+      "prompt": "I'm predicting house prices and want to compare Ridge, Lasso, and Gradient Boosting regressors fairly, reporting RMSE and R-squared with cross-validation. Which preprocessing matters for the linear ones?",
+      "expected_output": "Invokes alterlab-scikit-learn for supervised regression: compares Ridge, Lasso, and GradientBoostingRegressor via cross_val_score / cross-validation reporting RMSE, MAE, and R2, notes that the regularized linear models need StandardScaler (inside a Pipeline) while tree-based models do not, and sets random_state for reproducibility.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Compares regressors with cross-validation on RMSE/R2 and notes feature scaling is required for the regularized linear models but not the tree-based one." }
+      ]
+    },
+    {
+      "id": "near-miss-pymc",
+      "prompt": "Fit a Bayesian logistic regression and give me full posterior distributions and 94% credible intervals on the coefficients, with MCMC convergence diagnostics like R-hat and effective sample size.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pymc. The user wants Bayesian inference with posterior distributions, credible intervals, and MCMC/NUTS diagnostics (R-hat, ESS), which is PyMC's territory, not scikit-learn's point-estimate classical ML.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pymc" }
+      ]
+    },
+    {
+      "id": "near-miss-umap",
+      "prompt": "I have high-dimensional single-cell embeddings and want a high-quality 2D UMAP projection for visualization, tuning n_neighbors and min_dist to preserve local and global structure.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-umap. While scikit-learn covers dimensionality reduction broadly, the user specifically wants UMAP with its dedicated n_neighbors/min_dist tuning and manifold structure preservation, which the alterlab-umap skill owns.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-umap" }
+      ]
+    }
+  ]
+}

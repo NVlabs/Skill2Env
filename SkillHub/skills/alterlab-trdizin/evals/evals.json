@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-trdizin",
+  "evals": [
+    {
+      "id": "check-journal-indexed-status",
+      "prompt": "Before I submit my article there, can you check whether the journal \"Bilig\" is actually indexed in TR Dizin right now? I need to be sure it still counts.",
+      "expected_output": "Invokes alterlab-trdizin in journal-status mode: runs scripts/query_trdizin.py journal \"Bilig\" against https://search.trdizin.gov.tr/api/defaultSearch/journal/, parses hits.hits[]._source, and derives the verdict from isActive + journalYear coverage years vs rejectYearList (NOT from the query-time firstIndexDate/indexDate). Reports a 'Currently indexed in TR Dizin (active; coverage years …)' verdict with the ISSN/eISSN so the user can confirm the right journal, and notes status can change between terms. Does not assert the status from memory.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Queries the live TR Dizin API for the journal record and bases the indexed/not-indexed verdict on isActive/journalYear/rejectYearList, not on model memory or the query-time date fields." }
+      ]
+    },
+    {
+      "id": "turkish-rejected-journal-check",
+      "prompt": "\"Toplum ve Bilim\" dergisi TR Dizin'de taranıyor mu, yoksa reddedildi mi? Doçentlik dosyam için kontrol etmem lazım.",
+      "expected_output": "Invokes alterlab-trdizin in journal-status mode on a Turkish-language request: runs scripts/query_trdizin.py journal \"Toplum ve Bilim\", inspects the record's rejectYearList, and reports a 'Rejected / not indexed' verdict listing the rejected years. Explicitly notes that this skill only reports TR Dizin status and does NOT compute doçentlik points — for the eligibility math it hands off to alterlab-docentlik-eligibility.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Handles the Turkish-language prompt, returns a rejected/not-indexed verdict from rejectYearList, and defers the doçentlik point calculation to alterlab-docentlik-eligibility instead of computing it here." }
+      ]
+    },
+    {
+      "id": "search-indexed-publications",
+      "prompt": "Find me the most recent TR Dizin-indexed articles on deprem okuryazarlığı (earthquake literacy), newest first, with their journals and DOIs.",
+      "expected_output": "Invokes alterlab-trdizin in publication-search mode: runs scripts/query_trdizin.py publication \"deprem okuryazarlığı\" --order publicationYear-DESC against the defaultSearch/publication/ endpoint, parses _source (orderTitle, journal.name, doi, publicationYear, accessType), and returns a table of (year) title — journal · doi · access sorted newest-first, offering to narrow via the year/subject/language facets. Pages client-side for --limit since the API ignores a server-side limit.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Searches the publication endpoint with publicationYear-DESC ordering and returns indexed articles with journal + DOI, using client-side paging for the requested count." }
+      ]
+    },
+    {
+      "id": "audit-venue-list-before-dossier",
+      "prompt": "Here are five journals I've published in. Can you check which of them are currently in TR Dizin so I know which publications count as national-indexed venues?",
+      "expected_output": "Invokes alterlab-trdizin to run a journal-status check per venue via scripts/query_trdizin.py journal, returning a per-journal table of current TR Dizin status (active coverage years vs rejected) confirmed by ISSN. Reports only indexing status and explicitly does not compute career points — for doçentlik eligibility it routes to alterlab-docentlik-eligibility and for akademik teşvik scoring to alterlab-akademik-tesvik.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Produces a per-journal current-status table from the TR Dizin API and explicitly defers point/score computation to alterlab-docentlik-eligibility / alterlab-akademik-tesvik." }
+      ]
+    },
+    {
+      "id": "near-miss-dergipark-hosting",
+      "prompt": "Harvest all the article metadata from this DergiPark journal and give me BibTeX for each article so I can import them into Zotero.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-dergipark. The user wants to harvest article metadata and export BibTeX from a DergiPark-hosted journal (OAI-PMH harvest), which is journal hosting, not national-index status. alterlab-trdizin only searches the TR Dizin citation index and reports indexing status; DergiPark hosting does not imply TR Dizin indexing, so this is alterlab-dergipark's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-dergipark" }
+      ]
+    },
+    {
+      "id": "near-miss-docentlik-points",
+      "prompt": "I've confirmed my journals are TR Dizin indexed. Now compute my total doçentlik points from this publication list and tell me whether I clear the minimum for my field.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-docentlik-eligibility. The user wants the doçentlik eligibility point arithmetic (per-field UAK table, author-share rule, mandatory minima) — not a TR Dizin status lookup, which they have already done. alterlab-trdizin verifies whether a journal is indexed but does not compute career points; the scoring belongs to alterlab-docentlik-eligibility.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-docentlik-eligibility" }
+      ]
+    }
+  ]
+}

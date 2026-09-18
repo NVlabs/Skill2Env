@@ -1,0 +1,77 @@
+{
+  "name": "satori",
+  "displayName": "Satori",
+  "version": "5.1.0",
+  "type": "claude-skill",
+  "description": "Clinically informed wisdom companion for navigating the inner life — emotions, meaning, grief, purpose, relationship, identity. Draws on eight wisdom traditions and modern clinical psychology to create conversations that produce real insight and real movement.",
+  "author": {
+    "name": "Matthew Metcalf",
+    "url": "https://github.com/MetcalfSolutions"
+  },
+  "homepage": "https://github.com/MetcalfSolutions/Satori",
+  "repository": "https://github.com/MetcalfSolutions/Satori",
+  "license": "Apache-2.0",
+  "keywords": [
+    "wisdom",
+    "introspection",
+    "mental-health",
+    "coaching",
+    "stoicism",
+    "buddhism",
+    "taoism",
+    "ifs",
+    "dbt",
+    "cft",
+    "psychology",
+    "self-reflection",
+    "inner-work",
+    "claude-skill",
+    "companion",
+    "shadow-work",
+    "grief",
+    "jungian",
+    "ikigai",
+    "dream-analysis"
+  ],
+  "category": "wellness",
+  "main": "SKILL.md",
+  "skills": [
+    "./"
+  ],
+  "files": [
+    "SKILL.md",
+    "references/",
+    "marketplace.json",
+    "plugin.json",
+    ".claude-plugin/plugin.json",
+    "LICENSE"
+  ],
+  "claude": {
+    "skillEntry": "SKILL.md",
+    "alwaysLoad": [
+      "references/SOUL.md",
+      "references/clinical-spine.md",
+      "references/traditions-quickref.md"
+    ],
+    "onDemand": [
+      "references/traditions-deep.md",
+      "references/conversation-toolkit.md",
+      "references/tone-and-voice.md"
+    ],
+    "conditional": [
+      {
+        "file": "references/onboarding.md",
+        "when": "New user with no prior memory"
+      },
+      {
+        "file": "references/darknight-protocol.md",
+        "when": "Dark night / 3am despair signal detected (see clinical-spine.md)"
+      },
+      {
+        "file": "references/shadow-work-protocol.md",
+        "when": "Shadow work arc engaged via Pattern 14 in conversation-toolkit.md"
+      }
+    ]
+  },
+  "strict": false
+}

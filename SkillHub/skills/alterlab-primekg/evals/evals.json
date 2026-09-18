@@ -1,0 +1,44 @@
+{
+  "skill": "alterlab-primekg",
+  "evals": [
+    {
+      "id": "drug-disease-neighbors",
+      "prompt": "Using PrimeKG, find the genes and drugs associated with type 2 diabetes and summarize the strongest relationships.",
+      "expected_output": "Invokes alterlab-primekg: runs query_primekg.py to search for the disease node, retrieves its direct neighbors (associated genes, drugs, phenotypes) from kg.csv, and summarizes the relationships across the relevant relation types.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "PrimeKG" },
+        { "type": "behavior", "value": "Queries the PrimeKG knowledge graph for a disease's neighboring genes and drugs and summarizes the relations." }
+      ]
+    },
+    {
+      "id": "drug-repurposing-paths",
+      "prompt": "I'm looking for drug repurposing candidates for Alzheimer's disease. Use the knowledge graph to find existing drugs with paths to the disease through shared targets.",
+      "expected_output": "Invokes alterlab-primekg: identifies drug-disease paths in PrimeKG (e.g. drug to target gene to disease), surfacing existing drugs with graph-based evidence for a new indication, as repurposing candidates.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "repurpos" },
+        { "type": "behavior", "value": "Uses PrimeKG drug-disease paths through shared targets to surface repurposing candidates." }
+      ]
+    },
+    {
+      "id": "phenotype-disease-context",
+      "prompt": "Build a disease-centric subgraph for Parkinson's disease in PrimeKG showing related phenotypes, genes, and biological processes.",
+      "expected_output": "Invokes alterlab-primekg: constructs a local disease-context subgraph around the Parkinson's node, pulling related phenotypes, genes, pathways, and biological processes across PrimeKG's relation types.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Builds a multiscale disease-centric subgraph (phenotypes, genes, processes) from PrimeKG." }
+      ]
+    },
+    {
+      "id": "near-miss-rdkit",
+      "prompt": "Parse this SMILES string, compute its molecular weight, LogP, and TPSA, and generate a Morgan fingerprint.",
+      "expected_output": "Does NOT invoke alterlab-primekg; defers to a cheminformatics toolkit (alterlab-rdkit). The ask is single-molecule structure parsing and descriptor/fingerprint calculation, not querying a biomedical knowledge graph for entity relationships. PrimeKG answers relational drug/gene/disease questions, not molecular descriptors.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "rdkit" },
+        { "type": "behavior", "value": "Recognizes molecular descriptor/fingerprint work as RDKit territory, not knowledge-graph querying, and defers." }
+      ]
+    }
+  ]
+}

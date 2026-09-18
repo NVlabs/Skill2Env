@@ -1,0 +1,181 @@
+Source files: org/eclipse/emf/common/CommonPluginProperties.java
+
+/**
+ * Copyright (c) 2002-2010 Ed Merks and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   Ed Merks - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/common/command/UnexecutableCommand.java, org/eclipse/emf/common/util/WrappedException.java, org/eclipse/emf/common/util/EList.java, org/eclipse/emf/common/util/AbstractTreeIterator.java, org/eclipse/emf/common/util/AbstractEnumerator.java, org/eclipse/emf/common/util/DelegatingResourceLocator.java, org/eclipse/emf/common/notify/impl/DelegatingNotifyingListImpl.java, org/eclipse/emf/common/util/URI.java, org/eclipse/emf/common/command/BasicCommandStack.java, org/eclipse/emf/common/command/CommandStack.java, org/eclipse/emf/common/EMFPlugin.java, org/eclipse/emf/common/notify/impl/BasicNotifierImpl.java, org/eclipse/emf/common/command/StrictCompoundCommand.java, org/eclipse/emf/common/util/ResourceLocator.java, org/eclipse/emf/common/notify/impl/AdapterFactoryImpl.java, org/eclipse/emf/common/notify/impl/AdapterImpl.java, org/eclipse/emf/common/notify/NotificationWrapper.java, org/eclipse/emf/common/notify/Notifier.java, org/eclipse/emf/common/notify/NotificationChain.java, org/eclipse/emf/common/command/Command.java, org/eclipse/emf/common/command/CompoundCommand.java, org/eclipse/emf/common/util/EMap.java, org/eclipse/emf/common/notify/NotifyingList.java, org/eclipse/emf/common/notify/impl/NotificationImpl.java, org/eclipse/emf/common/notify/Adapter.java, org/eclipse/emf/common/command/CommandStackListener.java, org/eclipse/emf/common/util/UniqueEList.java, org/eclipse/emf/common/notify/impl/NotifyingListImpl.java, org/eclipse/emf/common/command/IdentityCommand.java, org/eclipse/emf/common/command/CommandWrapper.java, org/eclipse/emf/common/util/Enumerator.java, org/eclipse/emf/common/notify/impl/NotificationChainImpl.java, org/eclipse/emf/common/command/AbstractCommand.java, org/eclipse/emf/common/util/DelegatingEList.java, org/eclipse/emf/common/util/Logger.java, org/eclipse/emf/common/util/TreeIterator.java, org/eclipse/emf/common/notify/AdapterFactory.java, org/eclipse/emf/common/notify/impl/NotifierImpl.java
+
+/**
+ * Copyright (c) 2002-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/common/util/Monitor.java, org/eclipse/emf/common/util/DiagnosticException.java
+
+/**
+ * Copyright (c) 2005-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/common/util/Callback.java, org/eclipse/emf/common/util/InvocationTargetException.java, org/eclipse/emf/common/util/Array.java
+
+/**
+ * Copyright (c) 2010 Ed Merks and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   Ed Merks - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/common/util/ECollections.java, org/eclipse/emf/common/CommonPlugin.java, org/eclipse/emf/common/notify/Notification.java
+
+/**
+ * Copyright (c) 2002-2012 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/common/notify/impl/SingletonAdapterImpl.java
+
+/**
+ * Copyright (c) 2006-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/common/command/AbortExecutionException.java
+
+/**
+ * Copyright (c) 2008-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/common/util/Reflect.java
+
+/**
+ * Copyright (c) 2010-2011 Ed Merks and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   Ed Merks - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/common/util/Diagnostic.java, org/eclipse/emf/common/util/BasicDiagnostic.java, org/eclipse/emf/common/util/DiagnosticChain.java
+
+/**
+ * Copyright (c) 2004-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/common/util/BasicEMap.java
+
+/**
+ * Copyright (c) 2002-2012 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/common/util/BasicEList.java
+
+/**
+ * Copyright (c) 2002-2009 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/common/util/BasicMonitor.java
+
+/**
+ * Copyright (c) 2005-2012 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/common/util/AbstractEList.java
+
+/**
+ * Copyright (c) 2009-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *   IBM - Initial API and implementation
+ */
+
+Source files: org/eclipse/emf/common/util/ArrayDelegatingEList.java
+
+/**
+ * Copyright (c) 2009-2010 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   IBM - Initial API and implementation
+ */

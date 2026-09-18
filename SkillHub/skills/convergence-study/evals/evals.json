@@ -1,0 +1,188 @@
+{
+  "skill_name": "convergence-study",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I ran my FEM solver on 4 meshes with h=0.4,0.2,0.1,0.05 and got max stress values of 98.5, 99.6, 99.9, 99.975 MPa. Is my solution converging at second order as expected?",
+      "expected_output": "Observed convergence order near 2.0 confirming second-order scheme, with Richardson extrapolated value near 100 MPa.",
+      "assertions": [
+        "Uses h_refinement.py with --spacings 0.4,0.2,0.1,0.05 --values 98.5,99.6,99.9,99.975 --expected-order 2.0",
+        "Reports observed convergence order close to 2.0",
+        "Provides Richardson extrapolated value near 100 MPa",
+        "States solution is in asymptotic convergence range"
+      ],
+      "script_checks": [
+        {
+          "description": "h-refinement observed order ~2 (asymptotic)",
+          "cmd": [
+            "scripts/h_refinement.py",
+            "--spacings",
+            "0.4,0.2,0.1,0.05",
+            "--values",
+            "98.5,99.6,99.9,99.975",
+            "--expected-order",
+            "2.0",
+            "--json"
+          ],
+          "assert": [
+            {
+              "path": "results.mean_order",
+              "op": "ge",
+              "value": 1.8
+            },
+            {
+              "path": "results.mean_order",
+              "op": "le",
+              "value": 2.1
+            },
+            {
+              "path": "results.in_asymptotic_range",
+              "op": "eq",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I only have results from two grid levels: h=0.02 with T_max=1.0032 and h=0.01 with T_max=1.0008. My scheme is 2nd order. Can you estimate the exact solution?",
+      "expected_output": "Richardson extrapolation gives an estimated exact value of 1.0 with error estimate on the fine grid.",
+      "assertions": [
+        "Uses richardson_extrapolation.py with --spacings 0.02,0.01 --values 1.0032,1.0008 --order 2.0",
+        "Reports extrapolated value near 1.0",
+        "Provides error estimate for the fine-grid solution",
+        "Notes that only 2 levels means order cannot be independently verified"
+      ],
+      "script_checks": [
+        {
+          "description": "Richardson 2-level: extrapolated ~1.0, error estimate ~0.0008",
+          "cmd": [
+            "scripts/richardson_extrapolation.py",
+            "--spacings",
+            "0.02,0.01",
+            "--values",
+            "1.0032,1.0008",
+            "--order",
+            "2.0",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.extrapolated_value",
+              "op": "approx",
+              "value": 1.0,
+              "rel_tol": 1e-09
+            },
+            {
+              "path": "results.error_estimate",
+              "op": "approx",
+              "value": 0.0008,
+              "rel_tol": 0.0001
+            },
+            {
+              "path": "results.relative_error_estimate",
+              "op": "approx",
+              "value": 0.0008,
+              "rel_tol": 0.0001
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Compute GCI for my three-mesh verification study. Meshes: h=0.04, 0.02, 0.01. Drag coefficients: 0.3412, 0.3378, 0.3370. Need this for an ASME V&V report.",
+      "expected_output": "GCI computed per Roache method with asymptotic ratio indicating grids are (or are not) in asymptotic range.",
+      "assertions": [
+        "Uses gci_calculator.py with --spacings 0.04,0.02,0.01 --values 0.3412,0.3378,0.3370",
+        "Reports observed order, GCI_fine, and GCI_coarse values",
+        "Evaluates asymptotic ratio and whether it is close to 1.0",
+        "Notes ASME V&V 20 standard context and safety factor of 1.25"
+      ],
+      "script_checks": [
+        {
+          "description": "GCI three-mesh: order ~2.09, in asymptotic range",
+          "cmd": [
+            "scripts/gci_calculator.py",
+            "--spacings",
+            "0.04,0.02,0.01",
+            "--values",
+            "0.3412,0.3378,0.3370",
+            "--json"
+          ],
+          "assert": [
+            {
+              "path": "results.observed_order",
+              "op": "approx",
+              "value": 2.0875,
+              "abs_tol": 0.01
+            },
+            {
+              "path": "results.in_asymptotic_range",
+              "op": "eq",
+              "value": true
+            },
+            {
+              "path": "results.gci_fine",
+              "op": "lt",
+              "value": 0.01
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "My temporal convergence study with dt=0.04,0.02,0.01 gives values 2.12, 2.03, 2.0075 for a quantity that should converge at 2nd order. But the results look suspicious -- the order seems too high. Can you check?",
+      "expected_output": "Analysis showing the observed order is exactly 2.0 (PASS against the expected 2nd order), debunking the user's suspicion of superconvergence.",
+      "assertions": [
+        "Uses dt_refinement.py with --timesteps 0.04,0.02,0.01 --values 2.12,2.03,2.0075 --expected-order 2.0",
+        "Reports observed temporal convergence order of 2.0",
+        "Evaluates whether the order exceeds 2 and explicitly states it does not (no superconvergence/cancellation)",
+        "Concludes the observed order is exactly 2.0 (PASS), so the user's suspicion of superconvergence is not supported by the data"
+      ],
+      "script_checks": [
+        {
+          "description": "dt-refinement: observed order exactly 2.0, PASS, no superconvergence",
+          "cmd": [
+            "scripts/dt_refinement.py",
+            "--timesteps",
+            "0.04,0.02,0.01",
+            "--values",
+            "2.12,2.03,2.0075",
+            "--expected-order",
+            "2.0",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.mean_order",
+              "op": "approx",
+              "value": 2.0,
+              "rel_tol": 1e-06
+            },
+            {
+              "path": "results.in_asymptotic_range",
+              "op": "eq",
+              "value": true
+            },
+            {
+              "path": "results.convergence_assessment",
+              "op": "contains",
+              "value": "PASS"
+            },
+            {
+              "path": "results.richardson_extrapolated_value",
+              "op": "approx",
+              "value": 2.0,
+              "rel_tol": 1e-06
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

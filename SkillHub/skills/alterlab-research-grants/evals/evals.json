@@ -1,0 +1,78 @@
+{
+  "skill": "alterlab-research-grants",
+  "evals": [
+    {
+      "id": "nih-specific-aims-r01",
+      "prompt": "I'm putting together an R01 on gut-microbiome modulation of chemotherapy response. Help me draft the one-page Specific Aims and make sure it hits NIH's Significance, Innovation, and Approach review criteria.",
+      "expected_output": "Should trigger the research-grants skill. Drafts a one-page NIH Specific Aims page (hook, gap, central hypothesis, 2-3 aims with payoffs), explicitly aligns to NIH's Significance/Innovation/Approach review criteria, and reflects R01 conventions. May reference the specific aims guide.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Produces an NIH Specific Aims page aligned to the Significance, Innovation, and Approach review criteria with R01-appropriate structure." }
+      ]
+    },
+    {
+      "id": "nsf-broader-impacts",
+      "prompt": "My NSF proposal's Broader Impacts section is weak. Can you strengthen it so it stands on equal footing with Intellectual Merit, including concrete education and diversity activities?",
+      "expected_output": "Should trigger. Strengthens the NSF Broader Impacts section, treating it as equally weighted with Intellectual Merit per NSF merit review, and proposes concrete, assessable activities (education, broadening participation/diversity, societal benefit). May reference NSF guidelines / broader_impacts guidance.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Improves an NSF Broader Impacts section with concrete education/diversity/societal-benefit activities, treating it as co-equal with Intellectual Merit." }
+      ]
+    },
+    {
+      "id": "budget-justification",
+      "prompt": "I need a budget justification for a 3-year NSF proposal: two grad students, 1 month summer PI salary, a workstation, and travel to two conferences a year. Draft the justification text.",
+      "expected_output": "Should trigger. Drafts a budget justification narrative mapping each line item (personnel/grad RAs, PI summer salary, equipment, travel) to the research plan and justifying necessity, consistent with agency budget conventions. May reference the budget preparation guide.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Writes a budget justification that ties personnel, equipment, and travel line items to the research need following agency budget conventions." }
+      ]
+    },
+    {
+      "id": "darpa-narrative-and-resubmission",
+      "prompt": "We're responding to a DARPA BAA and also need to revise our NIH R01 after a not-discussed score. For DARPA, frame the innovation as a DARPA-hard problem with a transition path; for the NIH A1, help me write the introduction to the resubmission addressing reviewer concerns.",
+      "expected_output": "Should trigger. For DARPA, frames the work around the Heilmeier-style 'DARPA-hard' questions (what if true, who cares) with prototypes/transition path and milestones; for the NIH A1 resubmission, drafts an introduction-to-revised-application that responds to prior reviewer critiques. Applies agency-specific review criteria for both. May reference darpa_guidelines / resubmission_strategies.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Frames the DARPA narrative around DARPA-hard criteria with a transition path, and drafts an NIH A1 resubmission introduction addressing reviewer concerns." }
+      ]
+    },
+    {
+      "id": "nstc-cm03-bilingual",
+      "prompt": "I'm submitting to Taiwan's NSTC. Help me structure the CM03 proposal, write the bilingual abstract, and make sure I include the required research architecture diagram.",
+      "expected_output": "Should trigger. Structures the NSTC CM03 technical proposal, prepares the required bilingual (Chinese and English) abstract, and flags the mandatory research architecture diagram, emphasizing innovation, feasibility, and preliminary data per NSTC review focus. May reference nstc_guidelines.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "CM03" },
+        { "type": "behavior", "value": "Addresses NSTC CM03 structure, the bilingual abstract requirement, and the mandatory research architecture diagram." }
+      ]
+    },
+    {
+      "id": "near-miss-scientific-writing-manuscript",
+      "prompt": "Help me write the Discussion section of my journal manuscript — I need it in flowing IMRAD prose, relating my results to prior work and acknowledging limitations.",
+      "expected_output": "Should NOT trigger research-grants. Drafting a journal manuscript Discussion section in IMRAD prose is the alterlab-scientific-writing skill's territory, not writing a funding proposal to an agency's review criteria. The correct response defers to scientific-writing.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "scientific-writing" }
+      ]
+    },
+    {
+      "id": "near-miss-peer-review-grant-critique",
+      "prompt": "I'm an ad hoc reviewer on an NIH study section and I've been assigned this R01. Write me a structured critique scoring its significance, innovation, and approach with strengths and weaknesses.",
+      "expected_output": "Should NOT trigger research-grants. This asks for a reviewer's structured critique/scoring of someone else's proposal, which is the alterlab-peer-review skill's territory, not authoring or revising a competitive proposal. The correct response defers to peer-review (grant peer review). Although both touch agency review criteria, the intent is evaluation, not proposal authoring.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "peer-review" }
+      ]
+    },
+    {
+      "id": "near-miss-tubitak-national-proposal",
+      "prompt": "I'm applying to TÜBİTAK 1001 (ARDEB). Help me write the özgün değer section and the work-package/iş-zaman çizelgesi for the proposal form.",
+      "expected_output": "Should NOT trigger research-grants. A TÜBİTAK 1001/ARDEB national proposal has its own official .doc form tree (özgün değer, yöntem, proje yönetimi, yaygın etki) and program caps that the alterlab-tubitak-proposal skill owns; this skill covers NSF/NIH/DOE/DARPA/NSTC, not the Turkish national agency. The correct response defers to tubitak-proposal.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "tubitak-proposal" }
+      ]
+    }
+  ]
+}

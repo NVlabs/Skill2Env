@@ -1,0 +1,18 @@
+{
+  "campaign_id": "campaign_demo3sts",
+  "config_dir": "evals/files/case3_status",
+  "command_template": "python phase_field.py --config {config}",
+  "output_pattern": null,
+  "created_at": "2026-06-24 00:00:00",
+  "jobs": [
+    {"job_id": "job_0000", "config_file": "config_0000.json", "config_path": "evals/files/case3_status/config_0000.json", "command": "python phase_field.py --config evals/files/case3_status/config_0000.json", "status": "completed", "start_time": "2026-06-24 00:00:01", "end_time": "2026-06-24 00:00:10", "exit_code": 0, "output_file": "result_job_0000.json"},
+    {"job_id": "job_0001", "config_file": "config_0001.json", "config_path": "evals/files/case3_status/config_0001.json", "command": "python phase_field.py --config evals/files/case3_status/config_0001.json", "status": "completed", "start_time": "2026-06-24 00:00:01", "end_time": "2026-06-24 00:00:11", "exit_code": 0, "output_file": "result_job_0001.json"},
+    {"job_id": "job_0002", "config_file": "config_0002.json", "config_path": "evals/files/case3_status/config_0002.json", "command": "python phase_field.py --config evals/files/case3_status/config_0002.json", "status": "running", "start_time": "2026-06-24 00:00:01", "end_time": null, "exit_code": null, "output_file": null},
+    {"job_id": "job_0003", "config_file": "config_0003.json", "config_path": "evals/files/case3_status/config_0003.json", "command": "python phase_field.py --config evals/files/case3_status/config_0003.json", "status": "pending", "start_time": null, "end_time": null, "exit_code": null, "output_file": null}
+  ],
+  "manifest": {
+    "configs": ["config_0000.json", "config_0001.json", "config_0002.json", "config_0003.json"],
+    "sweep_method": "linspace",
+    "total_runs": 4
+  }
+}

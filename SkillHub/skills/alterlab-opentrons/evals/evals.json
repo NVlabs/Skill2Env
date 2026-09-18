@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-opentrons",
+  "evals": [
+    {
+      "id": "serial-dilution-flex",
+      "prompt": "Write an Opentrons Flex protocol that does a 12-point serial dilution across row A of a 96-well plate using a single-channel pipette.",
+      "expected_output": "Invokes alterlab-opentrons. Produces a Protocol API v2 protocol: metadata with apiLevel, requirements robotType 'Flex', a run(protocol) function, load_labware/load_instrument, adds diluent then a serial p300.transfer across plate.rows()[0] with mix_after and new_tip='always'.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "protocol_api" },
+        { "type": "behavior", "value": "Defines metadata with apiLevel, a run(protocol) function, and performs the serial dilution with transfer/mix_after." }
+      ]
+    },
+    {
+      "id": "pcr-setup-thermocycler",
+      "prompt": "I need an OT-2/Flex protocol that sets up a PCR plate on the thermocycler module: distribute master mix, add samples, then run 35 cycles of 95/60/72.",
+      "expected_output": "Invokes alterlab-opentrons. Loads the thermocyclerModuleV2 and a PCR labware, distributes master mix, transfers samples, then closes the lid and runs the cycling via set_block_temperature plus execute_profile(steps=..., repetitions=35) with block_max_volume.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "execute_profile" }
+      ]
+    },
+    {
+      "id": "heater-shaker-incubation",
+      "prompt": "In my Opentrons protocol I want to heat a plate to 37 C and shake it at 500 rpm for 10 minutes on the heater-shaker module, then stop.",
+      "expected_output": "Invokes alterlab-opentrons. Loads the heater-shaker module, closes the labware latch, calls set_target_temperature(37)/wait_for_temperature and set_and_wait_for_shake_speed(500), uses protocol.delay, then deactivates heater/shaker and opens the latch.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Controls the heater-shaker (temperature, shake speed, latch) and deactivates it at the end." }
+      ]
+    },
+    {
+      "id": "multichannel-plate-replication",
+      "prompt": "Write an Opentrons protocol to replicate a full 96-well plate to a second plate using an 8-channel pipette.",
+      "expected_output": "Invokes alterlab-opentrons. Loads a multi-channel pipette (e.g. p300_multi_gen2 on OT-2 or flex_8channel_1000 on Flex) and replicates the plate column-by-column, using a single-column reference per transfer with new_tip handling.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses a multi-channel pipette and replicates the plate using column references." }
+      ]
+    },
+    {
+      "id": "near-miss-pylabrobot",
+      "prompt": "I need one Python protocol that drives our Hamilton STAR for liquid handling and a BMG CLARIOstar plate reader, swapping backends so I can simulate first.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pylabrobot. The workflow spans multiple vendors (Hamilton STAR + CLARIOstar) with backend-swappable simulation, which is PyLabRobot's vendor-agnostic territory rather than the Opentrons-only Protocol API.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pylabrobot" }
+      ]
+    }
+  ]
+}

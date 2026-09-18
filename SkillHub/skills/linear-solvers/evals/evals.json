@@ -1,0 +1,131 @@
+{
+  "skill_name": "linear-solvers",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a 1 million DOF sparse symmetric positive definite system from a FEM thermal analysis. What solver and preconditioner should I use?",
+      "expected_output": "Recommends CG with AMG or incomplete Cholesky preconditioner for large SPD system.",
+      "assertions": [
+        "Uses solver_selector.py with --symmetric --positive-definite --sparse --size 1000000",
+        "Recommends Conjugate Gradient (CG) as primary solver",
+        "Uses preconditioner_advisor.py to recommend AMG or IC preconditioner",
+        "Notes that direct solvers are impractical at this size"
+      ],
+      "script_checks": [
+        {
+          "description": "solver_selector recommends CG for large sparse SPD system",
+          "cmd": ["scripts/solver_selector.py", "--symmetric", "--positive-definite", "--sparse", "--size", "1000000", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.recommended.0", "op": "eq", "value": "CG"},
+            {"path": "results.alternatives", "op": "contains", "value": "MINRES"},
+            {"path": "results.notes", "op": "contains", "value": "Use IC/AMG preconditioning for SPD systems."},
+            {"path": "inputs.size", "op": "eq", "value": 1000000}
+          ]
+        },
+        {
+          "description": "preconditioner_advisor suggests IC and AMG for SPD",
+          "cmd": ["scripts/preconditioner_advisor.py", "--matrix-type", "spd", "--sparse", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.suggested.0", "op": "eq", "value": "Incomplete Cholesky (IC)"},
+            {"path": "results.suggested", "op": "contains", "value": "AMG"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "My GMRES solver is stagnating. Residuals: 1, 0.1, 0.03, 0.01, 0.008, 0.007, 0.007, 0.007. The matrix is nonsymmetric from a convection-diffusion FVM discretization.",
+      "expected_output": "Diagnoses stagnation, recommends better preconditioner or increased restart parameter.",
+      "assertions": [
+        "Uses convergence_diagnostics.py with the given residual history",
+        "Identifies stagnation pattern in the residual decay",
+        "Uses preconditioner_advisor.py for nonsymmetric stagnating system",
+        "Recommends ILU with higher fill level, AMG, or increasing GMRES restart parameter"
+      ],
+      "script_checks": [
+        {
+          "description": "convergence_diagnostics flags stagnation on flat residual tail",
+          "cmd": ["scripts/convergence_diagnostics.py", "--residuals", "1,0.1,0.03,0.01,0.008,0.007,0.007,0.007", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.stagnation", "op": "eq", "value": true},
+            {"path": "results.asymptotic_rate", "op": "approx", "value": 1.0, "rel_tol": 1e-9},
+            {"path": "results.rate", "op": "approx", "value": 0.6297619047619047, "rel_tol": 1e-6},
+            {"path": "results.recommended_action", "op": "contains", "value": "Stagnation detected"}
+          ]
+        },
+        {
+          "description": "preconditioner_advisor suggests ILU/AMG for ill-conditioned nonsymmetric system",
+          "cmd": ["scripts/preconditioner_advisor.py", "--matrix-type", "nonsymmetric", "--sparse", "--ill-conditioned", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.suggested.0", "op": "eq", "value": "ILU(0)/ILUT"},
+            {"path": "results.suggested", "op": "contains", "value": "AMG"},
+            {"path": "results.notes", "op": "contains", "value": "Increase fill-in or use multigrid for robustness."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I need to analyze the sparsity pattern of my assembled stiffness matrix stored in A.npy before choosing a solver. It's about 5000x5000.",
+      "expected_output": "Guidance on using sparsity_stats.py to characterize the matrix structure.",
+      "assertions": [
+        "Recommends sparsity_stats.py with --matrix A.npy",
+        "Explains that nnz, density, bandwidth, and symmetry will be reported",
+        "Notes the matrix is small enough for direct solver consideration",
+        "Suggests using results to inform solver_selector.py choice"
+      ],
+      "files": ["files/A.npy"],
+      "script_checks": [
+        {
+          "description": "sparsity_stats reports nnz, density, bandwidth, symmetry for the fixture matrix",
+          "cmd": ["scripts/sparsity_stats.py", "--matrix", "evals/files/A.npy", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.shape.0", "op": "eq", "value": 50},
+            {"path": "results.shape.1", "op": "eq", "value": 50},
+            {"path": "results.nnz", "op": "eq", "value": 148},
+            {"path": "results.density", "op": "approx", "value": 0.0592, "rel_tol": 1e-6},
+            {"path": "results.bandwidth", "op": "eq", "value": 1},
+            {"path": "results.symmetry", "op": "eq", "value": true}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "My iterative solver for a saddle-point system from Stokes flow (velocity-pressure coupling) is completely failing. Any suggestions?",
+      "expected_output": "Identifies saddle-point structure as root cause and recommends Schur complement or block preconditioning.",
+      "assertions": [
+        "Uses solver_selector.py with --saddle-point to identify the block KKT structure",
+        "Recommends Schur complement approach or Uzawa iteration",
+        "Suggests block preconditioner appropriate for velocity-pressure coupling (preconditioner_advisor.py --saddle-point)",
+        "Notes standard CG/GMRES without block preconditioning will fail for saddle-point systems"
+      ],
+      "script_checks": [
+        {
+          "description": "solver_selector routes saddle-point system to Schur complement / Uzawa",
+          "cmd": ["scripts/solver_selector.py", "--saddle-point", "--size", "100000", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.recommended.0", "op": "eq", "value": "Schur complement / Uzawa"},
+            {"path": "results.alternatives", "op": "contains", "value": "Block-preconditioned MINRES/GMRES"},
+            {"path": "results.notes.0", "op": "contains", "value": "unpreconditioned CG/GMRES will fail"}
+          ]
+        },
+        {
+          "description": "preconditioner_advisor suggests block (Schur) preconditioner for saddle-point",
+          "cmd": ["scripts/preconditioner_advisor.py", "--matrix-type", "symmetric-indefinite", "--saddle-point", "--json"],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.suggested.0", "op": "eq", "value": "Block preconditioner (Schur complement)"},
+            {"path": "results.notes", "op": "contains", "value": "Use physics-informed block structure when available."}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "Crystal Structure": {
+    "required": ["has unit cell", "has space group"],
+    "recommended": [],
+    "optional": []
+  },
+  "Unit Cell": {
+    "required": ["has Bravais lattice"],
+    "recommended": ["has basis", "has lattice parameter"],
+    "optional": []
+  },
+  "Atomic Scale Sample": {
+    "required": ["has material", "has simulation cell"],
+    "recommended": ["has species", "has attribute", "has number of atoms"],
+    "optional": []
+  },
+  "Computational Sample": {
+    "required": ["has material"],
+    "recommended": ["has species"],
+    "optional": []
+  },
+  "Simulation Cell": {
+    "required": [],
+    "recommended": ["has volume"],
+    "optional": ["has simulation cell length", "has simulation cell volume"]
+  },
+  "Chemical Element": {
+    "required": ["has chemical symbol"],
+    "recommended": [],
+    "optional": ["has atomic percent", "has weight percent", "has element ratio"]
+  },
+  "Space Group": {
+    "required": ["has space group number"],
+    "recommended": ["has space group symbol"],
+    "optional": []
+  }
+}

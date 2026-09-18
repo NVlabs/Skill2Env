@@ -1,0 +1,68 @@
+{
+  "skill": "alterlab-social-science-methods",
+  "evals": [
+    {
+      "id": "fsqca-design",
+      "prompt": "I have 28 community programs and I want to figure out which combinations of conditions (funding, leadership, community support, political opposition) lead to program success. Statistical regression feels underpowered here.",
+      "expected_output": "Invokes alterlab-social-science-methods: recommends fuzzy-set Qualitative Comparative Analysis (fsQCA, Ragin) for medium-N configurational causation, walks calibration to fuzzy membership (anchors 0.95/0.50/0.05), truth-table construction, necessary-condition (consistency > 0.90) and sufficient-condition Boolean minimization, and returning to cases. Warns about the conditions-to-cases ratio (>= 3 cases per condition) and atheoretical condition selection. Names fsQCA software / R QCA package.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "QCA" }
+      ]
+    },
+    {
+      "id": "process-tracing-mechanism",
+      "prompt": "I have one rich case study and I want to establish the causal mechanism linking an economic shock to a policy reform, testing it against the evidence rigorously.",
+      "expected_output": "Invokes alterlab-social-science-methods process tracing: frames theory-testing within-case analysis, applies the four evidentiary tests (hoop, smoking gun, doubly decisive, straw-in-the-wind) and Bayesian updating (prior, likelihood under hypothesis true/false), and warns about confirmation bias and testing alternative mechanisms. Cites Beach & Pedersen / George & Bennett.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Recommends within-case process tracing with the four evidentiary tests (hoop, smoking gun, doubly decisive, straw-in-the-wind) and stresses testing alternative mechanisms." }
+      ]
+    },
+    {
+      "id": "content-analysis-reliability",
+      "prompt": "I'm doing a quantitative content analysis of 600 news articles with two coders and I need to know whether my coding scheme is reliable before I code the whole sample.",
+      "expected_output": "Invokes alterlab-social-science-methods quantitative content analysis: defines units of analysis and an exhaustive, mutually exclusive coding scheme, pilots and trains coders, and computes an intercoder reliability statistic that accounts for chance (Krippendorff's alpha or Cohen's kappa, threshold > 0.80 good / > 0.667 acceptable), explicitly rejecting bare percent agreement. Reports reliability before coding the full sample.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Recommends a chance-corrected intercoder reliability metric (Krippendorff's alpha or Cohen's kappa) with thresholds, not bare percent agreement, before full coding." }
+      ]
+    },
+    {
+      "id": "delphi-consensus",
+      "prompt": "I want to build expert consensus on priority indicators for a new public-health surveillance system using iterative rounds of anonymous expert input.",
+      "expected_output": "Invokes alterlab-social-science-methods Delphi method: selects a panel of 15-30 diverse experts, runs an open-ended Round 1 then structured Likert-rated rounds with anonymized aggregate feedback (median, IQR), and assesses consensus against pre-defined thresholds (e.g., 70-80% agreement, median 4+, IQR <= 1.0, stability < 15% change between rounds).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Delphi" }
+      ]
+    },
+    {
+      "id": "q-methodology-viewpoints",
+      "prompt": "I want to map the distinct viewpoints stakeholders hold about urban renewal by having them rank-order a set of opinion statements, then find the shared perspectives.",
+      "expected_output": "Invokes alterlab-social-science-methods Q methodology: develops the concourse, selects a Q-set of 30-60 statements and a P-set of 20-40 participants, has participants Q-sort onto a forced quasi-normal distribution, and runs by-person (Q-) factor analysis to extract shared viewpoint factors, interpreting distinguishing and consensus statements.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Q methodology" }
+      ]
+    },
+    {
+      "id": "near-miss-digital-humanities",
+      "prompt": "I have a corpus of 5,000 political speeches and I want to run LDA topic modeling and a BERTopic comparison to trace how rhetorical themes evolve over decades.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-digital-humanities. Computational topic modeling (LDA/BERTopic) and distant reading of a large text corpus are digital-humanities text-mining methods, not the configurational, comparative, or interpretive social-science methods (QCA, process tracing, CDA, Delphi) this skill covers.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-digital-humanities" }
+      ]
+    },
+    {
+      "id": "near-miss-deep-research",
+      "prompt": "I need a PRISMA-compliant systematic review with a meta-analysis on the effectiveness of school-based mental-health interventions, with effect sizes and risk-of-bias assessment.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-deep-research. A PRISMA systematic review with meta-analysis (effect sizes, RoB, GRADE) is the deep-research systematic-review mode, distinct from this skill's systematic MAPPING/scoping reviews (PRISMA-ScR) which describe the evidence territory without synthesizing effect sizes.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-deep-research" }
+      ]
+    }
+  ]
+}

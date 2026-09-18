@@ -1,0 +1,53 @@
+{
+  "skill": "alterlab-pytdc",
+  "evals": [
+    {
+      "id": "adme-scaffold-split",
+      "prompt": "Load the Caco2_Wang permeability dataset from Therapeutics Data Commons with a scaffold split (70/10/20) and give me train/valid/test DataFrames so I can model intestinal permeability.",
+      "expected_output": "Invokes alterlab-pytdc. Uses tdc.single_pred.ADME with name='Caco2_Wang', calls get_split(method='scaffold', frac=[0.7,0.1,0.2]) to return train/valid/test DataFrames (Drug_ID, Drug SMILES, Y). Frames Caco2 as an ADME permeability task from TDC.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "TDC" },
+        { "type": "behavior", "value": "Loads via tdc.single_pred.ADME and uses get_split with method='scaffold' returning train/valid/test." }
+      ]
+    },
+    {
+      "id": "dti-cold-split",
+      "prompt": "I'm benchmarking a drug-target binding model on BindingDB Kd. I want a cold-drug split so the test set only has drugs the model never saw during training. How do I get that from TDC?",
+      "expected_output": "Invokes alterlab-pytdc. Uses tdc.multi_pred.DTI with name='BindingDB_Kd' and get_split(method='cold_split', column_name='Drug') so unseen drugs appear only in test. Notes the DTI data format (Drug, Target sequence, Y affinity) and the cold-split rationale for realistic generalization evaluation.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "cold_split" },
+        { "type": "behavior", "value": "Uses tdc.multi_pred.DTI on BindingDB_Kd with get_split(method='cold_split', column_name='Drug') so test drugs are unseen." }
+      ]
+    },
+    {
+      "id": "admet-benchmark-group",
+      "prompt": "I need to evaluate my model on the official TDC ADMET benchmark group with the required 5-seed protocol and get the standardized leaderboard metrics. Can you set up the evaluation loop?",
+      "expected_output": "Invokes alterlab-pytdc. Uses tdc.benchmark_group.admet_group, retrieves a benchmark with group.get(name) -> {'name','train_val','test'}, loops over seeds [1,2,3,4,5] calling group.get_train_valid_split(benchmark=name, seed=seed) for the per-seed train/valid partition while predicting on the fixed benchmark['test'], collects one {name: y_pred} dict per seed, and calls group.evaluate_many(predictions_list) for standardized metrics. Does NOT index the benchmark by seed (no benchmark[seed]).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "get_train_valid_split" },
+        { "type": "behavior", "value": "Uses admet_group with get_train_valid_split per seed and evaluate_many(predictions_list); does not use benchmark[seed] indexing." }
+      ]
+    },
+    {
+      "id": "oracle-molecule-scoring",
+      "prompt": "I'm doing goal-directed molecule generation and need to score candidate SMILES against the DRD2 and GSK3B oracles from TDC. How do I call those oracles?",
+      "expected_output": "Invokes alterlab-pytdc. Uses tdc.Oracle (from tdc import Oracle) with name='DRD2' and name='GSK3B', calling the oracle on a SMILES or list of SMILES to get optimization scores. Frames oracles as the property targets for molecular generation/optimization.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Oracle" }
+      ]
+    },
+    {
+      "id": "near-miss-deepchem",
+      "prompt": "Now that I have the SMILES and labels loaded, featurize them with ECFP circular fingerprints and train a Random Forest with a normalization transformer to predict the property.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-deepchem. PyTDC sources standardized datasets, splits, and oracles, but the actual featurization (CircularFingerprint/ECFP), model training (SklearnModel RandomForest), and transformers are DeepChem's molecular-ML workflow.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-deepchem" }
+      ]
+    }
+  ]
+}

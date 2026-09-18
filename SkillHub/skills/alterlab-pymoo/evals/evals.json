@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-pymoo",
+  "evals": [
+    {
+      "id": "biobjective-nsga2",
+      "prompt": "I have a bridge design problem with two conflicting objectives — minimize material cost and minimize deflection. I want the full Pareto front of trade-off solutions and a plot of it.",
+      "expected_output": "Invokes alterlab-pymoo: defines the bi-objective problem as an ElementwiseProblem (or selects a benchmark), runs NSGA-II via minimize() with a fixed seed and ('n_gen', N) termination, extracts result.F as the Pareto front, and visualizes the trade-off with a Scatter plot.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "NSGA2" },
+        { "type": "behavior", "value": "Uses NSGA-II via minimize() with a fixed seed, reads result.F as the Pareto front, and plots the two-objective trade-off with a Scatter plot." }
+      ]
+    },
+    {
+      "id": "many-objective-nsga3",
+      "prompt": "I'm optimizing a 5-objective engineering design and NSGA-II gives me a poorly spread front. What algorithm and setup should I use, and how do I visualize five objectives?",
+      "expected_output": "Invokes alterlab-pymoo: recommends NSGA-III for 4+ objectives, generates reference directions with get_reference_directions (das-dennis), configures NSGA3(ref_dirs=...), runs minimize(), and visualizes with a Parallel Coordinate Plot (PCP) since 5 objectives exceed scatter capability.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Recommends NSGA-III with reference directions and a parallel-coordinate plot for the 5-objective case, not a 2D scatter." }
+      ]
+    },
+    {
+      "id": "constrained-optimization",
+      "prompt": "My optimization problem has two inequality constraints and one equality constraint, and most candidate solutions come out infeasible. How do I formulate the constraints in pymoo and get feasible solutions?",
+      "expected_output": "Invokes alterlab-pymoo: shows constraint formulation as g(x) <= 0 (out['G']) and h(x) = 0 (out['H']) inside _evaluate, explains the default feasibility-first handling and checking result.CV, and offers alternatives (ConstraintsAsPenalty, ConstraintsAsObjective, SRES/ISRES) when the feasible region is small.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Formulates inequality constraints as g(x) <= 0 and explains feasibility-first handling or a specialized constrained algorithm." }
+      ]
+    },
+    {
+      "id": "mcdm-from-front",
+      "prompt": "I already ran NSGA-II and have a Pareto front of 100 trade-off solutions, but I need to pick a single preferred design weighting objective two more heavily. How do I choose?",
+      "expected_output": "Invokes alterlab-pymoo: normalizes the objectives to [0,1], applies a multi-criteria decision-making method such as PseudoWeights with the user's preference weights (or knee-point / compromise programming), and returns the selected solution's decision variables and objective values.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "PseudoWeights" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-simpy",
+      "prompt": "I want to simulate a hospital emergency room where patients arrive randomly and compete for a limited number of doctors, and measure average waiting time and resource utilization over time.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-simpy. This is a discrete-event simulation of entities contending for shared resources over time, not a multi-objective optimization or Pareto-front computation.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-simpy" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-scikit-learn",
+      "prompt": "I have a labeled tabular dataset and want to tune the hyperparameters of a random forest classifier with cross-validated grid search to maximize accuracy.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scikit-learn. Hyperparameter tuning of a supervised ML model via grid search is a machine-learning task, not evolutionary multi-objective optimization with pymoo.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scikit-learn" }
+      ]
+    }
+  ]
+}

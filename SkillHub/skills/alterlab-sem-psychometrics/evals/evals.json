@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-sem-psychometrics",
+  "evals": [
+    {
+      "id": "cfa-fit",
+      "prompt": "I have a 3-factor questionnaire and want to run a confirmatory factor analysis and report whether it fits.",
+      "expected_output": "Invokes alterlab-sem-psychometrics: specifies the CFA in semopy (=~ syntax), fits it, reports CFI/TLI/RMSEA against Hu & Bentler cutoffs, and reports reliability with omega computed from the standardized loadings (not alpha alone).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "RMSEA" },
+        { "type": "behavior", "value": "Fits a CFA in semopy and reports fit indices against cutoffs plus omega reliability." }
+      ]
+    },
+    {
+      "id": "full-sem",
+      "prompt": "Fit a structural equation model where trust predicts satisfaction and satisfaction predicts loyalty, all latent.",
+      "expected_output": "Invokes alterlab-sem-psychometrics: writes the measurement (=~) and structural (~) parts in semopy, fits, and reports standardized path coefficients with model fit.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Builds a latent-variable SEM with measurement and structural parts and reports fit + standardized paths." }
+      ]
+    },
+    {
+      "id": "measurement-invariance",
+      "prompt": "Before I compare latent trust means across three countries, how do I test measurement invariance?",
+      "expected_output": "Invokes alterlab-sem-psychometrics: prescribes a multi-group CFA sequence configural -> metric -> scalar (-> strict), judged by ΔCFI/ΔRMSEA, and notes that scalar invariance is required before comparing latent means.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "invariance" }
+      ]
+    },
+    {
+      "id": "irt-2pl",
+      "prompt": "Fit an item response theory model to my dichotomous test items and give me item difficulty and discrimination.",
+      "expected_output": "Invokes alterlab-sem-psychometrics: uses a 2PL/Rasch IRT fit (girth twopl_mml / rasch_mml), returns discrimination and difficulty, and notes R mirt for polytomous/multidimensional needs.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Fits an IRT model and reports item discrimination/difficulty, flagging R mirt for models beyond 2PL." }
+      ]
+    },
+    {
+      "id": "near-miss-ssci-measurement-gate",
+      "prompt": "Should I even trust this scale? Is reliability the same as validity here?",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-ssci-measurement-gate. Whether to trust the scale (reliability vs validity discipline) is the gate decision, upstream of fitting a factor model.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-ssci-measurement-gate" }
+      ]
+    },
+    {
+      "id": "near-miss-statistical-analysis",
+      "prompt": "Run a plain multiple regression of income on age and education and give me the coefficients.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-statistical-analysis. There is no latent-variable / measurement model — it is observed-variable regression.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statistical-analysis" }
+      ]
+    }
+  ]
+}

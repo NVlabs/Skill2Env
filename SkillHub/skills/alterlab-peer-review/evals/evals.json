@@ -1,0 +1,54 @@
+{
+  "skill": "alterlab-peer-review",
+  "evals": [
+    {
+      "id": "manuscript-review",
+      "prompt": "I've been asked to peer review this clinical trial manuscript for a journal. Write me a structured, constructive review assessing the methodology, statistics, and reporting.",
+      "expected_output": "Invokes alterlab-peer-review: produces a structured, checklist-based review (initial assessment, methodology, statistical validity, reporting-standards compliance such as CONSORT, ethics, reproducibility), with constructive, actionable feedback and a recommendation.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "methodology" },
+        { "type": "behavior", "value": "Generates a structured peer review covering methods, statistics, and reporting-standards compliance with constructive feedback." }
+      ]
+    },
+    {
+      "id": "reporting-standards-check",
+      "prompt": "Review my observational cohort study manuscript against STROBE reporting standards and tell me what's missing before I submit.",
+      "expected_output": "Invokes alterlab-peer-review: checks the manuscript against the STROBE checklist item by item, flags missing or inadequately reported elements, and gives constructive guidance on how to address each gap.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "STROBE" },
+        { "type": "behavior", "value": "Assesses reporting-standards compliance (STROBE) systematically and lists missing elements." }
+      ]
+    },
+    {
+      "id": "grant-proposal-review",
+      "prompt": "Help me write a formal reviewer report for this grant proposal — assess the experimental design rigor and significance and give the applicant constructive feedback.",
+      "expected_output": "Invokes alterlab-peer-review: evaluates the proposal's significance, experimental-design rigor, feasibility, and statistical plan, then writes a structured reviewer report with constructive, specific feedback.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Produces a structured grant reviewer report assessing rigor and significance with constructive feedback." }
+      ]
+    },
+    {
+      "id": "near-miss-scholar-eval",
+      "prompt": "I need to score these five candidate papers on a numeric rubric and rank them for an award committee — give me a quantitative scoring framework with weighted criteria.",
+      "expected_output": "Does NOT invoke alterlab-peer-review; defers to alterlab-scholar-eval. The ask is a quantitative scoring/ranking framework with weighted criteria, not a constructive prose manuscript/grant review. Peer-review produces narrative reviewer reports; alterlab-scholar-eval produces numeric rubric scoring.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scholar-eval" },
+        { "type": "behavior", "value": "Distinguishes quantitative rubric scoring/ranking (alterlab-scholar-eval) from constructive peer-review prose and defers to the scoring skill." }
+      ]
+    },
+    {
+      "id": "near-miss-evidence-grading",
+      "prompt": "Don't write a reviewer report — I just want to grade the certainty of evidence in this RCT using GRADE and flag any confounders or causal-inference flaws in the design.",
+      "expected_output": "Does NOT invoke alterlab-peer-review; defers to alterlab-scientific-thinking. The ask is evidence-quality grading (GRADE) plus bias/confounder/causal-inference assessment, not a constructive submittable reviewer report.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scientific-thinking" },
+        { "type": "behavior", "value": "Recognizes evidence-grading and bias/causal-inference analysis as alterlab-scientific-thinking territory and defers rather than producing a peer-review report." }
+      ]
+    }
+  ]
+}

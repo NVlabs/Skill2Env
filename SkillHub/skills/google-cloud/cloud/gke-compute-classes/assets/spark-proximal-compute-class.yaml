@@ -1,0 +1,76 @@
+# EXAMPLE TEMPLATE - DO NOT DEPLOY
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: spark-zonal-class
+spec:
+  # Optimized for Apache Spark on GKE: 
+  # - Tier 1: C4D (Intel Granite Rapids) - Best price-performance with Titanium Local SSDs.
+  # - Tier 2: C4 fallback - High-performance Intel family with Titanium Local SSDs.
+  # - Tier 3: C3D fallback - High-performance AMD Genoa family with Titanium Local SSDs.
+  #
+  # PROXIMITY GUIDANCE:
+  # To minimize cross-zonal shuffle costs and latency, executors should be 
+  # co-located in the same zone as the driver using Pod Affinity.
+  #
+  nodePoolAutoCreation:
+    enabled: true
+
+  nodePoolConfig:
+    imageType: cos_containerd
+
+  # Disable activeMigration for batch stability. 
+  # Mid-job preemption of an executor forces expensive re-computation of the RDD lineage.
+  activeMigration:
+    optimizeRulePriority: false
+
+  autoscalingPolicy:
+    consolidationDelayMinutes: 5
+    consolidationThreshold: 50
+
+  priorityDefaults:
+    location:
+      zones: ['us-central1-a', 'us-central1-b', 'us-central1-c'] 
+      locationPolicy: ANY
+    
+    nodeSystemConfig:
+      linuxNodeConfig:
+        sysctls:
+          net.core.somaxconn: 2048
+          net.ipv4.tcp_tw_reuse: 1
+          vm.max_map_count: 262144
+          vm.swappiness: 1
+      
+      kubeletConfig:
+        cpuManagerPolicy: static
+
+  priorities:
+  - machineFamily: c4d  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    # C4D provides the absolute best price-performance for Spark per user analysis.
+    # Uses Titanium I/O offload for ultra-low latency shuffles.
+    storage:
+      bootDiskSize: 100
+      bootDiskType: hyperdisk-balanced 
+      localSSDCount: 2 
+    spot: false
+    priorityScore: 100
+
+  - machineFamily: c4  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    # C4 fallback maintaining Titanium Local SSD and 200Gbps+ networking.
+    storage:
+      bootDiskSize: 100
+      bootDiskType: hyperdisk-balanced 
+      localSSDCount: 2 
+    spot: false
+    priorityScore: 80
+
+  - machineFamily: c3d  # IMPORTANT: Align machineFamily with your existing CUDs/Reservations
+    # C3D (AMD) high-performance fallback with Local SSDs.
+    storage:
+      bootDiskSize: 100
+      bootDiskType: hyperdisk-balanced 
+      localSSDCount: 2 
+    spot: false
+    priorityScore: 60
+
+  whenUnsatisfiable: DoNotScaleUp # Strictly enforce high-performance tiers for Spark.

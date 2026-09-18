@@ -1,0 +1,63 @@
+{
+  "skill": "alterlab-pufferlib",
+  "evals": [
+    {
+      "id": "vectorized-ppo-training-throughput",
+      "prompt": "I'm training a PPO agent on Procgen coinrun and standard training is way too slow. I want to push hundreds of parallel environments and hit millions of steps per second on my GPU. How do I set this up?",
+      "expected_output": "Invokes alterlab-pufferlib: builds a vectorized environment with pufferlib.vector.make(env_creator, num_envs=256, num_workers=...) passing an env-constructor callable, trains with the PuffeRL (PPO+LSTM) trainer on device='cuda' using the evaluate()/train()/mean_and_log() loop, and tunes num_envs/num_workers/batch_size to maximize steps-per-second throughput.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "PuffeRL" },
+        { "type": "behavior", "value": "Uses pufferlib.vector.make with many parallel envs and the PuffeRL trainer to maximize steps-per-second, tuning num_envs/num_workers." }
+      ]
+    },
+    {
+      "id": "custom-pufferenv-implementation",
+      "prompt": "I need to build my own high-performance grid-world environment for RL. How do I implement it so it works with PufferLib's fast training and vectorization?",
+      "expected_output": "Invokes alterlab-pufferlib: implements a custom environment by subclassing PufferEnv, defining single_observation_space and single_action_space plus num_agents BEFORE calling super().__init__(buf), and implementing reset(seed) returning (obs, info-list) and step(action) returning (obs, rewards, terminals, truncations, info) with in-place buffer operations; suggests starting from scripts/env_template.py.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "PufferEnv" },
+        { "type": "behavior", "value": "Subclasses PufferEnv, defines observation/action spaces before super().__init__(buf), and implements reset/step with the PufferEnv signature." }
+      ]
+    },
+    {
+      "id": "multi-agent-pettingzoo-integration",
+      "prompt": "I have a cooperative multi-agent PettingZoo environment (knights_archers_zombies) and I want to train all agents with a shared policy at scale. How do I wrap and vectorize it in PufferLib?",
+      "expected_output": "Invokes alterlab-pufferlib: wraps the PettingZoo parallel_env in pufferlib.emulation.PettingZooPufferEnv via an env_creator callable, vectorizes with pufferlib.vector.make(env_creator, num_envs=...), and trains a shared policy built from env.single_observation_space / env.single_action_space using the PuffeRL trainer for native multi-agent RL.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "PettingZooPufferEnv" },
+        { "type": "behavior", "value": "Wraps the PettingZoo env with PettingZooPufferEnv, vectorizes it, and trains a shared multi-agent policy." }
+      ]
+    },
+    {
+      "id": "lstm-cnn-policy-development",
+      "prompt": "My environment gives image observations and the task is partially observable, so I think I need a recurrent CNN policy. How do I write the policy module for PufferLib training?",
+      "expected_output": "Invokes alterlab-pufferlib: builds the policy as a standard torch.nn.Module with a CNN encoder for image observations feeding an optimized LSTM for the partially-observable/recurrent component, with separate actor and critic heads, using layer_init from pufferlib.pytorch for proper weight initialization (actor std=0.01, critic std=1.0); points to references/policies.md.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "layer_init" },
+        { "type": "behavior", "value": "Builds a CNN+LSTM torch.nn.Module policy with actor/critic heads using layer_init from pufferlib.pytorch." }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-stable-baselines3",
+      "prompt": "I just want to quickly prototype a standard PPO agent on CartPole-v1 using a well-documented, off-the-shelf implementation with sensible defaults. I don't care about squeezing out maximum throughput, I just want something that works in a few lines.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-stable-baselines3. The user explicitly wants quick prototyping with a standard, well-documented off-the-shelf algorithm rather than high-throughput vectorized scaling, which is stable-baselines3's territory rather than PufferLib's.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-stable-baselines3" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-pytorch-lightning",
+      "prompt": "I'm training a supervised image classifier with a CNN and I want clean multi-GPU training, checkpointing, and logging boilerplate handled for me. How should I structure the training loop?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pytorch-lightning. The user is doing supervised deep learning (image classification), not reinforcement learning with environments and policies, so the general training-loop organization belongs to pytorch-lightning rather than PufferLib's RL-specific tooling.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pytorch-lightning" }
+      ]
+    }
+  ]
+}

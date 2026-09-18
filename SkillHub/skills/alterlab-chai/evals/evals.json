@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-chai",
+  "evals": [
+    {
+      "id": "antibody-antigen",
+      "prompt": "Predict the structure of my antibody Fv bound to its antigen. I have both sequences and want to see the predicted binding interface.",
+      "expected_output": "Invokes alterlab-chai: folds the antibody and antigen as a complex from a single typed FASTA with Chai-1, and reports the interface confidence so the user can judge the predicted paratope–epitope contact. Notes GPU/weights and dispatch via alterlab-remote-compute.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "interface" },
+        { "type": "behavior", "value": "Treats it as an antibody–antigen complex prediction and reads interface confidence." }
+      ]
+    },
+    {
+      "id": "mixed-assembly",
+      "prompt": "I have one FASTA describing a protein, an RNA strand, and a small-molecule cofactor. Fold the whole assembly together with Chai.",
+      "expected_output": "Invokes alterlab-chai: reads the single typed FASTA (protein/rna/ligand records), predicts the multi-entity complex in one pass, and returns per-entity confidence.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "FASTA" }
+      ]
+    },
+    {
+      "id": "restraint-guided",
+      "prompt": "I know two residues that should be in contact at the interface. Can Chai use that as a restraint to guide the complex prediction?",
+      "expected_output": "Invokes alterlab-chai and explains running the complex prediction with contact restraints to bias toward the known interface, verifying the restraint format for the installed version.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Incorporates user-provided restraints into the Chai-1 prediction." }
+      ]
+    },
+    {
+      "id": "near-miss-boltz",
+      "prompt": "For this protein–ligand complex I mainly need a predicted binding affinity to rank a few analogs.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-boltz, whose Boltz-2 model predicts binding affinity alongside the co-folded pose. Chai-1 predicts complex structure but is not the affinity-ranking tool.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-boltz" }
+      ]
+    },
+    {
+      "id": "near-miss-alphafold",
+      "prompt": "Just fold this single enzyme sequence into its 3D structure — there's no antibody, ligand, or other chain.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-alphafold. A single-protein fold with no other entities is AlphaFold2/ColabFold's job; Chai-1 is for multi-entity complexes.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-alphafold" }
+      ]
+    }
+  ]
+}

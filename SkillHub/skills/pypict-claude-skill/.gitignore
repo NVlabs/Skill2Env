@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# PICT generated files (optional - keep for examples)
+# *.txt
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Claude specific
+.claude/
+*.claude
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
+temp/
+tmp/
+CLAUDE.md
+.specify/*
+
+# Blog articles and drafts
+blog-article.md
+blog-article-image-prompts.md

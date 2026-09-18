@@ -1,0 +1,65 @@
+{
+  "skill": "alterlab-accreditation-aol",
+  "evals": [
+    {
+      "id": "aacsb-standard5-aol-portfolio",
+      "prompt": "Our business school is up for AACSB reaccreditation and our Standard 5 Assurance of Learning section is weak. For our MBA program I need help defining degree-level competency goals and laying out an assessment portfolio that uses both direct and indirect measures. Can you scaffold that?",
+      "expected_output": "Invokes alterlab-accreditation-aol in AACSB AoL mode: works at the degree-program (MBA) level, helps define program competency goals that derive from the school's mission and are reported at the degree level (not the major level), and lays out an assessment plan that pairs direct measures (exams, rubric-scored assignments, internship feedback) with indirect measures (employer/alumni surveys, focus groups), consistent with AACSB 2020 Standard 5.1. Does not invent competency text or assessment results; flags missing data as TODO and points to references/accreditor_standards.md for the verbatim standard.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Treats the work as program-level (MBA) Assurance of Learning under AACSB Standard 5, and insists on BOTH direct and indirect measures across the portfolio rather than indirect surveys alone." }
+      ]
+    },
+    {
+      "id": "abet-criterion3-curriculum-map",
+      "prompt": "I'm the assessment coordinator for our mechanical engineering program preparing the ABET self-study. I have our required course list and I need to build a curriculum map showing where each of the seven student outcomes is introduced, reinforced, and mastered, and check there are no coverage gaps before we submit.",
+      "expected_output": "Invokes alterlab-accreditation-aol in ABET Criterion 3 mapping mode: uses the seven ABET engineering (EAC) student outcomes quoted verbatim (not paraphrased), helps build a curriculum-to-outcome mapping matrix with Introduced/Reinforced/Mastered coverage levels, and runs scripts/aol_matrix.py to detect any outcome that no course covers or that is covered but never assessed. Reports per-outcome coverage and a program verdict (OK/GAPS) rather than eyeballing the matrix.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Builds an outcome-to-course mapping matrix against the ABET engineering student outcomes and uses scripts/aol_matrix.py to flag any outcome with no assessment point, instead of declaring coverage by inspection." }
+      ]
+    },
+    {
+      "id": "closing-the-loop-narrative",
+      "prompt": "Our program assessment data came back and one of our program learning outcomes missed its target — only 62% of students were rated proficient against our 75% benchmark. The accreditor wants to see that we 'closed the loop'. Help me write the continuous-improvement narrative.",
+      "expected_output": "Invokes alterlab-accreditation-aol in closing-the-loop mode: structures the continuous-improvement narrative as result (measure vs target) -> interpretation -> action (specific curriculum/process change with owner and date) -> re-assessment point, per references/closing_the_loop.md. Stresses that an action without a re-assessment is not a closed loop and that data without an action is the most common finding. Uses only the user's supplied numbers and marks anything missing as TODO; does not fabricate scores or actions.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Produces a result -> interpretation -> action -> re-assessment closing-the-loop narrative and insists the loop is only closed when a re-assessment point is named, without inventing figures." }
+      ]
+    },
+    {
+      "id": "plo-mapping-matrix-gap-check",
+      "prompt": "Here is our program's curriculum-to-outcome matrix as a CSV (courses as rows, learning outcomes as columns, cells marked I/R/M). Before our program review, can you check whether every outcome is actually assessed somewhere and flag any gaps?",
+      "expected_output": "Invokes alterlab-accreditation-aol to validate the mapping matrix structurally: runs scripts/aol_matrix.py over the CSV, reports per outcome whether it is covered at all and whether it has at least one assessment-level (M/A) cell, lists any orphan courses, and returns an OK/GAPS verdict. Notes that the script checks structure and coverage only, not whether the pedagogy is sound.",
+      "files": [
+        {
+          "name": "matrix.csv",
+          "content": "course,PLO1,PLO2,PLO3,PLO4\nCORE101,I,I,,\nCORE210,R,,I,R\nCORE320,R,R,R,\nCAPSTONE,M,M,,M\n"
+        }
+      ],
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Runs the matrix validator and identifies PLO3 as a coverage gap (covered but never assessed at M/A), returning a GAPS verdict rather than passing the matrix." }
+      ]
+    },
+    {
+      "id": "near-miss-teaching-design-course-rubric",
+      "prompt": "I'm redesigning my single graduate seminar for next semester. I need a week-by-week schedule, in-class activities, and a grading rubric for the final paper in this one course. Can you help me design the course?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-teaching-design. The request is single-course design — a weekly schedule, activities, and a course-grade rubric for one class — not program-level Assurance of Learning. alterlab-accreditation-aol works at the degree-program level (program outcomes, curriculum maps, AoL portfolios); designing one course and its grading rubric is alterlab-teaching-design's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-teaching-design" }
+      ]
+    },
+    {
+      "id": "near-miss-grant-reporting-final-report",
+      "prompt": "My TUBITAK-funded project is wrapping up and I need to write the final project report for the funder — milestones achieved, deliverables, and the budget-vs-actual narrative. Can you help me draft it?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-grant-reporting (and, for the Turkish funder specifics, alterlab-tubitak-proposal as noted there). The user needs a post-award grant final report with milestone and budget-variance narratives, not program accreditation Assurance-of-Learning material. alterlab-accreditation-aol drafts AACSB/ABET AoL documentation, not funder progress/final reports.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-grant-reporting" }
+      ]
+    }
+  ]
+}

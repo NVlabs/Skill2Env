@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-alphafold",
+  "evals": [
+    {
+      "id": "fold-monomer",
+      "prompt": "I have a protein sequence in a FASTA file and no known structure. Predict its 3D structure with AlphaFold and tell me how confident the prediction is.",
+      "expected_output": "Invokes alterlab-alphafold: runs colabfold_batch on the FASTA (MMseqs2 MSA), produces ranked PDB/mmCIF models, and interprets pLDDT/pTM (and PAE) so the user knows which regions are reliable. Notes a CUDA GPU is required and heavy runs dispatch via alterlab-remote-compute.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "pLDDT" },
+        { "type": "behavior", "value": "Runs ColabFold/AlphaFold2 and interprets confidence metrics rather than just returning coordinates." }
+      ]
+    },
+    {
+      "id": "fold-complex-multimer",
+      "prompt": "Will these two proteins form a complex? Here are both chains — predict the dimer structure and score the interface.",
+      "expected_output": "Invokes alterlab-alphafold in AF2-Multimer mode: folds the two chains as one complex (colon-joined FASTA or multi-record), reports ipTM and the inter-chain PAE to judge the predicted interface, not just intra-chain pLDDT.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ipTM" }
+      ]
+    },
+    {
+      "id": "design-self-consistency",
+      "prompt": "I designed a new sequence for a target backbone. Can you refold it with AlphaFold and check whether it actually folds back to the intended shape?",
+      "expected_output": "Invokes alterlab-alphafold for a self-consistency check: refolds the designed sequence, compares to the target backbone (TM-score/RMSD), and accepts only if it returns to the target with high pLDDT and low PAE — the acceptance gate in a design→fold→score loop.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Frames the refold as a self-consistency validation against the intended backbone." }
+      ]
+    },
+    {
+      "id": "rank-and-confidence",
+      "prompt": "AlphaFold gave me five models for my protein. How do I pick the best one and decide if the disordered-looking tail is real or just low confidence?",
+      "expected_output": "Invokes alterlab-alphafold: ranks by pLDDT/pTM, selects rank 1, and explains that a low-pLDDT tail (<50) likely indicates disorder/unreliability rather than a confident extended conformation.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "rank" }
+      ]
+    },
+    {
+      "id": "near-miss-boltz",
+      "prompt": "I want to co-fold my protein together with a small-molecule ligand (I have the SMILES) and estimate the binding affinity.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-boltz. AlphaFold2/ColabFold folds proteins and protein complexes but does not co-fold arbitrary small-molecule ligands or predict binding affinity — that is alterlab-boltz's (open AlphaFold3-alternative) job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-boltz" }
+      ]
+    },
+    {
+      "id": "near-miss-alphafold-db",
+      "prompt": "What's the AlphaFold predicted structure for human P53? I just want to download the existing model, not run anything.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-alphafold-db, which retrieves precomputed AlphaFold DB predictions by UniProt accession. This skill runs folding; it should not be used to fetch an already-computed model.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-alphafold-db" }
+      ]
+    }
+  ]
+}

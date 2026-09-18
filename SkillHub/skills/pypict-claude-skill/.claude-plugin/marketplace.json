@@ -1,0 +1,23 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "pypict-claude-skill",
+  "version": "1.0.0",
+  "description": "PICT Test Designer - Comprehensive test case design using Pairwise Independent Combinatorial Testing",
+  "owner": {
+    "name": "Omar Kamal Hosney",
+    "email": "omar.wasat@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "pict-test-designer",
+      "description": "Design comprehensive test cases using PICT (Pairwise Independent Combinatorial Testing). Analyzes inputs, generates PICT models with parameters, values, and constraints for valid scenarios using pairwise testing. Outputs the PICT model, markdown table of test cases, and expected results.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Omar Kamal Hosney",
+        "email": "omar.wasat@gmail.com"
+      },
+      "source": "./",
+      "category": "testing"
+    }
+  ]
+}

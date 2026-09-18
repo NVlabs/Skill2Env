@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{report_title}}</title>
+  <style>
+    :root {
+      --color-primary: #1A365D;
+      --color-secondary: #2D5B8C;
+      --color-accent: #667EEA;
+      --color-highlight: #DD6B20;
+      --color-success: #10B981;
+      --color-danger: #EF4444;
+      --color-warning: #F59E0B;
+      --text-primary: #2D3748;
+      --text-secondary: #718096;
+      --bg-light: #F7FAFC;
+      --bg-card: #FFFFFF;
+      --border-color: #E2E8F0;
+      --page-bg: #C9CED1;
+      --chart-bg: #F1F5F9;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      font-size: 14px;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--page-bg);
+      min-height: 100vh;
+    }
+
+    /* ===== Page container ===== */
+    .page {
+      max-width: 900px;
+      margin: 0 auto 20px;
+      background: var(--page-bg);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    /* ===== cover page ===== */
+    .cover-page {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0F2942 0%, #1A365D 40%, #2D5B8C 100%);
+      color: white;
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .cover-page::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image:
+        radial-gradient(ellipse at 30% 50%, rgba(102,126,234,0.15) 0%, transparent 60%),
+        radial-gradient(circle at 70% 80%, rgba(255,255,255,0.05) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    .cover-left {
+      flex: 0 0 35%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-number {
+      font-size: 280px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.08);
+      line-height: 1;
+      letter-spacing: -10px;
+      position: absolute;
+      left: -30px;
+    }
+
+    .cover-right {
+      flex: 1;
+      padding: 60px 80px 60px 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-size: 12px;
+      letter-spacing: 2px;
+      margin-bottom: 40px;
+      border: 1px solid rgba(255,255,255,0.15);
+      text-transform: uppercase;
+    }
+
+    .cover-title {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      margin-bottom: 20px;
+      line-height: 1.3;
+    }
+
+    .cover-subtitle {
+      font-size: 24px;
+      opacity: 0.9;
+      margin-bottom: 50px;
+      letter-spacing: 2px;
+      font-weight: 400;
+    }
+
+    .cover-divider {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #DD6B20 0%, #F6AD55 100%);
+      border-radius: 2px;
+      margin-bottom: 40px;
+    }
+
+    .cover-meta {
+      font-size: 18px;
+      opacity: 0.85;
+      letter-spacing: 2px;
+    }
+
+    .cover-date {
+      font-size: 18px;
+      opacity: 0.75;
+      letter-spacing: 2px;
+      margin-top: 15px;
+    }
+
+    .cover-footer {
+      position: absolute;
+      bottom: 40px;
+      left: 80px;
+      right: 80px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      opacity: 0.6;
+      letter-spacing: 1px;
+    }
+
+    /* ===== TOC page ===== */
+    .toc-page {
+      padding: 80px;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #FFFFFF 0%, var(--page-bg) 100%);
+    }
+
+    .toc-header {
+      margin-bottom: 50px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid var(--color-primary);
+    }
+
+    .toc-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: 8px;
+    }
+
+    .toc-item {
+      display: flex;
+      padding: 18px 0;
+      border-bottom: 1px dashed var(--border-color);
+      align-items: center;
+    }
+
+    .toc-number {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #1A365D 0%, #2D5B8C 100%);
+      color: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      margin-right: 25px;
+      box-shadow: 0 4px 12px rgba(26,54,93,0.3);
+    }
+
+    .toc-text {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .toc-page-num {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .toc-conclusion {
+      background: linear-gradient(135deg, #FFF5F5 0%, #FFF 100%);
+      border-left: 4px solid var(--color-highlight);
+      padding: 25px 30px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 40px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .toc-conclusion-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-highlight);
+      margin-bottom: 12px;
+    }
+
+    /* ===== Chapter pages ===== */
+    .chapter-section { background: var(--page-bg); }
+
+    .chapter-header {
+      background: linear-gradient(135deg, #1A365D 0%, #2D5B8C 100%);
+      color: white;
+      padding: 40px 50px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chapter-header::after {
+      content: '';
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 200px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 100%);
+    }
+
+    .chapter-num {
+      font-size: 60px;
+      font-weight: 700;
+      opacity: 0.3;
+      margin-right: 25px;
+    }
+
+    .chapter-name {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: 2px;
+    }
+
+    .chapter-body {
+      padding: 40px 50px;
+      background: linear-gradient(180deg, #FFFFFF 0%, var(--page-bg) 100%);
+    }
+
+    /* ===== Body typography ===== */
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin: 30px 0 15px;
+      padding-left: 15px;
+      border-left: 4px solid var(--color-accent);
+    }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 20px 0 12px;
+      color: var(--text-primary);
+    }
+
+    h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 16px 0 8px;
+      color: var(--text-primary);
+    }
+
+    p {
+      margin-bottom: 12px;
+      color: var(--text-secondary);
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin: 12px 0 12px 24px;
+    }
+
+    li {
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+    }
+
+    strong { color: var(--text-primary); }
+
+    /* ===== Highlight boxes ===== */
+    .highlight-box {
+      background: linear-gradient(135deg, #EFF6FF 0%, #FFF 100%);
+      border-left: 4px solid var(--color-accent);
+      padding: 20px 25px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .highlight-box.yellow {
+      background: linear-gradient(135deg, #FFFBEB 0%, #FFF 100%);
+      border-left-color: #F59E0B;
+    }
+
+    .highlight-box.red {
+      background: linear-gradient(135deg, #FEF2F2 0%, #FFF 100%);
+      border-left-color: var(--color-highlight);
+    }
+
+    .highlight-box.green {
+      background: linear-gradient(135deg, #F0FDF4 0%, #FFF 100%);
+      border-left-color: var(--color-success);
+    }
+
+    .highlight-text {
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    /* ===== Data card grid ===== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 25px 0;
+    }
+
+    .stats-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .stats-grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+    .stat-card {
+      background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%);
+      border-radius: 12px;
+      padding: 24px 16px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 24px;
+    }
+
+    .stat-icon.red { background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%); }
+    .stat-icon.green { background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); }
+    .stat-icon.purple { background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%); }
+    .stat-icon.blue { background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%); }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-value.red { color: var(--color-highlight); }
+    .stat-value.green { color: var(--color-success); }
+    .stat-value.purple { color: var(--color-accent); }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .stat-trend {
+      font-size: 11px;
+      margin-top: 8px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    .stat-trend.up { background: #D1FAE5; color: #059669; }
+    .stat-trend.down { background: #FEE2E2; color: #DC2626; }
+
+    /* ===== Visual charts ===== */
+    .chart-container {
+      background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border: 1px solid var(--border-color);
+    }
+
+    .chart-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #E2E8F0;
+    }
+
+    /* Chart rendering is centralized in ECharts; legacy CSS charts were removed. */
+
+    /* ===== Tables ===== */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 13px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .data-table th {
+      background: linear-gradient(180deg, #1A365D 0%, #2D5B8C 100%);
+      color: white;
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .data-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      background: white;
+    }
+
+    .data-table tr:nth-child(even) td { background: var(--bg-light); }
+    .data-table tr:last-child td { border-bottom: none; }
+
+    /* ===== Strategy cards ===== */
+    .strategy-card {
+      display: flex;
+      padding: 22px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .strategy-card.blue { background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); }
+    .strategy-card.green { background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); }
+    .strategy-card.yellow { background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); }
+    .strategy-card.red { background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%); }
+
+    .strategy-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      margin-right: 20px;
+      color: white;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .strategy-card.blue .strategy-num { background: linear-gradient(135deg, #2D5B8C 0%, #1A365D 100%); }
+    .strategy-card.green .strategy-num { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
+    .strategy-card.yellow .strategy-num { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+    .strategy-card.red .strategy-num { background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); }
+
+    .strategy-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .strategy-card.blue .strategy-title { color: var(--color-secondary); }
+    .strategy-card.green .strategy-title { color: #059669; }
+    .strategy-card.yellow .strategy-title { color: #D97706; }
+    .strategy-card.red .strategy-title { color: #DC2626; }
+
+    .strategy-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ===== Insight cards ===== */
+    .insight-card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .insight-card h4 {
+      margin-top: 0;
+      color: var(--color-primary);
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    .insight-card p {
+      margin-bottom: 8px;
+    }
+
+    /* ===== label/Badge ===== */
+    .tag {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .tag-p0 { background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%); color: var(--color-highlight); border: 1px solid #FECACA; }
+    .tag-p1 { background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); color: var(--color-secondary); border: 1px solid #BFDBFE; }
+    .tag-p2 { background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); color: #059669; border: 1px solid #A7F3D0; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .badge-high { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+    .badge-medium { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
+    .badge-low { background: #F0FDF4; color: #059669; border: 1px solid #A7F3D0; }
+    .badge-a { background: #D1FAE5; color: #059669; border: 1px solid #A7F3D0; }
+    .badge-b { background: #DBEAFE; color: #2563EB; border: 1px solid #BFDBFE; }
+    .badge-c { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
+
+    /* ===== Quotes ===== */
+    blockquote {
+      margin: 20px 0;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #EFF6FF 0%, #FFF 100%);
+      border-left: 4px solid var(--color-accent);
+      border-radius: 0 8px 8px 0;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* ===== page number ===== */
+    .page-number {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-secondary);
+      padding-top: 20px;
+      margin-top: 30px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .text-highlight {
+      color: var(--color-highlight);
+      font-weight: 600;
+    }
+
+    /* ===== footer page ===== */
+    .footer-page {
+      background: linear-gradient(135deg, #0F2942 0%, #1A365D 40%, #2D5B8C 100%);
+      min-height: 50vh;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-page::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: radial-gradient(ellipse at 50% 30%, rgba(102,126,234,0.2) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .footer-content { position: relative; z-index: 1; }
+    .footer-icon { font-size: 48px; margin-bottom: 30px; opacity: 0.9; }
+
+    .footer-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 25px;
+      letter-spacing: 8px;
+    }
+
+    .footer-divider {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #DD6B20 0%, #F6AD55 100%);
+      border-radius: 2px;
+      margin: 0 auto 30px;
+    }
+
+    .footer-text {
+      font-size: 15px;
+      opacity: 0.85;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    .footer-date {
+      font-size: 13px;
+      opacity: 0.6;
+      margin-top: 25px;
+      letter-spacing: 1px;
+    }
+
+    .footer-cta {
+      margin-top: 40px;
+      padding-top: 25px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .footer-cta a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 1px;
+      transition: color 0.2s;
+    }
+
+    .footer-cta a:hover {
+      color: #F6AD55;
+    }
+
+    /* ===== Print button ===== */
+    .no-print {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+    }
+
+    .print-btn {
+      background: linear-gradient(135deg, #1A365D 0%, #2D5B8C 100%);
+      color: white;
+      border: none;
+      padding: 14px 35px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(26,54,93,0.4);
+      transition: all 0.3s;
+    }
+
+    .print-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(26,54,93,0.5);
+    }
+
+    /* ===== Responsive layout ===== */
+    @media (max-width: 768px) {
+      .cover-page { flex-direction: column; }
+      .cover-left { display: none; }
+      .cover-right { padding: 40px 24px; }
+      .cover-title { font-size: 32px; letter-spacing: 2px; }
+      .toc-page { padding: 40px 24px; }
+      .chapter-body { padding: 24px; }
+      .chapter-header { padding: 24px; }
+      .stats-grid, .stats-grid-3 { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ===== Print styles ===== */
+    @media print {
+      @page { margin: 1.5cm; size: A4; }
+      body { background: white; }
+      .page { box-shadow: none; margin: 0; }
+      .no-print { display: none !important; }
+      .cover-page { min-height: auto; page-break-after: always; }
+      .toc-page { page-break-after: always; }
+      .chapter-section { page-break-before: always; }
+      .stat-card:hover { transform: none; box-shadow: none; }
+      h2, h3, h4 { page-break-after: avoid; }
+      .data-table, .chart-container, .highlight-box { page-break-inside: avoid; }
+    }
+  </style>
+  <!-- ECharts visualization library (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+</head>
+<body>
+
+  <!-- ===== cover page ===== -->
+  <div class="page cover-page">
+    <div class="cover-left">
+      <div class="cover-number">AI</div>
+    </div>
+    <div class="cover-right">
+      <div class="cover-badge">Alpha Insights - BizAdvisor</div>
+      <h1 class="cover-title">{{report_title}}</h1>
+      <p class="cover-subtitle">{{report_subtitle}}</p>
+      <div class="cover-divider"></div>
+      <p class="cover-meta">{{author}}</p>
+      <p class="cover-date">{{date}}</p>
+    </div>
+    <div class="cover-footer">
+      <span>{{confidentiality}}</span>
+      <span>{{version}}</span>
+    </div>
+  </div>
+
+  <!-- ===== TOC page ===== -->
+  <div class="page toc-page">
+    <div class="toc-header">
+      <div class="toc-title">Contents</div>
+    </div>
+
+    {{toc_list}}
+    <!-- Example:
+    <div class="toc-item">
+      <div class="toc-number">1</div>
+      <span class="toc-text">chapter title</span>
+    </div>
+    -->
+
+    <div class="toc-conclusion">
+      <div class="toc-conclusion-title">Core Conclusion</div>
+      <div class="toc-conclusion-text">{{core_conclusion}}</div>
+    </div>
+  </div>
+
+  <!-- ===== Chapter content ===== -->
+  {{chapter_content}}
+
+  <script type="text/plain" id="chapter-template-example">
+  ============================================================
+  Chapter template example (LLM may generate multiple as needed):
+
+  <div class="page chapter-section">
+    <div class="chapter-header">
+      <div class="chapter-num">01</div>
+      <div class="chapter-name">chapter title</div>
+    </div>
+    <div class="chapter-body">
+
+      <h2>section title</h2>
+      <p>body paragraph</p>
+
+      <!-- Highlight box (blue/yellow/red/green) -->
+      <div class="highlight-box yellow">
+        <div class="highlight-text"><strong>Key finding:</strong>content</div>
+      </div>
+
+      <!-- Data cards (4/3/2 columns) -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">📊</div>
+          <div class="stat-value">value</div>
+          <div class="stat-label">label</div>
+          <div class="stat-trend up">+12%</div>
+        </div>
+      </div>
+
+      <!-- ECharts chart container (JS initialization generated by Python) -->
+      <div class="chart-container">
+        <div id="chart-example" style="width:100%;height:350px;"></div>
+      </div>
+
+      <!-- Table -->
+      <table class="data-table">
+        <tr><th>Column 1</th><th>Column 2</th><th>Column 3</th></tr>
+        <tr><td>data</td><td>data</td><td>data</td></tr>
+      </table>
+
+      <!-- Strategy/recommendation card (blue/green/yellow/red) -->
+      <div class="strategy-card blue">
+        <div class="strategy-num">1</div>
+        <div>
+          <div class="strategy-title">strategy title</div>
+          <div class="strategy-desc">strategy description</div>
+        </div>
+      </div>
+
+      <!-- Insight card -->
+      <div class="insight-card">
+        <h4>insight title</h4>
+        <p><strong>Finding:</strong>content</p>
+        <p><strong>Implication:</strong>content</p>
+        <p><strong>Recommendation:</strong>content</p>
+        <p><strong>Confidence:</strong><span class="badge badge-a">High</span></p>
+      </div>
+
+      <!-- label -->
+      <span class="tag tag-p0">P0 Critical</span>
+      <span class="tag tag-p1">P1 Important</span>
+      <span class="badge badge-high">High</span>
+      <span class="badge badge-medium">Medium</span>
+      <span class="badge badge-low">Low</span>
+
+      <!-- Quote -->
+      <blockquote>quoted content</blockquote>
+
+      <div class="page-number">— page number —</div>
+    </div>
+  </div>
+  ============================================================
+  </script>
+
+  <!-- ===== footer page ===== -->
+  <div class="page footer-page">
+    <div class="footer-content">
+      <div class="footer-icon">📋</div>
+      <div class="footer-title">{{report_title}}</div>
+      <div class="footer-divider"></div>
+      <div class="footer-text">Generated by Alpha Insights-BizAdvisor</div>
+      <div class="footer-text">{{confidentiality}} · Do not distribute</div>
+      <div class="footer-date">{{date}}</div>
+      <div class="footer-cta">
+        <a href="https://github.com/Ericyoung-183/alpha-insights" target="_blank">Star Alpha Insights on GitHub</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print button -->
+  <div class="no-print">
+    <button class="print-btn" onclick="window.print()">Print / Export PDF</button>
+  </div>
+
+  <!-- Chart render fallback: detect blank charts and show a hint -->
+  <script>
+    window.addEventListener('load', function() {
+      document.querySelectorAll('.chart-container [id^="chart"]').forEach(function(el) {
+        var instance = window.echarts && echarts.getInstanceByDom(el);
+        if (!instance) {
+          el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;min-height:200px;color:#94a3b8;font-size:14px;border:2px dashed #e2e8f0;border-radius:8px;padding:20px;text-align:center;">'
+            + '<div>⚠️ Chart did not render<br><span style="font-size:12px;color:#cbd5e1;">Possible cause: data loading failed. Check the report generation log or contact the researcher.</span></div>'
+            + '</div>';
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,198 @@
+{
+  "skill_name": "slurm-job-script-generator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Generate a SLURM script for a pure MPI job. I need 2 nodes, 64 tasks per node, 30 minutes walltime, on the compute partition. The command is 'mpirun ./lammps -in input.lammps'. Load gcc/12 and openmpi/4.1 modules. Job name: lammps-scaling.",
+      "expected_output": "Agent generates a pure MPI SLURM sbatch script with correct directives for 2 nodes, 128 total tasks, 1 cpu per task, and proper module loading. Because the run command already begins with a launcher (mpirun), the agent passes --launcher none so the generator does not double-wrap it in srun.",
+      "assertions": [
+        "Invokes scripts/slurm_script_generator.py with --job-name lammps-scaling --time 00:30:00 --partition compute --nodes 2 --ntasks-per-node 64 --cpus-per-task 1 --module gcc/12 --module openmpi/4.1 --launcher none",
+        "Generated script includes #SBATCH directives for nodes, ntasks-per-node, time, partition, and job-name",
+        "All #SBATCH directives appear immediately after the shebang and before any executable command (no #SBATCH line follows the first non-comment, non-blank line)",
+        "Sets cpus-per-task to 1 for pure MPI layout",
+        "Includes module load commands for gcc/12 and openmpi/4.1 before the run command",
+        "Run line is 'mpirun ./lammps -in input.lammps' with no srun wrapper (no double launcher)"
+      ],
+      "script_checks": [
+        {
+          "description": "Pure MPI: 2 nodes x 64 tasks/node = 128 ntasks, cpus-per-task=1, launcher none (no srun wrap on mpirun)",
+          "cmd": [
+            "scripts/slurm_script_generator.py",
+            "--job-name", "lammps-scaling",
+            "--time", "00:30:00",
+            "--partition", "compute",
+            "--nodes", "2",
+            "--ntasks-per-node", "64",
+            "--cpus-per-task", "1",
+            "--module", "gcc/12",
+            "--module", "openmpi/4.1",
+            "--launcher", "none",
+            "--json",
+            "--",
+            "mpirun", "./lammps", "-in", "input.lammps"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.derived.ntasks", "op": "eq", "value": 128},
+            {"path": "results.derived.ntasks_per_node", "op": "eq", "value": 64},
+            {"path": "results.derived.cpus_total_requested", "op": "eq", "value": 128},
+            {"path": "results.run_line", "op": "eq", "value": "mpirun ./lammps -in input.lammps"},
+            {"path": "results.directives", "op": "contains", "value": "#SBATCH --ntasks-per-node=64"},
+            {"path": "results.directives", "op": "contains", "value": "#SBATCH --cpus-per-task=1"},
+            {"path": "results.directives", "op": "contains", "value": "#SBATCH --partition=compute"},
+            {"path": "results.directives", "op": "contains", "value": "#SBATCH --time=00:30:00"},
+            {"path": "results.warnings", "op": "eq", "value": []}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I need an sbatch script for a hybrid MPI+OpenMP job. 4 nodes, 16 MPI ranks per node, 8 OpenMP threads per rank. Walltime 2 hours. 128 cores per node on the cluster. Partition: parallel. Run command: srun ./vasp_std",
+      "expected_output": "Agent generates a hybrid MPI+OpenMP SLURM script with correct cpus-per-task=8, OMP_NUM_THREADS=8, and validates against 128 cores per node.",
+      "assertions": [
+        "Invokes scripts/slurm_script_generator.py with --job-name, --time 02:00:00 --nodes 4 --ntasks-per-node 16 --cpus-per-task 8 --partition parallel",
+        "Sets cpus-per-task to 8 matching the OpenMP thread count",
+        "Generated script exports OMP_NUM_THREADS=8",
+        "Validates that 16 tasks x 8 cpus = 128 does not exceed cores per node"
+      ],
+      "script_checks": [
+        {
+          "description": "Hybrid MPI+OpenMP: cpus-per-task=8, OMP_NUM_THREADS=8 in script, 16x8=128 cpus/node exactly fills 128 cores/node (no oversubscription warning)",
+          "cmd": [
+            "scripts/slurm_script_generator.py",
+            "--job-name", "vasp-hybrid",
+            "--time", "02:00:00",
+            "--nodes", "4",
+            "--ntasks-per-node", "16",
+            "--cpus-per-task", "8",
+            "--partition", "parallel",
+            "--cores-per-node", "128",
+            "--launcher", "none",
+            "--json",
+            "--",
+            "srun", "./vasp_std"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.derived.ntasks", "op": "eq", "value": 64},
+            {"path": "results.derived.cpus_per_node_requested", "op": "eq", "value": 128},
+            {"path": "results.derived.cores_per_node", "op": "eq", "value": 128},
+            {"path": "results.derived.cpus_total_requested", "op": "eq", "value": 512},
+            {"path": "results.directives", "op": "contains", "value": "#SBATCH --cpus-per-task=8"},
+            {"path": "results.directives", "op": "contains", "value": "#SBATCH --ntasks-per-node=16"},
+            {"path": "results.script", "op": "contains", "value": "export OMP_NUM_THREADS=8"},
+            {"path": "results.warnings", "op": "eq", "value": []}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Generate a GPU job script: 1 node, 4 GPUs, 30 MPI tasks, 2 hours, partition gpu, 64G memory per node. Command: ./gpu_sim --config params.json. Job name: gpu-phasefield.",
+      "expected_output": "Agent generates a GPU-enabled SLURM script with the correct GPU resource directive (#SBATCH --gres=gpu:4), per-node memory allocation, and a warning that the task-to-GPU ratio is not an integer (30 tasks do not divide evenly across 4 GPUs).",
+      "assertions": [
+        "Invokes scripts/slurm_script_generator.py with --nodes 1 --ntasks 30 --gpus-per-node 4 --mem 64G --time 02:00:00 --partition gpu --job-name gpu-phasefield",
+        "Generated script includes a GPU resource directive (#SBATCH --gres=gpu:4)",
+        "Uses --mem 64G for per-node memory (not --mem-per-cpu)",
+        "results.warnings contains a message that the task-to-GPU ratio is not an integer (ntasks=30 not divisible by total GPUs=4)",
+        "results.derived reports total_gpus=4 and ranks_per_gpu=7.5"
+      ],
+      "script_checks": [
+        {
+          "description": "GPU job: --gres=gpu:4 directive, --mem 64G, total_gpus=4, ranks_per_gpu=7.5, non-integer task-to-GPU warning",
+          "cmd": [
+            "scripts/slurm_script_generator.py",
+            "--job-name", "gpu-phasefield",
+            "--time", "02:00:00",
+            "--partition", "gpu",
+            "--nodes", "1",
+            "--ntasks", "30",
+            "--gpus-per-node", "4",
+            "--mem", "64G",
+            "--json",
+            "--",
+            "./gpu_sim", "--config", "params.json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.derived.total_gpus", "op": "eq", "value": 4},
+            {"path": "results.derived.ranks_per_gpu", "op": "approx", "value": 7.5, "rel_tol": 1e-9},
+            {"path": "results.derived.ntasks", "op": "eq", "value": 30},
+            {"path": "results.directives", "op": "contains", "value": "#SBATCH --gres=gpu:4"},
+            {"path": "results.directives", "op": "contains", "value": "#SBATCH --mem=64G"},
+            {"path": "results.warnings.0", "op": "contains", "value": "Task-to-GPU ratio is not an integer"},
+            {"path": "results.warnings.0", "op": "contains", "value": "ntasks=30"},
+            {"path": "results.warnings.0", "op": "contains", "value": "total GPUs=4"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Create a script with --mem-per-cpu 4G and --mem 128G for my job. 2 nodes, 32 tasks, 1 hour.",
+      "expected_output": "Agent detects the conflicting memory flags and either rejects the request or warns the user that --mem and --mem-per-cpu cannot both be specified.",
+      "assertions": [
+        "Detects that both --mem and --mem-per-cpu are provided simultaneously",
+        "Reports a warning or error about conflicting memory directives",
+        "Advises the user to choose either --mem (per node) or --mem-per-cpu (per CPU), not both",
+        "Does not generate a script with both conflicting flags"
+      ],
+      "script_checks": [
+        {
+          "description": "Conflicting memory flags (--mem and --mem-per-cpu together) are rejected with exit code 2; no script is generated",
+          "cmd": [
+            "scripts/slurm_script_generator.py",
+            "--job-name", "memjob",
+            "--time", "01:00:00",
+            "--nodes", "2",
+            "--ntasks", "32",
+            "--mem", "128G",
+            "--mem-per-cpu", "4G",
+            "--json",
+            "--",
+            "./sim"
+          ],
+          "expect_exit": 2,
+          "assert": []
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "quick job: 1 node, 8 tasks, 10 minutes, run './my_sim'. save it to job.sbatch and give me JSON output too",
+      "expected_output": "Agent generates a minimal SLURM script for a small single-node job, writing to file and outputting JSON.",
+      "assertions": [
+        "Invokes scripts/slurm_script_generator.py with --nodes 1 --ntasks 8 --time 00:10:00 --out job.sbatch --json",
+        "Run command is './my_sim' passed after the -- separator",
+        "Generated script is written to job.sbatch file",
+        "JSON output includes results.script, results.directives, and results.warnings"
+      ],
+      "script_checks": [
+        {
+          "description": "Minimal single-node job: 1 node, 8 ntasks, 10 min, default srun launcher wraps ./my_sim; JSON exposes script/directives/warnings",
+          "cmd": [
+            "scripts/slurm_script_generator.py",
+            "--job-name", "quick",
+            "--time", "00:10:00",
+            "--nodes", "1",
+            "--ntasks", "8",
+            "--json",
+            "--",
+            "./my_sim"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.derived.ntasks", "op": "eq", "value": 8},
+            {"path": "results.derived.cpus_total_requested", "op": "eq", "value": 8},
+            {"path": "results.run_line", "op": "eq", "value": "srun --ntasks=8 --cpus-per-task=1 ./my_sim"},
+            {"path": "results.directives", "op": "contains", "value": "#SBATCH --ntasks=8"},
+            {"path": "results.directives", "op": "contains", "value": "#SBATCH --time=00:10:00"},
+            {"path": "results.warnings", "op": "eq", "value": []},
+            {"path": "results.script", "op": "exists"}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+# Development and CI
+.git/
+.gitignore
+
+# Documentation assets (not needed in the package)
+docs/
+
+# GitHub-specific files
+.github/
+
+# Local tooling
+*.log
+*.tmp

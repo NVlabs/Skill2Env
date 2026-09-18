@@ -1,0 +1,65 @@
+{
+  "skill": "alterlab-geomaster",
+  "evals": [
+    {
+      "id": "sentinel2-ndvi",
+      "prompt": "I have a Sentinel-2 GeoTIFF with the red (B04) and near-infrared (B08) bands. Can you compute NDVI with rasterio and write the result out as a single-band float32 GeoTIFF?",
+      "expected_output": "Activates the GeoMaster skill and reads the red and NIR bands with rasterio, computes NDVI = (NIR - RED) / (NIR + RED) with a small epsilon to avoid divide-by-zero, updates the profile to count=1 / float32, and writes the result with rasterio.open(..., 'w'). Correctly maps B04 to red and B08 to NIR.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "rasterio"},
+        {"type": "behavior", "value": "Computes NDVI from Sentinel-2 red/NIR bands with rasterio and writes a single-band float32 GeoTIFF."}
+      ]
+    },
+    {
+      "id": "stac-planetary-computer",
+      "prompt": "I want to pull cloud-free Sentinel-2 L2A scenes over a bbox for 2023 from the Microsoft Planetary Computer using STAC and load them lazily as an xarray. How do I set that up?",
+      "expected_output": "Activates the GeoMaster skill and opens the Planetary Computer STAC endpoint with pystac_client, signs assets with planetary_computer.sign_inplace, searches sentinel-2-l2a filtered by bbox/datetime and eo:cloud_cover, and loads items into xarray (e.g. via odc.stac.load) for cloud-native processing.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "stac"},
+        {"type": "behavior", "value": "Uses pystac_client + planetary_computer to search Sentinel-2 L2A via STAC and load into xarray cloud-natively."}
+      ]
+    },
+    {
+      "id": "terrain-slope-aspect-dem",
+      "prompt": "From a DEM GeoTIFF I need slope, aspect, and a hillshade layer for a terrain analysis. Can you derive those with numpy gradients?",
+      "expected_output": "Activates the GeoMaster skill and reads the DEM with rasterio, uses np.gradient to get dx/dy, computes slope via arctan(sqrt(dx^2+dy^2)), aspect from arctan2, and a hillshade from a sun azimuth/altitude. Produces terrain metrics suitable for further GIS/raster work.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "slope"},
+        {"type": "behavior", "value": "Derives slope, aspect, and hillshade from a DEM using numpy gradients."}
+      ]
+    },
+    {
+      "id": "rf-image-classification",
+      "prompt": "I have a multiband satellite raster and a training polygon GeoDataFrame with class labels. Can you train a Random Forest to classify the imagery and write a classified raster out?",
+      "expected_output": "Activates the GeoMaster skill and rasterizes training polygons (rasterio.features.rasterize) to extract per-class pixel samples, trains a sklearn RandomForestClassifier, predicts over the reshaped image, and writes the classified single-band uint8 raster back out with rasterio while preserving the geospatial profile.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "randomforest"},
+        {"type": "behavior", "value": "Trains a RandomForestClassifier on rasterized training polygons and writes a classified raster, a supervised remote-sensing classification workflow."}
+      ]
+    },
+    {
+      "id": "near-miss-geopandas",
+      "prompt": "I just have a points GeoJSON and a polygons GeoJSON in the same CRS. I only want a plain vector spatial join with sjoin and then a groupby aggregation of an attribute column. No rasters, no imagery.",
+      "expected_output": "This is a pure tabular vector GeoDataFrame operation (sjoin + groupby) with no remote sensing, raster, or earth-observation component, so it is better handled by the dedicated geopandas skill rather than the broad GeoMaster remote-sensing skill. The response should defer to geopandas.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "geopandas"},
+        {"type": "behavior", "value": "Recognizes a plain vector sjoin/groupby task with no raster/remote-sensing aspect as the geopandas skill's domain and defers to it."}
+      ]
+    },
+    {
+      "id": "near-miss-astropy",
+      "prompt": "I'm working with a star catalog and need to convert between ICRS equatorial coordinates and galactic coordinates, then compute angular separations on the celestial sphere.",
+      "expected_output": "This is astronomical celestial-sphere coordinate handling (ICRS/galactic frames, sky angular separations), not Earth-observation geospatial CRS work, so it belongs to the astropy skill rather than GeoMaster. The response should defer to astropy and not treat ICRS/galactic as map projections.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "astropy"},
+        {"type": "behavior", "value": "Recognizes celestial coordinate frames (ICRS/galactic) as astropy's astronomy domain rather than Earth geospatial CRS work, and defers to astropy."}
+      ]
+    }
+  ]
+}

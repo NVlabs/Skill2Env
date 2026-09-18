@@ -1,0 +1,191 @@
+{
+  "skill_name": "numerical-stability",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm running an explicit finite difference heat equation solver with dx=0.01m, dt=0.001s, thermal diffusivity 1e-5 m2/s. Will this blow up?",
+      "expected_output": "Fourier number analysis showing the simulation is stable with Fo=1e-4 (0.0001) << 0.5 limit.",
+      "assertions": [
+        "Computes Fourier number correctly (Fo = alpha*dt/dx^2 = 1e-4)",
+        "States the explicit stability limit (Fo <= 0.5 for 1D diffusion)",
+        "Concludes the simulation is stable",
+        "References or uses cfl_checker.py"
+      ],
+      "script_checks": [
+        {
+          "description": "Stable heat eqn: Fo=1e-4 << 0.5",
+          "cmd": [
+            "scripts/cfl_checker.py",
+            "--dx",
+            "0.01",
+            "--dt",
+            "0.001",
+            "--diffusivity",
+            "1e-5",
+            "--json"
+          ],
+          "assert": [
+            {
+              "path": "metrics.fourier",
+              "op": "approx",
+              "value": 0.0001,
+              "rel_tol": 0.001
+            },
+            {
+              "path": "stable",
+              "op": "eq",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "My CFD sim diverges after 500 steps. dx=2mm, v=10m/s, nu=1.5e-5, dt=0.01s. What's wrong?",
+      "expected_output": "Identifies CFL=50 as cause of divergence, recommends reducing dt.",
+      "assertions": [
+        "Computes CFL number (C = v*dt/dx = 50)",
+        "Identifies CFL >> 1 as divergence cause",
+        "Recommends dt < 0.0002s or implicit scheme",
+        "Suggests cfl_checker.py for formal analysis"
+      ],
+      "script_checks": [
+        {
+          "description": "Diverging CFD: CFL=50 >> 1",
+          "cmd": [
+            "scripts/cfl_checker.py",
+            "--dx",
+            "0.002",
+            "--dt",
+            "0.01",
+            "--velocity",
+            "10",
+            "--json"
+          ],
+          "assert": [
+            {
+              "path": "metrics.cfl",
+              "op": "approx",
+              "value": 50.0,
+              "rel_tol": 1e-06
+            },
+            {
+              "path": "stable",
+              "op": "eq",
+              "value": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Is my reaction-diffusion system stiff? Reaction rate k=1000/s, diffusivity D=1e-6 m2/s.",
+      "expected_output": "Identifies stiffness due to timescale separation, recommends implicit/IMEX.",
+      "assertions": [
+        "Identifies large timescale ratio as indicator of stiffness",
+        "Recommends stiffness_detector.py",
+        "Suggests implicit or IMEX time integration",
+        "Notes explicit schemes need impractically small dt"
+      ],
+      "script_checks": [
+        {
+          "description": "Reaction-diffusion is stiff: reaction rate -k=-1000 vs diffusion mode -D*(pi/L)^2=-0.0987 (L=0.01m) -> real-part ratio >threshold, stiff=true, recommends implicit",
+          "cmd": [
+            "scripts/stiffness_detector.py",
+            "--eigs=-1000,-0.0987",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.real_part_stiffness_ratio",
+              "op": "approx",
+              "value": 10131.712259371834,
+              "rel_tol": 1e-06
+            },
+            {
+              "path": "results.stiffness_ratio",
+              "op": "approx",
+              "value": 10131.712259371834,
+              "rel_tol": 1e-06
+            },
+            {
+              "path": "results.imag_dominated",
+              "op": "eq",
+              "value": false
+            },
+            {
+              "path": "results.stiff",
+              "op": "eq",
+              "value": true
+            },
+            {
+              "path": "results.recommendation",
+              "op": "eq",
+              "value": "implicit (BDF/Radau)"
+            },
+            {
+              "path": "results.warning",
+              "op": "eq",
+              "value": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Check condition number of my 1000x1000 FEM stiffness matrix. It's sparse and symmetric positive definite.",
+      "expected_output": "Guidance on using matrix_condition.py for conditioning analysis.",
+      "assertions": [
+        "Recommends matrix_condition.py",
+        "Explains condition number significance for solver stability",
+        "Notes high condition number means ill-conditioned",
+        "Suggests preconditioning for large condition numbers"
+      ],
+      "files": [
+        "files/fem_stiffness_spd.npy"
+      ],
+      "script_checks": [
+        {
+          "description": "Symmetric positive-definite FEM stiffness fixture (1D Laplacian, tridiagonal 2,-1): symmetric, condition number ~1053, status ok",
+          "cmd": [
+            "scripts/matrix_condition.py",
+            "--matrix",
+            "evals/files/fem_stiffness_spd.npy",
+            "--norm",
+            "2",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {
+              "path": "results.is_symmetric",
+              "op": "eq",
+              "value": true
+            },
+            {
+              "path": "results.condition_number",
+              "op": "approx",
+              "value": 1053.4789912000592,
+              "rel_tol": 1e-06
+            },
+            {
+              "path": "results.eigenvalue_spread",
+              "op": "approx",
+              "value": 1053.4789911999383,
+              "rel_tol": 1e-06
+            },
+            {
+              "path": "results.status",
+              "op": "eq",
+              "value": "ok"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

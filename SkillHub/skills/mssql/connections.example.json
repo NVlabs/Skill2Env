@@ -1,0 +1,35 @@
+{
+  "databases": [
+    {
+      "name": "production",
+      "description": "Main production database - users, orders, transactions, accounts",
+      "host": "prod-db.example.com",
+      "port": 1433,
+      "database": "app_prod",
+      "user": "readonly_user",
+      "password": "your-password-here",
+      "encrypt": true,
+      "tds_version": "7.3"
+    },
+    {
+      "name": "analytics",
+      "description": "Analytics warehouse - aggregated metrics, reports, historical data",
+      "host": "analytics-db.example.com",
+      "port": 1433,
+      "database": "analytics",
+      "user": "analyst",
+      "password": "your-password-here",
+      "encrypt": true
+    },
+    {
+      "name": "staging",
+      "description": "Staging environment - mirrors production for testing",
+      "host": "localhost",
+      "port": 1433,
+      "database": "app_staging",
+      "user": "dev",
+      "password": "dev-password",
+      "tds_version": "7.3"
+    }
+  ]
+}

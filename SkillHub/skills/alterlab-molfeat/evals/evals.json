@@ -1,0 +1,59 @@
+{
+  "skill": "alterlab-molfeat",
+  "evals": [
+    {
+      "id": "ecfp-qsar-pipeline",
+      "prompt": "Featurize my training SMILES with ECFP (radius 3, 2048 bits) and build a scikit-learn pipeline that trains a random forest regressor for a QSAR model. Save the featurizer config so I can redeploy it.",
+      "expected_output": "Invokes alterlab-molfeat: wraps FPCalculator('ecfp', radius=3, fpSize=2048) in a MoleculeTransformer(n_jobs=-1), composes a sklearn Pipeline with the transformer and a RandomForestRegressor, fits on SMILES, and persists the config with transformer.to_state_yaml_file for reproducibility.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses molfeat FPCalculator + MoleculeTransformer in a scikit-learn pipeline and saves the featurizer state YAML." }
+      ]
+    },
+    {
+      "id": "compare-representations",
+      "prompt": "I want to compare ECFP, MACCS, RDKit 2D descriptors, and ChemBERTa embeddings as input representations for the same property-prediction task. Set up all four featurizers.",
+      "expected_output": "Invokes alterlab-molfeat: instantiates FPCalculator('ecfp'), FPCalculator('maccs'), RDKitDescriptors2D(), and PretrainedMolTransformer('ChemBERTa-77M-MLM'), wraps each in a MoleculeTransformer, and produces feature matrices to benchmark the representations head-to-head.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ChemBERTa" }
+      ]
+    },
+    {
+      "id": "chemberta-embeddings",
+      "prompt": "Generate ChemBERTa embeddings for my 50k SMILES for transfer learning, and cache them so I don't recompute.",
+      "expected_output": "Invokes alterlab-molfeat: uses PretrainedMolTransformer('ChemBERTa-77M-MLM', n_jobs=-1) to produce 768-dim embeddings, processes large input in chunks, and caches the resulting array (e.g. pickle) to avoid recomputation on reruns.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses molfeat's pretrained ChemBERTa transformer for embeddings and caches the result for reuse." }
+      ]
+    },
+    {
+      "id": "concat-featurizers-screen",
+      "prompt": "For virtual screening I want a combined feature vector that concatenates MACCS and ECFP fingerprints, then trains a classifier to rank a 1M compound library.",
+      "expected_output": "Invokes alterlab-molfeat: uses FeatConcat([FPCalculator('maccs'), FPCalculator('ecfp')]) to build the combined 167+2048 representation, featurizes train and library with a MoleculeTransformer (n_jobs=-1), fits a classifier, and ranks the library by predicted probability.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses FeatConcat to combine MACCS and ECFP into one feature vector for the screening classifier." }
+      ]
+    },
+    {
+      "id": "near-miss-pytdc",
+      "prompt": "I don't have a dataset yet. Get me a standardized lipophilicity benchmark with scaffold splits so I have labeled SMILES to model.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pytdc. The user needs a curated AI-ready dataset with proper splits (Therapeutics Data Commons), not featurization of molecules they already have; molfeat starts once labeled SMILES exist.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pytdc" }
+      ]
+    },
+    {
+      "id": "near-miss-deepchem",
+      "prompt": "Train an end-to-end graph convolutional network for molecular property prediction with built-in data loaders, splitters, and model classes in one framework.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-deepchem. The user wants a full deep-learning framework with bundled GCN model classes, data loaders and splitters end-to-end, whereas molfeat only produces feature vectors and stops at the featurization boundary.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-deepchem" }
+      ]
+    }
+  ]
+}

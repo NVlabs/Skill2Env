@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-aeon",
+  "evals": [
+    {
+      "id": "classification-rocket",
+      "prompt": "I have a labeled set of univariate accelerometer time series (gesture vs. no-gesture) and need to train a classifier. What's a fast, strong baseline and how do I check test accuracy?",
+      "expected_output": "Invokes alterlab-aeon for time series classification. Recommends a ROCKET-family classifier (RocketClassifier or MiniRocketClassifier from aeon.classification.convolution_based) as a fast strong baseline, fits on the (n_samples, n_channels, n_timepoints) training array, and scores on the held-out test split with clf.score. Mentions z-normalization (Normalizer) and a simple 1-NN/DTW baseline for comparison.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Rocket" },
+        { "type": "behavior", "value": "Uses an aeon classifier (not a generic sklearn model on flattened features) and respects aeon's (n_samples, n_channels, n_timepoints) input shape." }
+      ]
+    },
+    {
+      "id": "anomaly-detection-stomp",
+      "prompt": "I have a long sensor signal from a pump and I want to flag the unusual segments automatically. How do I get an anomaly score per timestamp?",
+      "expected_output": "Invokes alterlab-aeon for anomaly detection. Uses a matrix-profile detector such as STOMP from aeon.anomaly_detection with a chosen window_size, runs fit_predict to get a per-point anomaly score series, and thresholds (e.g. 95th percentile) to flag discords. Explains higher score means more anomalous.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Produces a per-timestamp anomaly score (e.g. via STOMP/matrix profile) and applies a threshold to flag anomalous subsequences." }
+      ]
+    },
+    {
+      "id": "clustering-dtw",
+      "prompt": "I have a few hundred unlabeled household electricity-load curves and want to group them into typical daily-usage shapes. Which method handles the time-warping?",
+      "expected_output": "Invokes alterlab-aeon for time series clustering. Uses TimeSeriesKMeans from aeon.clustering with distance='dtw' (and DBA averaging, averaging_method='ba') so shape similarity is matched under temporal warping, then exposes cluster labels and cluster_centers_ as representative load shapes.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "dtw" }
+      ]
+    },
+    {
+      "id": "segmentation-changepoints",
+      "prompt": "My EEG recording clearly has distinct regimes and I want to find the change points where the behavior shifts. No labels available.",
+      "expected_output": "Invokes alterlab-aeon for segmentation. Uses a self-supervised change-point segmenter such as ClaSPSegmenter from aeon.segmentation, runs fit_predict on the series to return the change points partitioning the recording into regimes.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Returns change points / segment boundaries (e.g. via ClaSPSegmenter), not class labels or a forecast." }
+      ]
+    },
+    {
+      "id": "near-miss-fluidsim",
+      "prompt": "I need to run a 2D Navier-Stokes turbulence simulation on a 512x512 periodic grid and look at the energy spectrum of the resulting vorticity field. Can you set up the solver?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-fluidsim. Although the request involves time-evolving fields, the task is running a pseudospectral CFD simulation (configuring a solver, viscosity, time stepping and analyzing energy spectra), not applying machine-learning algorithms to an existing recorded time series, which is aeon's domain.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-fluidsim" }
+      ]
+    },
+    {
+      "id": "near-miss-hypogenic",
+      "prompt": "I have a tabular survey dataset and I want an LLM to automatically generate and test candidate hypotheses about which features predict deception. Can you run that?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-hypogenic. The data is cross-sectional tabular (not time-indexed sequences) and the task is automated LLM-driven hypothesis generation and testing, which is HypoGeniC's domain, not specialized time series machine learning.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-hypogenic" }
+      ]
+    }
+  ]
+}

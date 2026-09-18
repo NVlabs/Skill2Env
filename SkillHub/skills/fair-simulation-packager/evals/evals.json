@@ -1,0 +1,152 @@
+{
+  "evals": [
+    {
+      "id": "lammps_bundle_manifest",
+      "prompt": "Package a LAMMPS diffusion run with input and data files, log and trajectory outputs, and energy/length units.",
+      "files": [
+        "evals/files/in.lammps",
+        "evals/files/data.lmp",
+        "evals/files/log.lammps"
+      ],
+      "expected_outputs": ["sha256", "units", "engine", "file_inventory"],
+      "assertions": [
+        "manifest.file_inventory.inputs and .outputs record the supplied files",
+        "existing files carry a sha256 hash and size_bytes",
+        "manifest.units reflects the provided key=value units",
+        "fair_checks.has_inputs and has_outputs are true",
+        "fair_packager.py reports sha256=7713b3f74249db206a25682f69360132f2977051b4f91205e071270c4091ac5d and size_bytes=146 for evals/files/in.lammps in file_inventory.inputs[0]",
+        "fair_packager.py reports sha256=acbe6b85901c4c77bda1bc675d84e3c7bed67aa2b99da30dcdfd615b426b8cd6 and size_bytes=131 for evals/files/data.lmp in file_inventory.inputs[1]",
+        "fair_packager.py reports sha256=79bb150359a9d28ec4321a2950a44f3407e1bd00d54965d986cc7b05341e8e4a and size_bytes=146 for evals/files/log.lammps in file_inventory.outputs[0]",
+        "fair_checks.has_hashes_for_existing_files is true and manifest_schema is materials-simulation-skills.fair-manifest.v1"
+      ],
+      "script_checks": [
+        {
+          "description": "LAMMPS bundle: exact hashes, sizes, units, and fair_checks from fair_packager.py",
+          "cmd": [
+            "scripts/fair_packager.py",
+            "--project-name", "al-cu-diffusion",
+            "--engine", "LAMMPS",
+            "--inputs", "evals/files/in.lammps,evals/files/data.lmp",
+            "--outputs", "evals/files/log.lammps",
+            "--units", "energy=eV,length=angstrom,time=ps",
+            "--structure-id", "local:alcu-cell-001",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.manifest.engine", "op": "eq", "value": "LAMMPS"},
+            {"path": "results.manifest.file_inventory.inputs.0.path", "op": "eq", "value": "evals/files/in.lammps"},
+            {"path": "results.manifest.file_inventory.inputs.0.sha256", "op": "eq", "value": "7713b3f74249db206a25682f69360132f2977051b4f91205e071270c4091ac5d"},
+            {"path": "results.manifest.file_inventory.inputs.0.size_bytes", "op": "eq", "value": 146},
+            {"path": "results.manifest.file_inventory.inputs.0.exists", "op": "eq", "value": true},
+            {"path": "results.manifest.file_inventory.inputs.1.path", "op": "eq", "value": "evals/files/data.lmp"},
+            {"path": "results.manifest.file_inventory.inputs.1.sha256", "op": "eq", "value": "acbe6b85901c4c77bda1bc675d84e3c7bed67aa2b99da30dcdfd615b426b8cd6"},
+            {"path": "results.manifest.file_inventory.inputs.1.size_bytes", "op": "eq", "value": 131},
+            {"path": "results.manifest.file_inventory.outputs.0.path", "op": "eq", "value": "evals/files/log.lammps"},
+            {"path": "results.manifest.file_inventory.outputs.0.sha256", "op": "eq", "value": "79bb150359a9d28ec4321a2950a44f3407e1bd00d54965d986cc7b05341e8e4a"},
+            {"path": "results.manifest.file_inventory.outputs.0.size_bytes", "op": "eq", "value": 146},
+            {"path": "results.manifest.units.energy", "op": "eq", "value": "eV"},
+            {"path": "results.manifest.units.length", "op": "eq", "value": "angstrom"},
+            {"path": "results.manifest.units.time", "op": "eq", "value": "ps"},
+            {"path": "results.manifest.fair_checks.has_inputs", "op": "eq", "value": true},
+            {"path": "results.manifest.fair_checks.has_outputs", "op": "eq", "value": true},
+            {"path": "results.manifest.fair_checks.has_units", "op": "eq", "value": true},
+            {"path": "results.manifest.fair_checks.has_hashes_for_existing_files", "op": "eq", "value": true},
+            {"path": "results.manifest.missing_files", "op": "eq", "value": []},
+            {"path": "results.manifest.provenance.manifest_schema", "op": "eq", "value": "materials-simulation-skills.fair-manifest.v1"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nomad_ready_metadata",
+      "prompt": "Create metadata for sharing a VASP relaxation result with NOMAD-like fields, including a structure id and the engine version.",
+      "files": [
+        "evals/files/POSCAR",
+        "evals/files/OUTCAR"
+      ],
+      "expected_outputs": ["structure_id", "engine_version", "provenance"],
+      "assertions": [
+        "manifest.structure_id captures the structure identity",
+        "manifest.engine_version is the provided version and fair_checks.has_engine_version is true",
+        "manifest.provenance includes working_directory and manifest_schema",
+        "fair_packager.py echoes structure_id=mp-134 and engine_version=vasp.6.4.2 in results.manifest",
+        "fair_packager.py reports sha256=044bb56e1115901fa9fe3bc7687e997a8bc3cf79dc99b872dc789b845103bd87 and size_bytes=121 for evals/files/POSCAR",
+        "fair_packager.py reports sha256=d5beaf3c347d0945b02c6e48c60c9422c95860c8b0b8ea0cfe24cb9ab35873c5 and size_bytes=136 for evals/files/OUTCAR",
+        "provenance.manifest_schema is materials-simulation-skills.fair-manifest.v1"
+      ],
+      "script_checks": [
+        {
+          "description": "VASP NOMAD-ready: exact structure_id, engine_version, hashes, and provenance from fair_packager.py",
+          "cmd": [
+            "scripts/fair_packager.py",
+            "--project-name", "al-fcc-relax",
+            "--engine", "VASP",
+            "--engine-version", "vasp.6.4.2",
+            "--inputs", "evals/files/POSCAR",
+            "--outputs", "evals/files/OUTCAR",
+            "--units", "energy=eV",
+            "--structure-id", "mp-134",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.manifest.engine", "op": "eq", "value": "VASP"},
+            {"path": "results.manifest.structure_id", "op": "eq", "value": "mp-134"},
+            {"path": "results.manifest.engine_version", "op": "eq", "value": "vasp.6.4.2"},
+            {"path": "results.manifest.fair_checks.has_engine_version", "op": "eq", "value": true},
+            {"path": "results.manifest.file_inventory.inputs.0.path", "op": "eq", "value": "evals/files/POSCAR"},
+            {"path": "results.manifest.file_inventory.inputs.0.sha256", "op": "eq", "value": "044bb56e1115901fa9fe3bc7687e997a8bc3cf79dc99b872dc789b845103bd87"},
+            {"path": "results.manifest.file_inventory.inputs.0.size_bytes", "op": "eq", "value": 121},
+            {"path": "results.manifest.file_inventory.outputs.0.path", "op": "eq", "value": "evals/files/OUTCAR"},
+            {"path": "results.manifest.file_inventory.outputs.0.sha256", "op": "eq", "value": "d5beaf3c347d0945b02c6e48c60c9422c95860c8b0b8ea0cfe24cb9ab35873c5"},
+            {"path": "results.manifest.file_inventory.outputs.0.size_bytes", "op": "eq", "value": 136},
+            {"path": "results.manifest.provenance.manifest_schema", "op": "eq", "value": "materials-simulation-skills.fair-manifest.v1"},
+            {"path": "results.manifest.provenance.working_directory", "op": "exists"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "missing_file_warning",
+      "prompt": "Build a manifest where neither the input nor the output file exists on disk yet (planned run).",
+      "expected_outputs": ["missing_files", "recommended_next_steps"],
+      "assertions": [
+        "the absent files are listed in manifest.missing_files rather than silently dropped",
+        "the manifest is still produced at exit code 0",
+        "manifest.recommended_next_steps is populated",
+        "fair_checks.has_hashes_for_existing_files is null when no supplied file exists",
+        "fair_packager.py lists exactly evals/files/INCAR.todo and evals/files/CONTCAR.notyet in missing_files and marks file_inventory.inputs[0].exists false",
+        "recommended_next_steps[0] is 'add code commit or container image digest' and the list has 3 entries"
+      ],
+      "script_checks": [
+        {
+          "description": "Planned run with no files on disk: missing_files, null has_hashes, exit 0 from fair_packager.py",
+          "cmd": [
+            "scripts/fair_packager.py",
+            "--project-name", "relax-pending",
+            "--engine", "VASP",
+            "--inputs", "evals/files/INCAR.todo",
+            "--outputs", "evals/files/CONTCAR.notyet",
+            "--units", "energy=eV",
+            "--json"
+          ],
+          "expect_exit": 0,
+          "assert": [
+            {"path": "results.manifest.file_inventory.inputs.0.exists", "op": "eq", "value": false},
+            {"path": "results.manifest.file_inventory.outputs.0.exists", "op": "eq", "value": false},
+            {"path": "results.manifest.missing_files", "op": "contains", "value": "evals/files/INCAR.todo"},
+            {"path": "results.manifest.missing_files", "op": "contains", "value": "evals/files/CONTCAR.notyet"},
+            {"path": "results.manifest.missing_files.0", "op": "eq", "value": "evals/files/INCAR.todo"},
+            {"path": "results.manifest.missing_files.1", "op": "eq", "value": "evals/files/CONTCAR.notyet"},
+            {"path": "results.manifest.fair_checks.has_hashes_for_existing_files", "op": "eq", "value": null},
+            {"path": "results.manifest.fair_checks.has_inputs", "op": "eq", "value": true},
+            {"path": "results.manifest.fair_checks.has_outputs", "op": "eq", "value": true},
+            {"path": "results.manifest.recommended_next_steps.0", "op": "eq", "value": "add code commit or container image digest"},
+            {"path": "results.manifest.recommended_next_steps.2", "op": "eq", "value": "store README or notes describing the scientific intent"}
+          ]
+        }
+      ]
+    }
+  ]
+}

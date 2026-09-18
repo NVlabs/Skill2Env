@@ -1,0 +1,75 @@
+{
+  "skill": "alterlab-research-ethics",
+  "evals": [
+    {
+      "id": "irb-application-prep",
+      "prompt": "I'm preparing my first IRB application for a study interviewing undergraduate students about academic stress. Walk me through what sections I need and what to watch out for.",
+      "expected_output": "Walks through the IRB application structure (study overview, purpose, participants/sampling, procedures, risks and benefits, informed consent, data management) and flags that students of the researcher are a vulnerable population due to power differential, recommending third-party recruitment and opt-out without penalty. Should stress applying before collecting data and grounding risk-benefit analysis in Belmont principles.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "IRB"},
+        {"type": "behavior", "value": "Provides IRB application structure and flags the student power differential as a vulnerable-population concern requiring extra protections."}
+      ]
+    },
+    {
+      "id": "informed-consent-drafting",
+      "prompt": "Help me draft an informed consent form for an anonymous online survey. What essential elements does it need and how should I handle consent without a physical signature?",
+      "expected_output": "Drafts/structures an informed consent form with the essential elements under 45 CFR 46.116 (purpose, procedures, risks, benefits, confidentiality, voluntary participation and withdrawal, contacts), written at a 6th-8th grade reading level, and addresses online consent specifics: click-to-consent checkboxes, no auto-checked agreement, downloadable copy, and withdrawal instructions after submission.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "informed consent"},
+        {"type": "behavior", "value": "Covers required consent elements and online click-to-consent handling at plain-language reading level."}
+      ]
+    },
+    {
+      "id": "gdpr-compliance-research",
+      "prompt": "My study collects personal data from participants in Germany. What do I need to do for GDPR compliance — what's my lawful basis and what goes in the privacy notice?",
+      "expected_output": "Explains GDPR lawful bases for research (consent Art. 6(1)(a), legitimate interest, public interest with Art. 89 safeguards), the privacy notice contents (controller identity, DPO contact, purposes/lawful basis, data categories, retention, data subject rights, right to withdraw, right to lodge a complaint), and data minimization/pseudonymization. Should mention a DPIA for high-risk processing.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "GDPR"},
+        {"type": "behavior", "value": "Identifies a lawful basis and enumerates privacy-notice contents and data-minimization duties under GDPR for research."}
+      ]
+    },
+    {
+      "id": "data-management-plan",
+      "prompt": "My grant requires a data management plan covering storage, security, and sharing of interview transcripts. Can you help me write one?",
+      "expected_output": "Produces a DMP covering data description and formats, collection standards, ethics/legal compliance (IRB number, consent coverage, GDPR/HIPAA/FERPA as relevant), storage and security during research (encryption, access control, backup), and preservation/sharing after research (repository, embargo, license, DOI, retention period, de-identification). Aligns with funder requirements.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "data management plan"},
+        {"type": "behavior", "value": "Drafts a DMP spanning collection, security during research, and preservation/sharing after research per funder requirements."}
+      ]
+    },
+    {
+      "id": "research-integrity-authorship",
+      "prompt": "A senior colleague wants to be listed as an author on my paper but contributed nothing beyond securing funding. How do I handle this without a research integrity problem?",
+      "expected_output": "Frames this as a gift/honorary authorship concern under responsible conduct of research, recommends applying ICMJE authorship criteria and the CRediT contributor taxonomy, documenting contributions, and discussing authorship early. Should distinguish legitimate contributions from funding-only roles and note this is a research integrity issue, not FFP.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "authorship"},
+        {"type": "behavior", "value": "Identifies gift authorship and applies ICMJE/CRediT criteria to resolve the dispute."}
+      ]
+    },
+    {
+      "id": "near-miss-survey-design",
+      "prompt": "I'm building the actual questionnaire for my study — help me write clear Likert items, pick a 5- vs 7-point scale, and avoid double-barreled questions.",
+      "expected_output": "This is survey instrument construction (item wording, Likert scale point selection, avoiding double-barreled items), not ethics or compliance. The skill's own 'Does NOT Trigger' table routes survey instrument design to alterlab-survey-design. Defers there rather than handling the questionnaire wording itself.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-survey-design"},
+        {"type": "behavior", "value": "Recognizes questionnaire item-writing is survey-design territory and defers to alterlab-survey-design."}
+      ]
+    },
+    {
+      "id": "near-miss-turkish-etik-kurul",
+      "prompt": "I'm at a Turkish university and need to figure out which etik kurul my survey-based study has to go to and prepare the başvuru form. Can you handle the Turkish ethics committee application?",
+      "expected_output": "This is a Turkey-specific etik kurul routing and application task governed by the TR Dizin/ULAKBIM trigger rule and TİTCK requirements, not general international IRB/Belmont guidance. The skill's 'Does NOT Trigger' table routes Turkish etik kurul applications to alterlab-tr-research-ethics. Defers there rather than producing a US-style IRB application.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-tr-research-ethics"},
+        {"type": "behavior", "value": "Recognizes a Turkish etik kurul application is Turkey-specific and defers to alterlab-tr-research-ethics rather than giving a US-style IRB walkthrough."}
+      ]
+    }
+  ]
+}

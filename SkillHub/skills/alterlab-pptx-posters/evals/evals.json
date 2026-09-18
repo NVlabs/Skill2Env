@@ -1,0 +1,52 @@
+{
+  "skill": "alterlab-pptx-posters",
+  "evals": [
+    {
+      "id": "explicit-pptx-poster",
+      "prompt": "I need a PowerPoint (PPTX) poster for my conference so my co-author can edit it afterward in PowerPoint. Can you build it?",
+      "expected_output": "Invokes alterlab-pptx-posters: confirms PPTX/PowerPoint was explicitly requested, builds the poster via the HTML/CSS template (poster_html_template.html), exports to PDF through the browser/Chrome-headless print path, and converts to PPTX (LibreOffice or python-pptx). Keeps content to 5-6 sections and 300-800 words.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "pptx"},
+        {"type": "behavior", "value": "Confirms the PPTX/PowerPoint requirement before proceeding and uses the HTML-to-PDF-to-PPTX workflow rather than producing a LaTeX poster."}
+      ]
+    },
+    {
+      "id": "explicit-html-poster",
+      "prompt": "Make me an HTML-based research poster with a responsive layout that I can preview in the browser and print to PDF.",
+      "expected_output": "Invokes alterlab-pptx-posters: copies the HTML/CSS poster template, fills in title/authors/sections with minimal text and prominent visuals, opens it in the browser for preview, and exports to PDF via the print dialog with background graphics enabled and margins removed.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "output_contains", "value": "html"},
+        {"type": "behavior", "value": "Uses the web/HTML+CSS poster template and browser print-to-PDF path, enforcing the poster readability constraints (limited sections, large fonts, generous white space)."}
+      ]
+    },
+    {
+      "id": "no-latex-html-poster",
+      "prompt": "LaTeX isn't installed on this machine — I still need a conference poster. Build me one I can produce without LaTeX and convert to PowerPoint.",
+      "expected_output": "Invokes alterlab-pptx-posters as the non-LaTeX fallback: builds the poster in HTML/CSS, exports to PDF, and converts to PPTX, since the user cannot use the default latex-posters skill.",
+      "assertions": [
+        {"type": "should_trigger", "value": true},
+        {"type": "behavior", "value": "Recognizes the no-LaTeX / PowerPoint constraint as the trigger condition for this skill and routes to the HTML-based workflow instead of latex-posters."}
+      ]
+    },
+    {
+      "id": "near-miss-latex-posters",
+      "prompt": "I need a conference research poster — just a standard A0 academic poster, no particular format.",
+      "expected_output": "Defers to alterlab-latex-posters and does NOT invoke alterlab-pptx-posters: a plain 'research poster' with no PPTX/PowerPoint/HTML request defaults to LaTeX (better typographic control). pptx-posters only fires when PPTX/PowerPoint or HTML is explicitly requested or LaTeX is unavailable.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-latex-posters"}
+      ]
+    },
+    {
+      "id": "near-miss-scientific-slides",
+      "prompt": "Build me a PowerPoint slide deck for my 15-minute conference talk on machine learning.",
+      "expected_output": "Defers to alterlab-scientific-slides and does NOT invoke alterlab-pptx-posters: a PowerPoint slide deck for an oral talk is a presentation, not a poster. pptx-posters produces a single large-format poster, not a multi-slide deck.",
+      "assertions": [
+        {"type": "should_not_trigger", "value": true},
+        {"type": "output_contains", "value": "alterlab-scientific-slides"}
+      ]
+    }
+  ]
+}

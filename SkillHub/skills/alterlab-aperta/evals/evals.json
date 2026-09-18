@@ -1,0 +1,71 @@
+{
+  "skill": "alterlab-aperta",
+  "evals": [
+    {
+      "id": "deposit-accepted-manuscript",
+      "prompt": "My TÜBİTAK 1001 project article was just accepted at an engineering journal. What does the TÜBİTAK open-science policy require me to do, and how do I deposit it to Aperta?",
+      "expected_output": "Invokes alterlab-aperta in deposit mode. Identifies the object as the kabul edilmiş makale (accepted manuscript / author-accepted version), states the green-road deposit-on-acceptance mandate, classifies the work as STEM so the open-access embargo ceiling is at most 6 months (an upper bound; immediate open access preferred), and walks the Aperta deposit checklist (record metadata, funding link, licence, DOI minting via the InvenioRDM repository at aperta.ulakbim.gov.tr). Closes with the verify-against-current-policy disclaimer. Does not invent embargo start-points or extra rules.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Aperta" },
+        { "type": "behavior", "value": "States the 6-month STEM embargo ceiling as an upper bound (not a required wait) and tells the user to deposit the accepted manuscript on acceptance, then reminds them to verify against the current policy." }
+      ]
+    },
+    {
+      "id": "vyp-for-grant-application-turkish",
+      "prompt": "TÜBİTAK 1002 başvurum için bir Veri Yönetim Planı (VYP) hazırlamam gerekiyor. Projede anketle toplanan kişisel veriler olacak. Bana bir VYP taslağı çıkarır mısın?",
+      "expected_output": "Invokes alterlab-aperta in VYP-scaffold mode. Runs scripts/vyp_scaffold.py to emit a bilingual Veri Yönetim Planı following the documented data-lifecycle section tree, sets the embargo ceiling for the project's field, and — because the project involves kişisel veri (personal data) — activates the İlke-6 closed-data section and notes that the KVKK lawful-basis / anonymisation determination must come from alterlab-kvkk-dmp and be pasted in. Ends with the verify-against-current-policy disclaimer.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-kvkk-dmp" },
+        { "type": "behavior", "value": "Produces a VYP section tree (not a free-form essay), flags that the KVKK analysis is delegated to alterlab-kvkk-dmp, and includes an İlke-6 closed-data section because personal data is involved." }
+      ]
+    },
+    {
+      "id": "ilke6-closed-clinical-data",
+      "prompt": "I have a TÜBİTAK project with patient clinical data that can't be made fully open. How do I document and justify keeping it closed under the TÜBİTAK open-science policy, and can I still put anything on Aperta?",
+      "expected_output": "Invokes alterlab-aperta in İlke-6 justification mode. Confirms the closure ground (KVKK personal/special-category clinical data), explains the compliant Aperta pattern of a restricted record with open metadata (discoverable + citable via DOI while files are gated), and writes the İlke-6 justification paragraph (what data, basis for closure, who may request access, any opening trigger) to carry into the VYP and the sonuç raporu. Notes that the KVKK anonymisation determination — whether the data can be truly anonymised and opened — comes from alterlab-kvkk-dmp. Reminds the user to verify against the current policy.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Recommends a restricted Aperta record with open metadata, writes an İlke-6 justification, and defers the KVKK anonymisation decision to alterlab-kvkk-dmp rather than ruling on it itself." }
+      ]
+    },
+    {
+      "id": "final-report-compliance",
+      "prompt": "I'm writing the final report (sonuç raporu) for my TÜBİTAK project and need to show that I complied with the open-access requirements. How do I report my Aperta deposits?",
+      "expected_output": "Invokes alterlab-aperta in final-report compliance mode. Produces a compliance statement listing, per output, the Aperta DOI, the access mode (open/restricted), and the open-access date, and confirms each meets the field embargo ceiling — or, for closed data, references the İlke-6 justification. Scopes itself to the open-science / data-deposition compliance statement and does not write the rest of the sonuç raporu narrative. Ends with the verify-against-current-policy disclaimer.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "İlke-6" },
+        { "type": "behavior", "value": "Builds a per-output Aperta DOI + access-mode + open-access-date compliance statement and confirms it against the field embargo ceiling, without writing the full grant report narrative." }
+      ]
+    },
+    {
+      "id": "near-miss-open-science-zenodo",
+      "prompt": "I'm not on a TÜBİTAK grant — I have an NSF award and need to pick a data repository and write a data management plan. Should I use Zenodo or Dryad, and how do I make my data FAIR?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-open-science. The user wants international repository choice (Zenodo/Dryad), FAIR principles, and an NSF data management plan — there is no TÜBİTAK funding, no Aperta deposit, and no TÜBİTAK Açık Bilim Politikası obligation. alterlab-aperta covers only the Turkish/TÜBİTAK open-science track; international DMPs and repositories belong to alterlab-open-science.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-open-science" }
+      ]
+    },
+    {
+      "id": "near-miss-kvkk-dmp",
+      "prompt": "I need to decide the KVKK lawful basis for my survey dataset and whether I can anonymise it or have to rely on açık rıza (explicit consent). Can you work through the KVKK analysis and the VERBİS question?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-kvkk-dmp. The user is asking for the KVKK (Law 6698) lawful-basis selection, anonymisation-vs-explicit-consent decision, and VERBİS registration question — the legal data-protection analysis itself. alterlab-aperta only consumes the KVKK outcome to document İlke-6 closed-data and to fill the VYP; it does not run the KVKK lawful-basis analysis, which is alterlab-kvkk-dmp's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-kvkk-dmp" }
+      ]
+    },
+    {
+      "id": "near-miss-preprint-deposition",
+      "prompt": "Before I even submit to a journal I want to post my manuscript as a preprint so I can cite it. Which server should I use — arXiv, SSRN, or bioRxiv — and how do I deposit it there?",
+      "expected_output": "Does NOT invoke this skill; routes to alterlab-open-science. The user wants to post a preprint to a preprint server (arXiv/SSRN/bioRxiv) before journal submission — not a green-road deposit of an accepted manuscript into Aperta under the TÜBİTAK policy. alterlab-aperta handles deposit-on-acceptance into the national open archive, not preprint-server posting or open-access routes in general, which belong to alterlab-open-science.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-open-science" }
+      ]
+    }
+  ]
+}

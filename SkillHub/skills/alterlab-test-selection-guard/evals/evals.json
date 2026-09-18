@@ -1,0 +1,69 @@
+{
+  "skill": "alterlab-test-selection-guard",
+  "evals": [
+    {
+      "id": "select-test-from-structure",
+      "prompt": "I have reaction times from two independent groups of participants (a treatment group and a control group) and I want to compare them. Which statistical test should I use?",
+      "expected_output": "Invokes alterlab-test-selection-guard to walk the decision tree from the data's structure: continuous outcome -> two groups -> independent -> normality, naming an independent-samples t-test (Welch's if variances are unequal) with Mann-Whitney U as the PRE-SPECIFIED non-parametric fallback. States the Iron Law that the test is fixed by structure and the assumption-check gate before any p-value is seen, and requires Shapiro-Wilk / Levene to be run and reported (handing execution to alterlab-statistical-analysis). Does not choose the test by which one is significant.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Names the t-test branch with a pre-specified non-parametric fallback and insists the assumption check decides the branch, not the p-value." }
+      ]
+    },
+    {
+      "id": "post-hoc-test-switch-trap",
+      "prompt": "My independent t-test came back at p = .07, just missing significance. Should I switch to a Mann-Whitney U test instead — non-parametric tests are more conservative anyway, right?",
+      "expected_output": "Invokes alterlab-test-selection-guard and STOPS the switch as test-shopping: the proposed change is conditioned on the non-significant p-value, which violates the Iron Law NO TEST CHOSEN AFTER SEEING THE P-VALUE. Cites the Excuse-vs-Reality row ('the t-test wasn't significant, let me try Mann-Whitney') and the Red-Flags-STOP list, explaining that a move to the non-parametric test is legitimate ONLY when the pre-specified assumption check (not the p-value) sent you there. Tells the user to revert to the pre-specified test or label the analysis exploratory and drop the confirmatory claim.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "test-shopping" },
+        { "type": "behavior", "value": "Refuses to endorse switching tests because of a non-significant result and names it as p-hacking / test-shopping rather than a neutral methodological choice." }
+      ]
+    },
+    {
+      "id": "multiplicity-escalation-gate",
+      "prompt": "I've now run a t-test, a Mann-Whitney, and a regression all testing the same hypothesis about whether the intervention raised scores, and one of them finally came out significant. Which result should I report?",
+      "expected_output": "Invokes alterlab-test-selection-guard and triggers the escalation gate: 3+ tests on one hypothesis searching for significance means STOP. Gives the two honest options — correct across the whole family of tests actually run (Bonferroni or Benjamini-Hochberg FDR) or declare the analysis exploratory and report every test run — and forbids reporting only the significant one or running a fourth test. Does not bless cherry-picking the significant result.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Recognizes 3+ tests on one hypothesis as multiplicity / test-shopping and requires Bonferroni/FDR correction over the full family or an exploratory label, never a cherry-picked report." }
+      ]
+    },
+    {
+      "id": "assumption-gate-ordering",
+      "prompt": "I'm comparing exam scores across three teaching methods. Can I just run a one-way ANOVA and only worry about checking normality afterward if the result looks weird?",
+      "expected_output": "Invokes alterlab-test-selection-guard to enforce the assumption-check gate: the data structure (continuous outcome, 3+ independent groups) pre-specifies one-way ANOVA, but the Shapiro-Wilk / Levene checks must be run and REPORTED before the p-value is interpreted, not conditionally after seeing the result. Explains the fixed order (pre-specify -> check + report -> take the pre-specified parametric or Kruskal-Wallis branch the checks dictate), and routes the actual checks to alterlab-statistical-analysis's assumption_checks.py.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Requires assumption checks to run and be reported BEFORE interpreting the test, and refuses to make the check conditional on whether the result 'looks weird'." }
+      ]
+    },
+    {
+      "id": "near-miss-statistical-analysis-execution",
+      "prompt": "I've already settled on a paired t-test for my pre/post design. Can you actually run it on my CSV, check the assumptions, compute the effect size, and write up the result in APA format?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-statistical-analysis. The test is already chosen, so there is no selection or test-shopping question for the guard to police; the user wants execution — running the paired t-test, the assumption checks (Shapiro-Wilk / Levene via assumption_checks.py), the effect size, and APA reporting. alterlab-test-selection-guard only fixes and polices the CHOICE of test; computing and reporting it is alterlab-statistical-analysis's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statistical-analysis" }
+      ]
+    },
+    {
+      "id": "near-miss-preregistration-discipline",
+      "prompt": "Before I touch my data I want to lock down my whole analysis plan — primary outcome, covariates, exclusion and outlier rules, and a stopping rule — so I can't HARK or move the goalposts later. How do I freeze a proper pre-registered analysis plan?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-preregistration-discipline. The user wants the broader frozen-analysis-plan discipline (primary outcome, covariates, exclusions, optional-stopping, HARKing) covering the entire plan before data collection, not the narrow question of which statistical test the data structure implies. alterlab-test-selection-guard is only the test-choice slice of that discipline; locking the full plan is alterlab-preregistration-discipline's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-preregistration-discipline" }
+      ]
+    },
+    {
+      "id": "near-miss-scientific-thinking-design",
+      "prompt": "I'm not even sure my study design is right — can I make a causal claim about my intervention from this observational dataset, or are there confounders that wreck the inference before I worry about any test?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scientific-thinking. The question is about study-design validity, causal inference, and confounders — an upstream judgment about whether the evidence can support the claim at all — not about which statistical test the data structure implies. alterlab-test-selection-guard only chooses and polices the test once the design and question are settled; appraising design validity and confounding is alterlab-scientific-thinking's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scientific-thinking" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "id": "metcalfsolutions/satori",
+  "name": "Satori",
+  "slug": "satori",
+  "version": "5.1.0",
+  "description": "Clinically informed wisdom companion for navigating the inner life — emotions, meaning, grief, purpose, relationship, identity.",
+  "longDescription": "Satori is a Claude skill built on eight wisdom traditions (Stoicism, Taoism, Buddhism, Sufi wisdom, Hindu philosophy, Confucian ethics, African thought) and modern clinical psychology (IFS, DBT, CFT, Schema Therapy, Somatic). A 211,000+ character operating system for reflective conversation, built across ten interlocking reference documents with drift detection, crisis protocols, memory-aware pattern tracking, a formulation system modeled on how clinicians actually think, a guided onboarding sequence, a dark night of the soul protocol, and a five-session Jungian shadow work arc.",
+  "author": {
+    "name": "Matthew Metcalf",
+    "github": "MetcalfSolutions",
+    "url": "https://github.com/MetcalfSolutions"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MetcalfSolutions/Satori.git",
+    "homepage": "https://github.com/MetcalfSolutions/Satori"
+  },
+  "homepage": "https://github.com/MetcalfSolutions/Satori",
+  "license": "Apache-2.0",
+  "keywords": [
+    "wisdom",
+    "introspection",
+    "mental-health",
+    "coaching",
+    "stoicism",
+    "buddhism",
+    "taoism",
+    "ifs",
+    "dbt",
+    "cft",
+    "psychology",
+    "self-reflection",
+    "inner-work",
+    "claude-skill",
+    "companion",
+    "shadow-work",
+    "grief",
+    "onboarding",
+    "dark-night",
+    "ikigai",
+    "dream-analysis",
+    "jungian",
+    "narrative-identity",
+    "motivational-interviewing"
+  ],
+  "category": "wellness",
+  "tags": [
+    "wellness",
+    "mental-health",
+    "wisdom",
+    "coaching",
+    "introspection",
+    "philosophy",
+    "psychology",
+    "mindfulness",
+    "shadow-work",
+    "grief",
+    "ikigai",
+    "jungian"
+  ],
+  "entryPoint": "SKILL.md",
+  "pluginConfig": ".claude-plugin/plugin.json",
+  "download": {
+    "url": "https://github.com/MetcalfSolutions/Satori/releases/latest/download/SatoriSkill-v5.zip",
+    "filename": "SatoriSkill-v5.zip",
+    "type": "skill-zip"
+  },
+  "installMethods": [
+    {
+      "type": "skill-zip",
+      "platform": "claude.ai",
+      "label": "Claude.ai Skill Upload",
+      "description": "Download SatoriSkill-v5.zip and upload in Claude.ai Settings → Skills",
+      "recommended": true,
+      "steps": [
+        "Download SatoriSkill-v5.zip from the Releases page",
+        "Open claude.ai and click Customize in the left sidebar",
+        "Click Skills, then the + button, then Upload a skill",
+        "Drop SatoriSkill-v5.zip into the upload area",
+        "Start a conversation — Satori is ready"
+      ]
+    },
+    {
+      "type": "claude-code-plugin",
+      "platform": "claude-code",
+      "label": "Claude Code Plugin",
+      "description": "Install via Claude Code plugin system using plugin.json",
+      "steps": [
+        "Clone the repository: git clone https://github.com/MetcalfSolutions/Satori.git",
+        "Claude Code will detect .claude-plugin/plugin.json automatically when run from the project directory"
+      ]
+    },
+    {
+      "type": "manual",
+      "platform": "claude-code",
+      "label": "Manual Installation",
+      "description": "Clone repository and copy skill files to Claude skills directory",
+      "steps": [
+        "git clone https://github.com/MetcalfSolutions/Satori.git",
+        "mkdir -p ~/.claude/skills/satori",
+        "cp -r Satori/SKILL.md Satori/references ~/.claude/skills/satori/"
+      ]
+    }
+  ],
+  "requirements": {
+    "platforms": ["claude.ai", "claude-code"],
+    "persistentMemory": "recommended",
+    "notes": "Persistent memory enhances Satori's pattern tracking across sessions. Enable in Claude.ai Settings → Memory."
+  },
+  "contents": {
+    "skillFile": "SKILL.md",
+    "referenceFiles": [
+      "references/SOUL.md",
+      "references/clinical-spine.md",
+      "references/traditions-quickref.md",
+      "references/traditions-deep.md",
+      "references/conversation-toolkit.md",
+      "references/tone-and-voice.md",
+      "references/onboarding.md",
+      "references/darknight-protocol.md",
+      "references/shadow-work-protocol.md"
+    ],
+    "totalCharacters": 211280,
+    "totalReferenceFiles": 10,
+    "distributionZip": "SatoriSkill-v5.zip"
+  },
+  "createdAt": "2025-01-01",
+  "updatedAt": "2026-04-01"
+}

@@ -1,0 +1,51 @@
+{
+  "skill": "alterlab-ssci-orchestrator",
+  "evals": [
+    {
+      "id": "full-study-pipeline",
+      "prompt": "I have a research question about whether a mentoring program raises student retention, a panel dataset, and a survey instrument for engagement. Walk me through the whole thing from design to defensible conclusions.",
+      "expected_output": "Invokes alterlab-ssci-orchestrator: opens a Design Passport and sequences the pipeline design-gate -> measurement-gate -> sampling-gate -> the right analysis module -> inference-gate, enforcing gate order and dispatching each stage rather than doing the analysis itself.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Design Passport" },
+        { "type": "behavior", "value": "Coordinates the staged pipeline and enforces that each gate passes before the next stage runs, dispatching to sibling skills." }
+      ]
+    },
+    {
+      "id": "run-methods-pipeline",
+      "prompt": "Can you run a full methodology review on my study end to end and tell me at each stage whether I'm cleared to proceed?",
+      "expected_output": "Invokes alterlab-ssci-orchestrator: runs the stage-gated pipeline, emitting a PASS / WARN / BLOCK verdict per gate and refusing to advance past a fail-closed BLOCK (design-gate, inference-gate).",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Produces a per-gate PASS/WARN/BLOCK verdict and holds the pipeline at a fail-closed gate until it is resolved." }
+      ]
+    },
+    {
+      "id": "multi-stage-coordination",
+      "prompt": "Help me design this study, figure out how many participants I need, and then make sure the claims I write at the end are defensible.",
+      "expected_output": "Invokes alterlab-ssci-orchestrator because the ask spans multiple stages (design + sampling + inference); it coordinates the gates in order via the Design Passport rather than treating it as one isolated step.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Recognizes a multi-stage request and coordinates the relevant gates in sequence instead of answering a single gate." }
+      ]
+    },
+    {
+      "id": "near-miss-workflow-orchestration",
+      "prompt": "How do I fan out subagents and run a judge panel over several draft answers, with adversarial verification?",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-workflow-orchestration. That is general multi-agent execution mechanics, not the social-science methods pipeline.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-workflow-orchestration" }
+      ]
+    },
+    {
+      "id": "near-miss-ssci-design-gate",
+      "prompt": "I just need to know what research design fits my question — nothing else.",
+      "expected_output": "Should NOT trigger the orchestrator; defers to alterlab-ssci-design-gate. A single-stage design question needs the gate directly, not pipeline coordination.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-ssci-design-gate" }
+      ]
+    }
+  ]
+}

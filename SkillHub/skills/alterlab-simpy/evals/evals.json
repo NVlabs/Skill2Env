@@ -1,0 +1,58 @@
+{
+  "skill": "alterlab-simpy",
+  "evals": [
+    {
+      "id": "queue-server-simulation",
+      "prompt": "I need to simulate a call center where calls arrive randomly and wait for one of 3 agents. I want average wait time and agent utilization over an 8-hour shift.",
+      "expected_output": "Invokes alterlab-simpy: builds a discrete-event model with a simpy.Environment, a simpy.Resource(capacity=3) for the agents, a customer generator with randomized inter-arrival and service times (with a seeded random), uses 'with resource.request() as req:' context managers, runs env.run(until=...), and reports average wait time and resource utilization via a ResourceMonitor.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Models agents as a SimPy Resource, collects per-customer wait times, and reports average wait time and utilization." }
+      ]
+    },
+    {
+      "id": "manufacturing-priority-preemption",
+      "prompt": "Model a machine shop where rush orders should be able to interrupt normal jobs already on a machine. I want to see how preemption affects throughput.",
+      "expected_output": "Invokes alterlab-simpy: uses a simpy.PreemptiveResource so high-priority (rush) requests can interrupt lower-priority jobs mid-service, models the interrupt handling in the process generator, runs the simulation, and reports throughput differences with monitoring.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "PreemptiveResource" }
+      ]
+    },
+    {
+      "id": "producer-consumer-store",
+      "prompt": "Simulate a warehouse where a producer adds finished items to a buffer and a consumer pulls them out on a different schedule, so I can see when the buffer fills up or empties.",
+      "expected_output": "Invokes alterlab-simpy: implements a producer-consumer pattern using a simpy.Store as the shared buffer, with producer (store.put) and consumer (store.get) generator processes on different timeouts, runs env.run(until=...), and tracks buffer level over time.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses a SimPy Store as a shared buffer with put/get processes and tracks buffer occupancy over simulated time." }
+      ]
+    },
+    {
+      "id": "capacity-planning-sweep",
+      "prompt": "For our clinic, I want to find the minimum number of nurses needed so that 95% of patients wait less than 10 minutes. Can you run the simulation across different staffing levels?",
+      "expected_output": "Invokes alterlab-simpy: parameterizes nurse count as a Resource capacity, runs the queue simulation across multiple staffing levels (with seeded reproducibility), collects wait-time distributions per level, and identifies the minimum capacity meeting the 95%-under-10-minutes service target.",
+      "assertions": [
+        { "type": "should_trigger", "value": true }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-statsmodels",
+      "prompt": "I have observed inter-arrival times and service times from my call center logs. Fit an M/M/c queueing model and estimate the parameters analytically with confidence intervals.",
+      "expected_output": "Does NOT invoke this skill; defers to a classical statistical modeling skill (alterlab-statsmodels). The user wants analytical parameter estimation with confidence intervals from observed data, not a process-based discrete-event simulation of resource contention.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statsmodels" }
+      ]
+    },
+    {
+      "id": "near-miss-alterlab-pymoo",
+      "prompt": "Find the staffing configuration across five departments that simultaneously minimizes total labor cost and minimizes average customer wait, giving me the Pareto front of trade-offs.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pymoo. The user wants multi-objective optimization and a Pareto front of competing objectives, which is pymoo's territory, not a single discrete-event simulation run.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pymoo" }
+      ]
+    }
+  ]
+}

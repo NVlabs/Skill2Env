@@ -1,0 +1,38 @@
+{
+  "_comment": "Validation constraints for ASMO ontology classes.",
+  "Simulation": {
+    "required": ["has computational method"],
+    "recommended": ["has input parameter", "has statistical ensemble"],
+    "optional": ["has interatomic potential", "uses simulation algorithm", "has output parameter"]
+  },
+  "Energy Calculation": {
+    "required": ["has computational method"],
+    "recommended": ["has input parameter", "has relaxation DOF", "has calculated property"],
+    "optional": ["has interatomic potential"]
+  },
+  "Density Functional Theory": {
+    "required": [],
+    "recommended": ["has XC functional"],
+    "optional": []
+  },
+  "Molecular Dynamics": {
+    "required": [],
+    "recommended": [],
+    "optional": []
+  },
+  "Calculated Property": {
+    "required": ["has unit"],
+    "recommended": ["was calculated by", "has value"],
+    "optional": []
+  },
+  "Bulk Modulus": {
+    "required": ["has unit"],
+    "recommended": ["was calculated by", "has value"],
+    "optional": []
+  },
+  "Interatomic Potential": {
+    "required": [],
+    "recommended": ["has reference"],
+    "optional": []
+  }
+}

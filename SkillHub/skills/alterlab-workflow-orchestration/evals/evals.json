@@ -1,0 +1,73 @@
+{
+  "skill": "alterlab-workflow-orchestration",
+  "evals": [
+    {
+      "id": "parallel-fan-out-citations",
+      "prompt": "I have four chapter bibliographies and I want to check them all at once rather than one after another. Can you fan these out to parallel agents that each existence-check one chapter's references, then merge everything into a single report of bad citations?",
+      "expected_output": "Invokes alterlab-workflow-orchestration with the parallel fan-out pattern (P1): explains dispatching one subagent per independent bibliography (each in its own context window), has each subagent run the alterlab-citation-verifier skill on a single input and return only its verdict table, then merges into one manuscript-wide report. References that parallel subagents work best when inputs are independent. Provides a copyable delegation prompt and optionally a reusable subagent definition; does not itself perform the verification.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-citation-verifier" },
+        { "type": "behavior", "value": "Treats this as an orchestration question (how to fan out and merge across separate subagents), not as a single verification task, and grounds the parallelism in Claude Code subagent behavior." }
+      ]
+    },
+    {
+      "id": "adversarial-verification-debate",
+      "prompt": "Before I submit, I want my three biggest empirical claims stress-tested by a separate agent whose whole job is to try to break them and prove the citations don't actually support them. Set up that adversarial verification workflow for me.",
+      "expected_output": "Invokes alterlab-workflow-orchestration with the adversarial verification pattern (P4): a FRESH skeptic agent per claim (producer != verifier), tasked solely with finding disconfirming evidence and checking claim-faithfulness via alterlab-citation-verifier (and alterlab-deep-research fact-check mode). Distinguishes 'citation exists' from 'citation supports the claim'. Mentions the agent-team escalation (CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS) for sustained debate where agents challenge each other. Returns copyable delegation prompts.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-citation-verifier" },
+        { "type": "output_contains", "value": "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS" },
+        { "type": "behavior", "value": "Insists the verifier be a separate/fresh agent from the producer, and frames the workflow around competing-hypotheses / scientific-debate structure rather than answering the factual question itself." }
+      ]
+    },
+    {
+      "id": "judge-panel-independent-reviewers",
+      "prompt": "I want a manuscript reviewed by three genuinely independent reviewer agents — methodology, domain contribution, and reproducibility — that can't see each other's opinions, and then have their verdicts synthesized into one decision. How do I wire that up?",
+      "expected_output": "Invokes alterlab-workflow-orchestration with the judge-panel pattern (P3): spawns three independent reviewer subagents (each its own isolated context so they cannot anchor on each other), keeps them read-only, composes alterlab-paper-reviewer / alterlab-peer-review, and adds a synthesis step that reconciles agreement and disagreement into a single editorial decision. Notes that alterlab-paper-reviewer already runs a panel inside one context, and that this pattern is for genuinely separate agents.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-paper-reviewer" },
+        { "type": "behavior", "value": "Emphasizes independence/isolated contexts to avoid anchoring and adds an explicit synthesis step, rather than just running a single in-context reviewer panel." }
+      ]
+    },
+    {
+      "id": "loop-until-clean-revision",
+      "prompt": "Can you set up a loop where a reviewer agent comments, the draft gets revised, and it re-reviews only the flagged items, repeating until there are no unresolved comments left — but make sure it actually stops?",
+      "expected_output": "Invokes alterlab-workflow-orchestration with the loop-until-clean pattern (P5): a bounded validator->fix->repeat cycle composing alterlab-paper-reviewer/alterlab-peer-review plus a revision step, with BOTH an explicit success gate (zero unresolved comments) AND a max-iteration cap (e.g. 3 rounds) so the loop terminates. Reports rounds taken and residual issues. Provides a copyable loop prompt.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-paper-reviewer" },
+        { "type": "behavior", "value": "Always pairs a success/quality gate with a max-iteration cap so the loop is bounded, and frames it as orchestration of existing review/revise skills." }
+      ]
+    },
+    {
+      "id": "near-miss-research-pipeline",
+      "prompt": "I want to write a research paper from scratch on the impact of AI tutoring on undergraduate writing — take me all the way from research to a reviewed, revised final manuscript.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-research-pipeline. The user wants the already-packaged end-to-end research->write->integrity->review->revise flow executed for them, not guidance on how to compose skills into a custom workflow. alterlab-workflow-orchestration is for designing custom multi-agent compositions, not for running the standard pipeline that alterlab-research-pipeline already orchestrates.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-research-pipeline" }
+      ]
+    },
+    {
+      "id": "near-miss-single-citation-verifier",
+      "prompt": "Here's my reference list — can you just check whether each of these citations actually exists before I submit?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-citation-verifier. This is a single, self-contained existence-check task with no multi-agent composition, parallelism, panel, or loop involved. alterlab-workflow-orchestration only triggers when the user wants to COMPOSE skills into a multi-agent workflow, not when one atomic skill already does the job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-citation-verifier" }
+      ]
+    },
+    {
+      "id": "near-miss-claude-api-billing",
+      "prompt": "How much does the Claude Agent SDK cost per token, and which model id should I use for cheap background subagents?",
+      "expected_output": "Does NOT invoke this skill; defers to the claude-api skill. The question is about API/SDK pricing and model-id selection, not about designing an academic multi-agent workflow. alterlab-workflow-orchestration teaches orchestration patterns and composition, and does not answer pricing/model-catalog questions.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "claude-api" }
+      ]
+    }
+  ]
+}

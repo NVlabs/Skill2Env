@@ -1,0 +1,33 @@
+{
+  "configs": [
+    "config_0000.json",
+    "config_0001.json",
+    "config_0002.json",
+    "config_0003.json"
+  ],
+  "parameter_space": {
+    "dt": [
+      0.0001,
+      0.01
+    ],
+    "kappa": [
+      0.1,
+      1.0
+    ]
+  },
+  "sweep_method": "linspace",
+  "total_runs": 4,
+  "base_config": "simulation.json",
+  "parameters": [
+    {
+      "name": "dt",
+      "min": 0.0001,
+      "max": 0.01
+    },
+    {
+      "name": "kappa",
+      "min": 0.1,
+      "max": 1.0
+    }
+  ]
+}

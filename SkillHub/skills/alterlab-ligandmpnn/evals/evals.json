@@ -1,0 +1,60 @@
+{
+  "skill": "alterlab-ligandmpnn",
+  "evals": [
+    {
+      "id": "small-molecule-pocket",
+      "prompt": "I have a protein structure with a small-molecule ligand bound in a pocket. Design pocket residues that fit this ligand better.",
+      "expected_output": "Invokes alterlab-ligandmpnn: uses the ligand-aware model conditioned on the HETATM ligand atoms to redesign the pocket residues, restricting design to the site. Notes the ligand must be present in the input structure.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "ligand" },
+        { "type": "behavior", "value": "Conditions the sequence design on the bound ligand context, not protein atoms alone." }
+      ]
+    },
+    {
+      "id": "metal-site",
+      "prompt": "Design a zinc-coordinating site into my protein — the structure has the Zn ion placed. I want residues that properly coordinate the metal.",
+      "expected_output": "Invokes alterlab-ligandmpnn with the metal ion in context so the designed coordinating residues fit the Zn site.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "metal" }
+      ]
+    },
+    {
+      "id": "nucleic-acid-context",
+      "prompt": "Redesign the DNA-contacting residues of my transcription factor with the bound DNA present in the model.",
+      "expected_output": "Invokes alterlab-ligandmpnn conditioning on the nucleic-acid chain so the designed interface residues suit the DNA context.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Uses the nucleic-acid context to guide interface residue design." }
+      ]
+    },
+    {
+      "id": "near-miss-proteinmpnn",
+      "prompt": "Just design a sequence for this bare backbone — there's no ligand, metal, or nucleic acid involved.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-proteinmpnn. With no non-protein context, plain ProteinMPNN inverse folding is the right tool; LigandMPNN's ligand conditioning adds nothing here.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-proteinmpnn" }
+      ]
+    },
+    {
+      "id": "near-miss-diffdock",
+      "prompt": "I have a fixed receptor structure and just want to predict how this ligand docks into its pocket — the pose, not new residues.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-diffdock. The task is predicting a ligand pose in a fixed pocket (docking), not designing protein sequence — LigandMPNN designs residues, it does not place ligands.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-diffdock" }
+      ]
+    },
+    {
+      "id": "near-miss-rfdiffusion",
+      "prompt": "I want to build a brand-new protein backbone that scaffolds a metal-binding site — I don't have a structure yet, I need to generate one around the site geometry.",
+      "expected_output": "Should NOT trigger this skill; defers to alterlab-rfdiffusion, which generates de-novo backbones and scaffolds functional motifs. LigandMPNN designs the pocket sequence on an existing structure; generating the scaffold itself is RFdiffusion's job (then LigandMPNN designs the sequence).",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-rfdiffusion" }
+      ]
+    }
+  ]
+}

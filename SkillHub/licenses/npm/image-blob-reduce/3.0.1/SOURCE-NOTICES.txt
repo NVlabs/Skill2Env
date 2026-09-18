@@ -1,0 +1,3 @@
+Source files: dist/image-blob-reduce.esm.mjs
+
+/*! image-blob-reduce 3.0.1 https://github.com/nodeca/image-blob-reduce @license MIT */

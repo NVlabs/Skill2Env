@@ -1,0 +1,29 @@
+# markdownlint configuration
+# https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+
+# Disable line length — tables and long descriptions need it
+MD013: false
+
+# Disable no-inline-html — some formatting may need it
+MD033: false
+
+# Disable no-duplicate-heading — files reuse headings across sections
+MD024: false
+
+# Disable first-line-heading — files may start with frontmatter or non-heading text
+MD041: false
+
+# Disable blanks-around-fences — too strict for mixed content
+MD031: false
+
+# Disable commands-show-output — code blocks may show example output
+MD014: false
+
+# Disable blanks-around-lists — existing content style uses lists directly after paragraphs
+MD032: false
+
+# Disable blanks-around-headings — existing content uses compact heading style
+MD022: false
+
+# Disable no-trailing-punctuation — headings use colons for style
+MD026: false

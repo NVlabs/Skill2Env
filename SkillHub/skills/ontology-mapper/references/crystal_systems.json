@@ -1,0 +1,62 @@
+{
+  "crystal_systems": {
+    "cubic": {
+      "constraints": "a=b=c, alpha=beta=gamma=90",
+      "bravais_lattices": ["cP", "cI", "cF"],
+      "space_group_range": [195, 230],
+      "common_aliases": {"FCC": "cF", "BCC": "cI", "SC": "cP"}
+    },
+    "hexagonal": {
+      "constraints": "a=b!=c, alpha=beta=90, gamma=120",
+      "bravais_lattices": ["hP"],
+      "space_group_range": [168, 194],
+      "common_aliases": {"HCP": "hP"}
+    },
+    "trigonal": {
+      "constraints": "a=b=c, alpha=beta=gamma (rhombohedral) or a=b!=c (hexagonal setting)",
+      "bravais_lattices": ["hR", "hP"],
+      "space_group_range": [143, 167],
+      "common_aliases": {}
+    },
+    "tetragonal": {
+      "constraints": "a=b!=c, alpha=beta=gamma=90",
+      "bravais_lattices": ["tP", "tI"],
+      "space_group_range": [75, 142],
+      "common_aliases": {}
+    },
+    "orthorhombic": {
+      "constraints": "a!=b!=c, alpha=beta=gamma=90",
+      "bravais_lattices": ["oP", "oC", "oI", "oF"],
+      "space_group_range": [16, 74],
+      "common_aliases": {}
+    },
+    "monoclinic": {
+      "constraints": "a!=b!=c, alpha=gamma=90, beta!=90",
+      "bravais_lattices": ["mP", "mC"],
+      "space_group_range": [3, 15],
+      "common_aliases": {}
+    },
+    "triclinic": {
+      "constraints": "a!=b!=c, alpha!=beta!=gamma",
+      "bravais_lattices": ["aP"],
+      "space_group_range": [1, 2],
+      "common_aliases": {}
+    }
+  },
+  "bravais_lattice_symbols": {
+    "cP": "cubic primitive (simple cubic)",
+    "cI": "cubic body-centered (BCC)",
+    "cF": "cubic face-centered (FCC)",
+    "hP": "hexagonal primitive (HCP)",
+    "hR": "hexagonal rhombohedral",
+    "tP": "tetragonal primitive",
+    "tI": "tetragonal body-centered",
+    "oP": "orthorhombic primitive",
+    "oC": "orthorhombic base-centered",
+    "oI": "orthorhombic body-centered",
+    "oF": "orthorhombic face-centered",
+    "mP": "monoclinic primitive",
+    "mC": "monoclinic base-centered",
+    "aP": "triclinic"
+  }
+}

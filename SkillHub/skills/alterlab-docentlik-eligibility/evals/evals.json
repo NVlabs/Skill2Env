@@ -1,0 +1,68 @@
+{
+  "skill": "alterlab-docentlik-eligibility",
+  "evals": [
+    {
+      "id": "prescreen-publication-list",
+      "prompt": "I'm preparing my doçentlik application in the Sağlık (Health) field. Here's my publication list with each article's quartile, my author position, and whether it was published after my PhD. Can you work out whether I clear the point thresholds and tell me exactly where I stand?",
+      "expected_output": "Invokes alterlab-docentlik-eligibility: runs scripts/score_docentlik.py over the list with the bundled Sağlık TABLO 10 table, applies the author-share rule (full / 0.8 / lead-half-equal), and pass-fail-checks the four computable mandatory minimums (≥100 total, ≥90 post-doctorate, ≥40 SCIE/SSCI article points, ≥3 lead-author Q articles). Returns the per-publication scaled points and the exact shortfall on any failed check. Crucially, it presents the result as a PARTIAL pre-screen — it does NOT assert eligibility, it lists the unmodelled mandatory minimums (TR Dizin/national article, citation, scientific-meeting, education, per-category caps) that the user must verify by hand, and it appends the verify-against-current-ÜAK-period disclaimer. Does not assert eligibility from model memory and does not present PRESCREEN_PASS_VERIFY_REMAINING as a green ELIGIBLE verdict.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Reports the four computable checks (total/post-doctorate/SCIE-SSCI-points/lead-author Q) against 100/90/40/3, scales co-authored items by the author-share rule, explicitly flags the unmodelled minimums the tool could not check, frames the output as a partial pre-screen rather than an eligibility decision, and ends with the verify-against-current-period disclaimer. Does NOT declare the candidate eligible." }
+      ]
+    },
+    {
+      "id": "turkish-yeterli-puan-mi",
+      "prompt": "Doçentlik için yeterli puanım var mı? Sağlık alanındayım, yayın listem ekte — her makalenin Q dilimi, yazar sıram ve doktora sonrası olup olmadığı belirtildi. ÜAK puanlarımı hesaplayıp eksiğimi söyler misin?",
+      "expected_output": "Invokes alterlab-docentlik-eligibility on a Turkish-language request: scores the publication list with the bundled Sağlık table, applies the paylaşım kuralı (author-share rule), checks the 100 / 90 / 40 / ≥3 başlıca-yazar-Q computable minimums, and reports the per-item scaled points and exact shortfall. It does NOT answer 'evet, yeterli' (yes, eligible) — it explains this is a partial pre-screen, lists the asgari koşullar it cannot check (TR Dizin/ulusal makale, atıf, bilimsel toplantı, eğitim-öğretim, kategori üst sınırları) for the candidate to verify, and appends the verify-against-current-ÜAK-period disclaimer. Preserves Turkish diacritics in user-facing strings.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Handles the Turkish prompt, computes the four modelled minimums, surfaces the shortfall, lists the unmodelled mandatory minimums the user must verify, refrains from declaring the candidate eligible, and surfaces the current-period disclaimer." }
+      ]
+    },
+    {
+      "id": "audit-lead-author-q-minimum",
+      "prompt": "Forget the total points for a second — I just want to know whether I meet the başlıca yazar requirement. Of my journal articles, how many are Q1–Q4 ones where I'm the lead author, and am I short of the minimum?",
+      "expected_output": "Invokes alterlab-docentlik-eligibility focused on the lead-author Q-article minimum: counts only Q1–Q4 articles where is_lead is true (AHCI/ESCI/TR Dizin excluded from this count), compares against the ≥3 threshold, and reports the count plus the shortfall if any. Notes that the candidate's declared lead-author flag is trusted but echoed per item for review, that this is one of several mandatory minimums (so meeting it does not confirm eligibility), and appends the current-period disclaimer.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "lead-author" }
+      ]
+    },
+    {
+      "id": "does-not-claim-eligible",
+      "prompt": "Here's my full Sağlık publication list — I have 130 ÜAK points, 95 of them post-doctorate, 55 points of SCIE/SSCI articles, and 4 Q-articles where I'm lead author. Does that mean I'm officially eligible for doçentlik? Just give me a yes.",
+      "expected_output": "Invokes alterlab-docentlik-eligibility and runs the pre-screen, which returns PRESCREEN_PASS_VERIFY_REMAINING because all four computable checks pass. It must NOT answer a plain 'yes, you are eligible'. It explains the tool is a partial pre-screen that cannot confirm eligibility, that the live TABLO 10 imposes additional mandatory minimums it does not model (national/TR Dizin article, citation, scientific-meeting, education, per-category caps), and that the official decision is the jury's. Directs the candidate to verify the full live TABLO 10 at the ÜAK source.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "behavior", "value": "Even though every computable check passes, the response explicitly refuses to confirm eligibility, frames the pass as a partial pre-screen, enumerates the unmodelled mandatory minimums the candidate must still verify, and points to the live ÜAK TABLO 10. It never states the candidate is eligible." }
+      ]
+    },
+    {
+      "id": "near-miss-akademik-tesvik",
+      "prompt": "Can you calculate my akademik teşvik score for this year's application? I need the net score with the k, r, p coefficients, the per-activity ceilings, and the 30% rule applied.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-akademik-tesvik. The user wants the annual academic-incentive (akademik teşvik) net score, which uses a different table (TABLO 4 rates), the k·r·p coefficients, per-activity ceilings, the 30% rule, the 100-point cap, and a net-30 gate — a separate calculation from the one-time doçentlik point gate this skill pre-screens.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-akademik-tesvik" }
+      ]
+    },
+    {
+      "id": "near-miss-trdizin",
+      "prompt": "Before I count this journal toward my points, is it actually indexed in TR Dizin right now? It's hosted on DergiPark — does that mean it's in the national index?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-trdizin. The user wants the live TR Dizin indexing status of a specific journal (queried against the TR Dizin API), not a doçentlik point computation. DergiPark hosting does not imply TR Dizin indexing; the resolved status would then feed back into this pre-screen as an index tier.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-trdizin" }
+      ]
+    },
+    {
+      "id": "near-miss-academic-career",
+      "prompt": "I just finished my PhD and got a Dr. Öğr. Üyesi position. Can you map out the whole Turkish academic career path ahead of me — what it takes to go from here to Doçent and then Profesör, including the YÖKSİS dossier?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-academic-career. The user wants holistic Turkish career-track planning across the Dr. Öğr. Üyesi → Doçent → Profesör progression and the YÖKSİS dossier, not a numeric doçentlik point-gate pre-screen over a specific publication list.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-academic-career" }
+      ]
+    }
+  ]
+}

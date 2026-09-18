@@ -1,0 +1,63 @@
+{
+  "skill": "alterlab-statistical-analysis",
+  "evals": [
+    {
+      "id": "test-selection-two-groups",
+      "prompt": "I'm comparing test scores between two independent groups of students (n=48 and n=52). I want to know which statistical test is appropriate, whether my data meets the assumptions, and how to report it for an APA-style paper.",
+      "expected_output": "Invokes alterlab-statistical-analysis: recommends an independent-samples t-test (Mann-Whitney U if normality is violated), checks assumptions first (Shapiro-Wilk for normality, Levene's test for homogeneity of variance, suggesting Welch's t-test if variances differ), computes Cohen's d with a 95% CI, and produces an APA-formatted results sentence with t(df), exact p, effect size and CI. May use pingouin's pg.ttest.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "assumption" },
+        { "type": "behavior", "value": "Selects the right two-group test, checks normality/homogeneity assumptions before running it, reports Cohen's d with CI, and gives APA-formatted output." }
+      ]
+    },
+    {
+      "id": "power-analysis-sample-size",
+      "prompt": "I'm planning a three-group experiment and need to know how many participants per group I need to detect a medium effect (f = 0.25) with 80% power at alpha = .05 before I start collecting data.",
+      "expected_output": "Invokes alterlab-statistical-analysis for an a priori power analysis: uses statsmodels FTestAnovaPower().solve_power with effect_size=0.25, ngroups=3, alpha=0.05, power=0.80 to return the required n per group. Frames it as study planning (a priori, not post-hoc), and may mention Cohen's f benchmarks for ANOVA effect sizes.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "power" },
+        { "type": "behavior", "value": "Runs an a priori power analysis to solve for required sample size given effect size, alpha, and target power, treating it as pre-study planning." }
+      ]
+    },
+    {
+      "id": "anova-posthoc-effect-size",
+      "prompt": "I ran a one-way design with three treatment conditions and a continuous outcome. Tell me whether the groups differ, which specific conditions differ from each other, and report the effect size properly.",
+      "expected_output": "Invokes alterlab-statistical-analysis: runs a one-way ANOVA (pingouin pg.anova), checks the omnibus p-value, and if significant follows up with post-hoc pairwise comparisons (Tukey HSD via pg.pairwise_tukey) with multiple-comparison correction. Reports partial eta-squared as the effect size and writes an APA-style result with F(df1, df2), p, and eta-squared.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "post" },
+        { "type": "behavior", "value": "Runs one-way ANOVA, follows up with corrected post-hoc pairwise tests, and reports partial eta-squared effect size in APA format." }
+      ]
+    },
+    {
+      "id": "bayes-factor-evidence",
+      "prompt": "My two groups didn't differ significantly with a frequentist t-test, but I want to know whether the data actually support the null hypothesis of no difference, not just fail to reject it. Can I quantify the evidence?",
+      "expected_output": "Invokes alterlab-statistical-analysis and recommends a Bayesian approach: a Bayesian t-test producing a Bayes Factor (BF01 / BF10) that can quantify evidence FOR the null, plus a credible interval on the mean difference. Explains that frequentist non-significance is not evidence of absence, while a Bayes Factor can directly support the null, and mentions checking convergence diagnostics (R-hat, ESS) for the PyMC/MCMC implementation.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Bayes" },
+        { "type": "behavior", "value": "Recommends a Bayesian t-test / Bayes Factor to quantify evidence for the null hypothesis, explaining that non-significance is not evidence of absence." }
+      ]
+    },
+    {
+      "id": "near-miss-statsmodels",
+      "prompt": "Fit a mixed-effects linear model with random intercepts and slopes for subjects using statsmodels MixedLM, and give me the full model summary with the fitted coefficient table and the variance components.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-statsmodels. The user wants to programmatically implement a specific model (a mixed-effects MixedLM) and inspect its fitted summary/coefficients, which the statistical-analysis description explicitly hands off ('For implementing specific models programmatically prefer statsmodels'). This skill is for guided test selection, assumption checking, and APA reporting, not hands-on model fitting of a named estimator.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-statsmodels" }
+      ]
+    },
+    {
+      "id": "near-miss-scikit-learn",
+      "prompt": "I want to train a logistic regression classifier on my features to predict a binary outcome, tune it with cross-validation, and report test-set accuracy and ROC AUC for a predictive model.",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-scikit-learn. The goal is predictive machine learning (train/test split, cross-validated tuning, classification metrics like accuracy and ROC AUC), not inferential hypothesis testing with assumption checks and APA reporting. The response should point to alterlab-scikit-learn for the predictive modeling workflow.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-scikit-learn" }
+      ]
+    }
+  ]
+}

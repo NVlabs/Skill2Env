@@ -1,0 +1,72 @@
+{
+  "skill": "alterlab-nf-core-sarek",
+  "evals": [
+    {
+      "id": "germline-fastq-to-vcf",
+      "prompt": "I have paired-end whole-genome FASTQ files for a single patient and I want to call germline SNVs and indels following GATK best practices. What's the cleanest way to go from FASTQ to a VCF?",
+      "expected_output": "Invokes alterlab-nf-core-sarek: builds a samplesheet.csv (patient, sample, lane, fastq_1, fastq_2) via scripts/make_samplesheet.py, then runs `nextflow run nf-core/sarek -r 3.8.1 -profile docker --input samplesheet.csv --outdir ./results --genome GATK.GRCh38 --tools haplotypecaller`. Pins the revision to 3.8.1, sets --tools haplotypecaller explicitly for GATK best practice (rather than letting it default to Strelka), describes the MarkDuplicates + BQSR preprocessing against the GRCh38 known-sites bundle, and routes the resulting VCF to alterlab-pysam / annotation skills.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "haplotypecaller" },
+        { "type": "behavior", "value": "Pins -r 3.8.1 and sets --tools explicitly to haplotypecaller for GATK best practice instead of relying on the Strelka default." }
+      ]
+    },
+    {
+      "id": "somatic-tumor-normal",
+      "prompt": "We sequenced a tumor and its matched normal blood sample for one patient. I need to call somatic point mutations. Can you set up the variant-calling pipeline?",
+      "expected_output": "Invokes alterlab-nf-core-sarek in somatic mode: constructs a samplesheet with the tumor row (status 1) and the matched normal row (status 0) under the SAME patient ID, runs nf-core/sarek -r 3.8.1 with --tools mutect2 (optionally mutect2,strelka) and --genome GATK.GRCh38. Emphasizes that tumor and normal must share one patient identifier for somatic pairing, and hands the somatic VCF to alterlab-cosmic / alterlab-gnomad for annotation.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "mutect2" },
+        { "type": "behavior", "value": "Sets status 1 (tumor) and status 0 (normal) under the same patient and selects a somatic caller (mutect2); does not treat the two samples as unrelated germline samples." }
+      ]
+    },
+    {
+      "id": "default-caller-trap-deepvariant",
+      "prompt": "I ran nf-core/sarek without setting --tools and I'm confused — I expected GATK HaplotypeCaller output but I got something else. Also, what's the most accurate germline caller I could use instead?",
+      "expected_output": "Invokes alterlab-nf-core-sarek: explains the #1 trap — with --tools unset, sarek 3.8.1 runs preprocessing and Strelka only, NOT HaplotypeCaller, so the user got Strelka output. Recommends re-running with an explicit --tools (haplotypecaller for GATK best practice, or deepvariant for highest germline F1 per the nf-core/Hanssen et al. 2024 benchmark). Cites that the default is Strelka and that --tools must be set explicitly.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "Strelka" },
+        { "type": "behavior", "value": "Correctly identifies that an unset --tools makes sarek default to Strelka (not HaplotypeCaller) and recommends deepvariant or haplotypecaller explicitly." }
+      ]
+    },
+    {
+      "id": "resume-from-recalibrated-bam",
+      "prompt": "I already have recalibrated BAM files from a previous sarek run on these samples — I don't want to re-align everything. Can I just re-run the variant calling step with DeepVariant?",
+      "expected_output": "Invokes alterlab-nf-core-sarek: directs the user to re-enter the pipeline at --step variant_calling with a samplesheet carrying the bam/bai (CRAM/CRAI) re-entry columns rather than fastq_1/fastq_2, sets --tools deepvariant, keeps -r 3.8.1, and uses Nextflow -resume to reuse cached work. Avoids re-running mapping/markduplicates/BQSR.",
+      "assertions": [
+        { "type": "should_trigger", "value": true },
+        { "type": "output_contains", "value": "variant_calling" },
+        { "type": "behavior", "value": "Uses --step variant_calling with BAM/CRAM re-entry rows instead of starting from FASTQ, so alignment and BQSR are not repeated." }
+      ]
+    },
+    {
+      "id": "near-miss-pysam-filter-vcf",
+      "prompt": "I already have a multi-sample VCF from a variant-calling run. I just need to filter it in Python to keep variants with QUAL > 30 and DP > 10, and pull out all the variants in a specific gene region. How do I do that with pysam?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-pysam. The user already holds a VCF and wants to read/filter/region-query it programmatically with pysam/htslib — that is in-memory VCF parsing, not running the FASTQ-to-VCF pipeline. alterlab-nf-core-sarek is for producing variants from raw reads, not post-hoc filtering of an existing VCF.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-pysam" }
+      ]
+    },
+    {
+      "id": "near-miss-tiledbvcf-store-cohort",
+      "prompt": "I have thousands of per-sample VCFs and flat-file storage is becoming unmanageable for region/sample queries. I want to ingest them into a compressed, incrementally-updatable variant store I can query fast. What should I use?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-tiledbvcf. The user wants scalable storage and querying of already-called variants in TileDB-VCF arrays, not to run alignment-to-VCF variant calling. alterlab-nf-core-sarek produces the VCFs; storing and querying them at population scale is alterlab-tiledbvcf's job.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-tiledbvcf" }
+      ]
+    },
+    {
+      "id": "near-miss-rnaseq-quant",
+      "prompt": "I have bulk RNA-seq FASTQ files and I want to quantify transcript and gene-level expression with salmon before differential expression. How do I build the index and quantify?",
+      "expected_output": "Does NOT invoke this skill; defers to alterlab-rnaseq-quant. The user wants RNA-seq transcript/gene quantification (salmon/kallisto), not DNA short-variant calling. alterlab-nf-core-sarek is a FASTQ-to-VCF germline/somatic variant pipeline and has nothing to do with expression quantification.",
+      "assertions": [
+        { "type": "should_not_trigger", "value": true },
+        { "type": "output_contains", "value": "alterlab-rnaseq-quant" }
+      ]
+    }
+  ]
+}
