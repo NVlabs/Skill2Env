@@ -8,7 +8,7 @@
 <a href="SkillHub/"><img src="https://img.shields.io/badge/🤗_SkillHub-pink?style=flat-square" alt="SkillHub" /></a>
 <a href="https://hub.harborframework.com/datasets/skill2env/skill2env"><img src="https://img.shields.io/badge/Dataset-Harbor-orange" alt="Dataset" /></a>
 
-Skill2Env turns any [Agent Skill](https://agentskills.io) into RL-ready terminal tasks in the [Harbor](https://harborframework.com) format.
+Skill2Env turns any [Agent Skill](https://agentskills.io) into RL-ready terminal tasks in the [Harbor Format](https://harborframework.com).
 
 <p align="center">
   <img src="assets/pipeline.png" alt="Skill2Env pipeline" width="800">
