@@ -128,12 +128,7 @@ watching CPU, memory, Docker, and Codex rate-limit behavior.
 
 ## Submit tasks to the Harbor hub
 
-```bash
-harbor auth login                                  # once, GitHub sign-in
-uv run skill2env submit output/quickstart --dry-run
-uv run skill2env submit output/quickstart --org <your-org-name> --public # omit --public for a private submission
-```
-
+See Habor's [official guide](https://docs.harborframework.com/core-concepts/harbor-hub/publish) on publishing tasks or dataset.
 
 ## Troubleshooting
 
