@@ -4,7 +4,7 @@
 
 <p align="center">
 <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="Apache 2.0 License" /></a>
-<a href="paper/Skill2Env_arXiv.pdf"><img src="https://img.shields.io/badge/📄_Paper-red?style=flat-square" alt="Tech Report" /></a>
+<a href="https://www.alphaxiv.org/abs/2609.reinforcing-agents-collective-skills"><img src="https://img.shields.io/badge/📄_Paper-red?style=flat-square" alt="Tech Report" /></a>
 <a href="SkillHub/"><img src="https://img.shields.io/badge/🤗_SkillHub-pink?style=flat-square" alt="SkillHub" /></a>
 <a href="https://hub.harborframework.com/datasets/skill2env/skill2env"><img src="https://img.shields.io/badge/Dataset-HarborHub-orange" alt="Dataset" /></a>
 
