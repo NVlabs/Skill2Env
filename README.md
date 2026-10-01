@@ -125,11 +125,6 @@ watching CPU, memory, Docker, and Codex rate-limit behavior.
 
 
 
-
-## Submit tasks to the Harbor hub
-
-See Habor's [official guide](https://docs.harborframework.com/core-concepts/harbor-hub/publish) on publishing tasks or dataset.
-
 ## Troubleshooting
 
 Codex runs a nested sandbox inside its container. On Ubuntu hosts with AppArmor, allow unprivileged
@@ -154,3 +149,18 @@ Project-owned source is licensed under [Apache-2.0](LICENSE). See the
 Third-party material in `SkillHub/` retains its respective copyright and license terms.
 See the [source and license inventory](SkillHub/skillhub_source_licenses.csv),
 [preserved license files](SkillHub/licenses/), and [SkillHub README](SkillHub/README.md).
+
+
+## 📖 Reference
+> [!IMPORTANT]
+> If you find it useful, please consider citing our work:
+```md
+@misc{xu2026reinforcing,
+  title = {Reinforcing Agents with Collective Skills},
+  author = {Xu, Binfeng and Hu, Jian and Zhang, Hao and Zhang, Shaokun and Zhang, Yifan and Demoret, Michael and Kautz, Jan and Dong, Yi},
+  year = {2026},
+  publisher = {alphaXiv},
+  url = {https://www.alphaxiv.org/abs/2609.reinforcing-agents-collective-skills},
+  keywords = {Artificial Intelligence (cs.AI), Machine Learning (cs.LG), Computation and Language (cs.CL), Reinforcement Learning, Agentic RL, Skill2Env, FOS: Computer and information sciences}
+}
+```
