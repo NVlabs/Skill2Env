@@ -154,13 +154,13 @@ See the [source and license inventory](SkillHub/skillhub_source_licenses.csv),
 ## 📖 Reference
 > [!IMPORTANT]
 > If you find it useful, please consider citing our work:
-```md
-@misc{xu2026reinforcing,
-  title = {Reinforcing Agents with Collective Skills},
+```bibtex
+@misc{xu2026skill2env,
+  title  = {{Skill2Env}: Reinforcing Agents with Collective Skills},
   author = {Xu, Binfeng and Hu, Jian and Zhang, Hao and Zhang, Shaokun and Zhang, Yifan and Demoret, Michael and Kautz, Jan and Dong, Yi},
-  year = {2026},
-  publisher = {alphaXiv},
-  url = {https://www.alphaxiv.org/abs/2609.reinforcing-agents-collective-skills},
-  keywords = {Artificial Intelligence (cs.AI), Machine Learning (cs.LG), Computation and Language (cs.CL), Reinforcement Learning, Agentic RL, Skill2Env, FOS: Computer and information sciences}
+  year   = {2026},
+  doi    = {10.13140/RG.2.2.28645.77287},
+  url    = {https://www.alphaxiv.org/abs/2609.reinforcing-agents-collective-skills},
+  note   = {Preprint}
 }
 ```
