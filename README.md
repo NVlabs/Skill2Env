@@ -10,7 +10,7 @@
 
 Skill2Env turns any [Agent Skill](https://agentskills.io) into RL-ready terminal tasks in the [Harbor](https://harborframework.com) format.
 
-Download and use our open licensed dataset on Harbor Hub:
+> Download and use our open licensed dataset on Harbor Hub:
 - [`skill2env/skill2env`](https://hub.harborframework.com/datasets/skill2env/skill2env): 7496 terminal agent tasks with paper release.
 - [`skill2env/skill2env-lite`](https://hub.harborframework.com/datasets/skill2env/skill2env-lite): 886 easy-to-medium subset, filtered for recipe studies on small models.
 
