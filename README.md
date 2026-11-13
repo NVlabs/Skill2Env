@@ -8,7 +8,7 @@
 <a href="SkillHub/"><img src="https://img.shields.io/badge/🤗_SkillHub-pink?style=flat-square" alt="SkillHub" /></a>
 <a href="https://hub.harborframework.com/datasets/skill2env/skill2env"><img src="https://img.shields.io/badge/Dataset-HarborHub-orange" alt="Dataset" /></a>
 
-Skill2Env turns any [Agent Skill](https://agentskills.io) into RL-ready terminal tasks in the [Harbor](https://harborframework.com) format.
+Skill2Env turns [Agent Skills](https://agentskills.io) into RL-ready terminal tasks in the [Harbor](https://harborframework.com) format.
 
 > Download and use our open licensed dataset on Harbor Hub:
 - [`skill2env/skill2env`](https://hub.harborframework.com/datasets/skill2env/skill2env): 7496 terminal agent tasks with paper release.
